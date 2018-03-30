@@ -38,8 +38,8 @@ InputManager:
     axis: 1
     joyNum: 0
   - serializedVersion: 3
-    m_Name: LeftClick
-    descriptiveName: 
+    m_Name: LeftMouseButton
+    descriptiveName: Left Mouse Button
     descriptiveNegativeName: 
     negativeButton: 
     positiveButton: joystick button 0
@@ -54,8 +54,8 @@ InputManager:
     axis: 0
     joyNum: 0
   - serializedVersion: 3
-    m_Name: RightClick
-    descriptiveName: 
+    m_Name: RightMouseButton
+    descriptiveName: Right Mouse Button
     descriptiveNegativeName: 
     negativeButton: 
     positiveButton: joystick button 1

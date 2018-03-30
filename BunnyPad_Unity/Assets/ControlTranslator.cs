@@ -1,7 +1,7 @@
 ﻿/*
  * GIT + Grenchen Institute of Technology
  *
- * BunnyController (a.k.a. JoyMouse)
+ * BunnyPad (a.k.a. JoyMouse)
  * 
  * by Benedict Jäggi @ 2018
  * based on JoyMouse from the same human beeing, from about 1999.
@@ -19,6 +19,43 @@ using System.Runtime.InteropServices;
 
 public class ControlTranslator : MonoBehaviour
 {
+// THREADING STUFF FOR THE FOCUS
+	#region Public data
+	public float timeWaiting = 5000000.0f;
+	public string labelInitialText = "I`m the console here!";
+	#endregion
+
+	#region Private data
+	private string _label;
+	private Thread _t1;
+	private Thread _t2;
+	private bool _t1Paused = false;
+	private bool _t2Paused = false;
+	#endregion
+
+	#region Start
+	void Start () {
+		_label = labelInitialText;
+		_t1 = new Thread(_func1);
+		_t2 = new Thread(_func2);
+	}
+	#endregion
+
+	#region Threads
+	private void _func1()
+	{
+		if(_label == labelInitialText)
+			_label = "";
+		while(true)
+		{
+			_label += 1;
+			for(int i = 0; i < timeWaiting; i ++)
+				while(_t1Paused){}
+		}
+	}
+	*/
+	// ENDOF THREADS
+
 	protected static float m_xMul = 5.0f;
 	protected static float m_yMul = 5.0f;
 
@@ -63,6 +100,7 @@ public class ControlTranslator : MonoBehaviour
 // Use this for initialization
 	void Start ()
 	{
+		Application.runInBackground = true;
 		Log("Hallo, ich bin dein Hasenkontrollator (BunnyController).");
 		Input.ResetInputAxes ();
 		string p = "Verbundene Spielgeräte:\n";
@@ -88,31 +126,31 @@ public class ControlTranslator : MonoBehaviour
 	protected void TranslatePadButtons(uint X, uint Y)
 	{
 		// click happens after release of button.
-		if (Input.GetButton ("LeftClick")) {
+		if (Input.GetButton ("LeftMouseButton")) {
 			if (!m_leftClickDown) {
 				mouse_event (MOUSEEVENTF_LEFTDOWN, X, Y, 0, 0);
-				Log ("Left Down");
+				Log ("Left Mouse Down");
 			}
 			m_leftClickDown = true;
 		} else {
 			if (m_leftClickDown) {
 				mouse_event (MOUSEEVENTF_LEFTUP, X, Y, 0, 0);
-				Log ("Left Up");
+				Log ("Left Mouse Up");
 			}
 			m_leftClickDown = false;
 		}
 
 		// click happens after release of button.
-		if (Input.GetButton ("LeftClick")) {
-			if (!m_leftClickDown) {
+		if (Input.GetButton ("RightMouseButton")) {
+			if (!m_rightClickDown) {
 				mouse_event (MOUSEEVENTF_RIGHTDOWN, X, Y, 0, 0);
-				Log ("Right Down");
+				Log ("Right Mouse Down");
 			}
 			m_rightClickDown = true;
 		} else {
 			if (m_rightClickDown) {
 				mouse_event (MOUSEEVENTF_RIGHTUP, X, Y, 0, 0);
-				Log ("Right Up");
+				Log ("Right Mouse Up");
 			}
 			m_rightClickDown = false;
 		}

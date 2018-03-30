@@ -1,0 +1,12 @@
+﻿<Properties StartupItem="BunnyPad_MonoOnly\BunnyPad_MonoOnly.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="BunnyPad_MonoOnly\Program.cs">
+    <Files>
+      <File FileName="BunnyPad_MonoOnly\Program.cs" Line="2" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

@@ -1,0 +1,5 @@
+C:\Users\Ben0bi\Desktop\BunnyPad\BunnyPad_MonoOnly\BunnyPad_MonoOnly\bin\Debug\BunnyPad_MonoOnly.exe
+C:\Users\Ben0bi\Desktop\BunnyPad\BunnyPad_MonoOnly\BunnyPad_MonoOnly\bin\Debug\BunnyPad_MonoOnly.pdb
+C:\Users\Ben0bi\Desktop\BunnyPad\BunnyPad_MonoOnly\BunnyPad_MonoOnly\obj\x86\Debug\BunnyPad_MonoOnly.csprojResolveAssemblyReference.cache
+C:\Users\Ben0bi\Desktop\BunnyPad\BunnyPad_MonoOnly\BunnyPad_MonoOnly\obj\x86\Debug\BunnyPad_MonoOnly.exe
+C:\Users\Ben0bi\Desktop\BunnyPad\BunnyPad_MonoOnly\BunnyPad_MonoOnly\obj\x86\Debug\BunnyPad_MonoOnly.pdb
