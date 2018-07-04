@@ -36,8 +36,8 @@ namespace Majestic_11
             Log.Line("------------------------------------------------------------------------------------------------------");
 
             XInputController controlpoller = new XInputController(f);
-
             Application.Run(f);
+
         }
     }
 }

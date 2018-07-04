@@ -1,4 +1,7 @@
-﻿namespace Majestic_11
+﻿using System;
+using System.Windows.Forms;
+
+namespace Majestic_11
 {
     partial class Frm_MJOY_Main
     {
@@ -63,6 +66,7 @@
             this.MaximizeBox = false;
             this.Name = "Frm_MJOY_Main";
             this.Text = "The joy of a mouse.";
+            this.Load += new System.EventHandler(this.Frm_MJOY_Main_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -75,7 +79,10 @@
 
         public void setLbl_connected(string text)
         {
-            lbl_connected.Text = text;
+            try
+            {
+                this.Invoke((MethodInvoker)delegate { lbl_connected.Text = text; });
+            }catch (Exception ex) { }
         }
     }
 }

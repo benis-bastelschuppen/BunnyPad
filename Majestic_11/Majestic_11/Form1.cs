@@ -16,5 +16,10 @@ namespace Majestic_11
         {
             InitializeComponent();
         }
+
+        private void Frm_MJOY_Main_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
