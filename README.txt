@@ -48,7 +48,6 @@ You can do the following stuff right now:
 
 + Press ESC with the Back button. (Left middle button)
 
-
 + Slow down mouse/scrollwheel speed with the left trigger (LT).
 + Speed up mouse/scrollwheel speed with the right trigger (RT).
 
