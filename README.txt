@@ -38,15 +38,16 @@ You can do the following stuff right now:
 + Left click with A.
 + Right click with B.
 + Press ENTER with Y.
-+ Press ESC with the Back button. (Left middle button)
++ Press Backspace with X
 
 + FN: Select another config by holding the left shoulder button (LS).
 + Ctrl-C with FN+A.
 + Ctrl-V with FN+B.
-+ Ctrl-Z with FN+X.
 + Ctrl-Y with FN+Y.
++ Ctrl-Z with FN+X.
 
-+ Press Backspace with X
++ Press ESC with the Back button. (Left middle button)
+
 
 + Slow down mouse/scrollwheel speed with the left trigger (LT).
 + Speed up mouse/scrollwheel speed with the right trigger (RT).
