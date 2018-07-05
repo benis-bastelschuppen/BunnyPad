@@ -6,7 +6,7 @@ by ben0bi @ ~2002, 2018
 e.G. play the next movie in the browser or
 	play your most loved adventure (Monkey Island :) ) with the gamepad.
 
-Back in 2002 I wrote the Program JoyMouse for using the joystick as a mouse.
+Back in 2002 I wrote the program JoyMouse for using the joystick as a mouse.
 In that time, programs where called programs and not apps. Times of wonder
 and prosperity. :) But nowadays this program was way outdated, and so I 
 created a new one.
