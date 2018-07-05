@@ -17,3 +17,14 @@ You can:
 + Right click with B.
 + Slow down mouse/scrollwheel speed with the left trigger (LT).
 + Speed up mouse/scrollwheel speed with the right trigger (RT).
+
++ Use the arrow keys with the digital pad. 
+	It waits 500ms after the first keystroke, then it will do it faster.
++ Press ENTER with the right shoulder button (RS).
++ Press Backspace with the left shoulder button (LS).
++ Press ESC with the right thumb button.
+
++ CTRL-C: X
++ CTRL-V: Y
++ CTRL-Z: Back/Options (Left position middle button)
++ CTRL-Y: Start (Right position middle button)

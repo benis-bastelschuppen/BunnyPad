@@ -21,5 +21,24 @@ namespace Majestic_11
         {
 
         }
+
+        private void btn_quit_Click(object sender, EventArgs e)
+        {
+            Program.Running = false;
+            Application.Exit();
+        }
+
+        private void btn_minimize_Click(object sender, EventArgs e)
+        {
+            if (Program.controlpoller.IsConnected)
+                this.Hide();
+            else
+                this.WindowState = FormWindowState.Minimized;
+        }
+
+        private void btn_about_Click(object sender, EventArgs e)
+        {
+            Program.ShowAboutForm();
+        }
     }
 }

@@ -10,6 +10,7 @@ using SharpDX.XInput;
 using System.Threading;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace Majestic_11
 {
@@ -20,17 +21,38 @@ namespace Majestic_11
         protected Gamepad pad;
         protected Controller controller;
         protected bool connected = false;
+        public bool IsConnected { get { return connected;} }
         public float deadzone = 2500;
 
         protected float multiplier = 50.0f / short.MaxValue;
 
-        protected Point leftThumb, rightThumb, dpad = new Point(0,0);
+        protected Point leftThumb, rightThumb = new Point(0,0);
+        protected byte dpad, olddpad = 0;
+        protected int arrowWaitTime = 0; // wait time counter for the arrow keys.
         protected float leftTrigger, rightTrigger;
-        protected bool leftMouseDown, rightMouseDown = false;
+        protected bool leftMouseDown, rightMouseDown, enterKeyDown, escapeKeyDown,
+            ctrlZDown, ctrlYDown, ctrlCDown, ctrlVDown, backspaceDown, fnDown, showMenuDown = false;
         protected float mouseSpeed = 0.2f;
 
         protected Thread thread = null;
         protected int pollcount = 0;
+
+        // some definitions which can be configured.
+        GamepadButtonFlags ctrl_ButtonEscapeKey = GamepadButtonFlags.Back;
+        GamepadButtonFlags ctrl_ShowMenu = GamepadButtonFlags.Start;
+
+        GamepadButtonFlags ctrl_ButtonLeftMouse = GamepadButtonFlags.A;
+        GamepadButtonFlags ctrl_ButtonRightMouse = GamepadButtonFlags.B;
+        GamepadButtonFlags ctrl_ButtonEnterKey = GamepadButtonFlags.Y;
+        GamepadButtonFlags ctrl_ButtonBackspaceKey = GamepadButtonFlags.X;
+
+        GamepadButtonFlags ctrl_ButtonFN = GamepadButtonFlags.LeftShoulder;
+
+        // FN keys
+        GamepadButtonFlags ctrl_ButtonCtrlCKey = GamepadButtonFlags.A;
+        GamepadButtonFlags ctrl_ButtonCtrlVKey = GamepadButtonFlags.B;
+        GamepadButtonFlags ctrl_ButtonCtrlZKey = GamepadButtonFlags.X;
+        GamepadButtonFlags ctrl_ButtonCtrlYKey = GamepadButtonFlags.Y;
 
         // WINDOWS SPECIFIC		
         // create the point structure for the windows getcursorpos function.
@@ -86,17 +108,34 @@ namespace Majestic_11
         // thread for selecting a controller. It tries to get one until it has one, then it starts the update thread.
         protected void connectThreadFunc()
         {
-            this.connect();
+            char c = '*';
+            byte q = 1;
+            this.connect(c);
             while(!connected)
             {
-                this.connect();
+                switch(q)
+                {
+                    case 1: c = '+';break;
+                    case 2: c = 'o';break;
+                    case 3: c = 'O'; break;
+                    case 4: c = 'o'; break;
+                    case 5: c = '+'; break;
+                    case 6: c = 'x'; break;
+                    case 7: c = 'X'; break;
+                    case 8: c = 'x'; q = 0; break;
+                    default:
+                        q = 0;
+                        break;
+                }
+                this.connect(c);
+                q++;
                 Thread.Sleep(250);
             }
             Update();
         }
 
         // the connect function itself.
-        public void connect()
+        public void connect(char loadingchar)
         {
             // this function may be started in a thread so the text functions need to invoke.
             controller = new Controller(UserIndex.One);
@@ -104,19 +143,19 @@ namespace Majestic_11
 
             if (connected)
             {
-                string txt = "Controller specs:\n";
+                string txt = "+++ CONNECTED +++\n";
                 string q = controller.GetBatteryInformation(BatteryDeviceType.Gamepad).BatteryType.ToString();
                 if (q == "Disconnected")
                     q = "Wired or Unknown";
-                txt += "Battery type: " + q + "\n";
-                txt += "Battery level: " + controller.GetBatteryInformation(BatteryDeviceType.Gamepad).BatteryLevel + "\n";
+                txt += "Bat. Type: " + q + " | ";
+                txt += "Bat. Lvl.: " + controller.GetBatteryInformation(BatteryDeviceType.Gamepad).BatteryLevel + "\n";
                 mainForm.setLbl_connected(txt);
                 Log.Line("Controller connected.");
                 pollcount = 0;
             }
             else
             {
-                mainForm.setLbl_connected("-- no controller connected or controller not found. --");
+                mainForm.setLbl_connected(""+loadingchar+" ..Waiting for connection.. "+loadingchar);
                 if (pollcount == 0)
                     Log.Line("Polling for controller");
                 else
@@ -139,7 +178,14 @@ namespace Majestic_11
                 }
 
                 // get the gamepad
-                pad = controller.GetState().Gamepad;
+                try
+                {
+                    pad = controller.GetState().Gamepad;
+                }catch(Exception ex)
+                {
+                    continue;
+                    //Log.Line("EXCEPTION: Gamepad not found.");
+                }
 
                 // get new values
                 leftThumb.X = (pad.LeftThumbX < deadzone && pad.LeftThumbX > -deadzone) ? 0 : (int)((float)pad.LeftThumbX * multiplier);
@@ -170,21 +216,48 @@ namespace Majestic_11
                 if (rightThumb.Y != 0)
                     mouse_event(MOUSEEVENTF_WHEEL, (uint)cur.X, (uint)cur.Y, (uint)(rightThumb.Y*mouseSpeed), 0);
 
-                // get digital pad values.
-                int oldypad = dpad.Y;
-                if(pad.Buttons == GamepadButtonFlags.DPadDown) dpad.Y = 1;
-                if (pad.Buttons == GamepadButtonFlags.DPadUp) dpad.Y = -1;
-                if (pad.Buttons != GamepadButtonFlags.DPadDown && pad.Buttons != GamepadButtonFlags.DPadUp) dpad.Y = 0;
+                // get digital pad keys.
+                olddpad = dpad;
+                switch(pad.Buttons)
+                {
+                    case GamepadButtonFlags.DPadDown:dpad = 1; break;
+                    case GamepadButtonFlags.DPadUp: dpad = 2; break;
+                    case GamepadButtonFlags.DPadRight: dpad = 3; break;
+                    case GamepadButtonFlags.DPadLeft: dpad = 4; break;
+                    default: dpad = 0; break;
+                }
 
-                int oldxpad = dpad.X;
-                if (pad.Buttons == GamepadButtonFlags.DPadRight) dpad.X = 1;
-                if (pad.Buttons == GamepadButtonFlags.DPadLeft) dpad.X = -1;
-                if (pad.Buttons != GamepadButtonFlags.DPadRight && pad.Buttons != GamepadButtonFlags.DPadLeft) dpad.X = 0;
-                if (oldxpad != dpad.X || oldypad != dpad.Y)
-                    Log.Line("DPad changed to: " + dpad.X+":"+dpad.Y);
+                bool sendarrow = false;
+                // send a key on begin of keypress..
+                if(dpad!=olddpad)
+                {
+                    arrowWaitTime = 0;
+                    sendarrow = true;
+                }
+
+                // and after some time after the key went down.
+                if (dpad == olddpad && arrowWaitTime > 500)
+                    sendarrow = true;
+
+                // finally send the arrow keys.
+                if(sendarrow)
+                {
+                    if (dpad == 1) SendKeys.SendWait("{DOWN}");
+                    if (dpad == 2) SendKeys.SendWait("{UP}");
+                    if (dpad == 3) SendKeys.SendWait("{RIGHT}");
+                    if (dpad == 4) SendKeys.SendWait("{LEFT}");
+                }
+
+                if ((pad.Buttons & ctrl_ButtonFN) == ctrl_ButtonFN)
+                {
+                    fnDown = true;
+                }else{
+                    fnDown = false;
+                }
 
                 // simulate clicks.
-                if(pad.Buttons == GamepadButtonFlags.A)
+                // left click
+                if ((pad.Buttons & ctrl_ButtonLeftMouse) == ctrl_ButtonLeftMouse && !fnDown)
                 {
                     if(!leftMouseDown)
                     {
@@ -192,10 +265,7 @@ namespace Majestic_11
                         mouse_event(MOUSEEVENTF_LEFTDOWN, (uint)cur.X, (uint)cur.Y, 0, 0);
                     }
                     leftMouseDown = true;
-                }
-
-                if (pad.Buttons != GamepadButtonFlags.A)
-                {
+                }else{
                     if (leftMouseDown)
                     {
                         Log.Line("Left mouse button up @ " + cur.X + ":" + cur.Y);
@@ -204,7 +274,8 @@ namespace Majestic_11
                     leftMouseDown = false;
                 }
 
-                if (pad.Buttons == GamepadButtonFlags.B)
+                // right click
+                if ((pad.Buttons & ctrl_ButtonRightMouse) == ctrl_ButtonRightMouse && !fnDown)
                 { 
                     if (!rightMouseDown)
                     {
@@ -212,10 +283,7 @@ namespace Majestic_11
                         mouse_event(MOUSEEVENTF_RIGHTDOWN, (uint)cur.X, (uint)cur.Y, 0, 0);
                     }
                     rightMouseDown = true;
-                }
-
-                if (pad.Buttons != GamepadButtonFlags.B)
-                {
+                }else{
                     if (rightMouseDown)
                     {
                         Log.Line("Right mouse button up @ " + cur.X + ":" + cur.Y);
@@ -224,8 +292,109 @@ namespace Majestic_11
                     rightMouseDown = false;
                 }
 
+                // enter button
+                if ((pad.Buttons & ctrl_ButtonEnterKey) == ctrl_ButtonEnterKey && !fnDown)
+                {
+                    if (!enterKeyDown)
+                    {
+                        Log.Line("Enter key pressed.");
+                        SendKeys.SendWait("{ENTER}");
+                    }
+                    enterKeyDown = true;
+                }
+                else { enterKeyDown = false; }
+
+                // esc button
+                if ((pad.Buttons & ctrl_ButtonEscapeKey) == ctrl_ButtonEscapeKey)// && !fnDown)
+                {
+                    if (!escapeKeyDown)
+                    {
+                        Log.Line("ESC pressed.");
+                        SendKeys.SendWait("{ESC}");
+                    }
+                    escapeKeyDown = true;
+                }
+                else { escapeKeyDown = false; }
+
+                // backspace button
+                if ((pad.Buttons & ctrl_ButtonBackspaceKey) == ctrl_ButtonBackspaceKey && !fnDown)
+                {
+                    if (!backspaceDown)
+                    {
+                        Log.Line("Backspace pressed.");
+                        SendKeys.SendWait("{BACKSPACE}");
+                    }
+                    backspaceDown = true;
+                }
+                else { backspaceDown = false; }
+
+                // ctrl-c button
+                if ((pad.Buttons & ctrl_ButtonCtrlCKey) == ctrl_ButtonCtrlCKey && fnDown)
+                {
+                    if (!ctrlCDown)
+                    {
+                        Log.Line("CTRL-C pressed.");
+                        SendKeys.SendWait("^c");
+                    }
+                    ctrlCDown = true;
+                }
+                else { ctrlCDown = false; }
+
+                // ctrl-v button
+                if ((pad.Buttons & ctrl_ButtonCtrlVKey) == ctrl_ButtonCtrlVKey && fnDown)
+                {
+                    if (!ctrlVDown)
+                    {
+                        Log.Line("CTRL-V pressed.");
+                        SendKeys.SendWait("^v");
+                    }
+                    ctrlVDown = true;
+                }
+                else { ctrlVDown = false; }
+
+                // ctrl-z button
+                if ((pad.Buttons & ctrl_ButtonCtrlZKey) == ctrl_ButtonCtrlZKey && fnDown)
+                {
+                    if (!ctrlZDown)
+                    {
+                        Log.Line("CTRL-Z pressed.");
+                        SendKeys.SendWait("^z");
+                    }
+                    ctrlZDown = true;
+                }
+                else { ctrlZDown = false; }
+
+                // ctrl-y button
+                if ((pad.Buttons & ctrl_ButtonCtrlYKey) == ctrl_ButtonCtrlYKey && fnDown)
+                {
+                    if (!ctrlYDown)
+                    {
+                        Log.Line("CTRL-Y pressed.");
+                        SendKeys.SendWait("^y");
+                    }
+                    ctrlYDown = true;
+                }
+                else { ctrlYDown = false; }
+
+                // show menu button
+                if ((pad.Buttons & ctrl_ShowMenu) == ctrl_ShowMenu)// && !fnDown)
+                {
+                    if (!showMenuDown)
+                    {
+                        Log.Line("Show menu pressed.");
+                        Program.ShowMainForm();
+                    }
+                    showMenuDown = true;
+                }
+                else { showMenuDown = false; }
+
                 Thread.Sleep(20);
+                if(dpad!=0) arrowWaitTime += 20; // add those millisecs to the wait time
             }
+
+            // if the connection was lost, we try to get a new one.
+            // first show the main form if it is hidden.
+            Program.ShowMainForm();
             connectThreadFunc();
         }
     }

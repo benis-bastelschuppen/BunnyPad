@@ -15,7 +15,7 @@ namespace Majestic_11
         public static void Line(string t)
         {
             Console.Out.WriteLine(t);
-            try
+  /*          try
             {
                 output.Invoke((MethodInvoker)delegate
                 {
@@ -39,12 +39,13 @@ namespace Majestic_11
             {
                 // prevent the log system from losing data.
                 preList.AddLast(t);
-            }
+            }*/
         }
 
         public static void Append(string txt)
         {
-            try
+            Console.Out.Write(txt);
+/*            try
             {
                 output.Invoke((MethodInvoker)delegate
                 {
@@ -85,7 +86,7 @@ namespace Majestic_11
                     preList.RemoveLast();
                     preList.AddLast(txt2);
                 }
-            }
+            }*/
         }
 
         public static void SetOutputListbox(ListBox lb) { output = lb; }
