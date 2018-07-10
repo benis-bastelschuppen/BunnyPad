@@ -35,6 +35,10 @@ You can do the following stuff right now:
 
 + Move the mouse cursor with the left thumbstick.
 + Simulate the mouse wheel with the right thumbstick.
++ Use the arrow keys with the digital pad. 
+	It waits 500ms after the first keystroke, then it will do it faster.
+
+(Main Buttons)
 + Left click with A.
 + Right click with B.
 + Press ENTER with Y.
@@ -46,10 +50,18 @@ You can do the following stuff right now:
 + Ctrl-Y with FN+Y.
 + Ctrl-Z with FN+X.
 
+(Secondary Buttons)
 + Press ESC with the Back button. (Left middle button)
++ Press TABulator with the right shoulder button.
 
 + Slow down mouse/scrollwheel speed with the left trigger (LT).
 + Speed up mouse/scrollwheel speed with the right trigger (RT).
 
-+ Use the arrow keys with the digital pad. 
-	It waits 500ms after the first keystroke, then it will do it faster.
++ Show the main menu with the Start button.
+
+TODO / Nice-To-Have:
+--> Virtual keyboard. Show or hide it with the left thumbstick.
+--> Own configuration: (Save and load config)
+--> Game configurations:
+	(Beyond Good & Evil: ASDW, Mouse, ESC, M)
+--> Reset to default (desktop) config in the blink of an eye.

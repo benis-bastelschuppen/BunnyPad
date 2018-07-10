@@ -9,86 +9,55 @@ namespace Majestic_11
 {
     public static class Log
     {
-        static ListBox output=null;
-        static LinkedList<string> preList = new LinkedList<string>();
+        static ListBox m_output=null;
+        static LinkedList<string> m_loglist = new LinkedList<string>();
 
+        public static void copyToListbox(ListBox outp)
+        {
+            if (outp == null)
+                return;
+
+            try
+            {
+                outp.Invoke((MethodInvoker)delegate
+                {
+                    outp.Items.Clear();
+                    // add the "lost data" list to the log system.
+                    if (m_loglist.Count > 0)
+                    {
+                        foreach (string itm in m_loglist)
+                            outp.Items.Add(itm);
+                        outp.SelectedIndex = outp.Items.Count - 1;
+                        // deselect the item after scrolling.
+                        outp.SetSelected(outp.Items.Count - 1, false);
+                    }
+                });
+            }
+            catch (Exception ex) { }
+        }
+
+        // output a single line in the log.
         public static void Line(string t)
         {
             Console.Out.WriteLine(t);
-  /*          try
-            {
-                output.Invoke((MethodInvoker)delegate
-                {
-                    // add the "lost data" list to the log system.
-                    if(preList.Count>0)
-                    {
-                        foreach(string itm in preList)
-                        {
-                            output.Items.Add(itm);
-                        }
-                        preList.Clear();
-                    }
-                    // add the actual text to the log system.
-                    output.Items.Add(t);
-                    output.SelectedIndex = output.Items.Count - 1;
-                    // deselect the item after scrolling.
-                    output.SetSelected(output.Items.Count - 1, false);
-                });
-            }
-            catch (Exception ex)
-            {
-                // prevent the log system from losing data.
-                preList.AddLast(t);
-            }*/
+            m_loglist.AddLast(t);
+            copyToListbox(m_output);
         }
 
+        // append something to the last line of the log.
         public static void Append(string txt)
         {
             Console.Out.Write(txt);
-/*            try
+            string t2 = txt;
+            if(m_loglist.Count>0)
             {
-                output.Invoke((MethodInvoker)delegate
-                {
-                    // add the "lost data" list to the log system.
-                    if (preList.Count > 0)
-                    {
-                        foreach (string itm in preList)
-                        {
-                            output.Items.Add(itm);
-                        }
-                        preList.Clear();
-                    }
-                    // add the actual text to the log system.
-
-                    string txt2 = txt;
-                    if (output.Items.Count > 0)
-                    {
-                        txt2 = output.Items[output.Items.Count - 1].ToString() + txt;
-                        output.Items.RemoveAt(output.Items.Count - 1);
-                    }
-
-                    output.Items.Add(txt2);
-                    output.SelectedIndex = output.Items.Count - 1;
-                    // deselect the item after scrolling.
-                    output.SetSelected(output.Items.Count - 1, false);
-                });
+                t2 = m_loglist.Last.ToString()+txt;
+                m_loglist.RemoveLast();
             }
-            catch (Exception ex)
-            {
-                if (preList.Count < 0)
-                {
-                    preList.AddLast(txt);
-                }
-                else
-                {
-                    string txt2 = preList.Last.ToString();
-                    txt2 += txt;
-                    preList.RemoveLast();
-                    preList.AddLast(txt2);
-                }
-            }*/
+            m_loglist.AddLast(t2);
+            copyToListbox(m_output);
         }
 
-        public static void SetOutputListbox(ListBox lb) { output = lb; }
+        public static void SetDefaultOutputListbox(ListBox lb) { m_output = lb; }
     }
 }

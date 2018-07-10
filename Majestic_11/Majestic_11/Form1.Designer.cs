@@ -126,6 +126,8 @@ namespace Majestic_11
             }catch (Exception ex) { }
         }
 
+        public string ConnectText => lbl_connected.Text;
+
         private Button btn_quit;
         private Button btn_minimize;
         private PictureBox pictureBox1;

@@ -58,7 +58,7 @@ namespace Majestic_11
                     pos.Y = pos.Y + movedirection;
                     g.DrawImage(aboutImage.BackgroundImage, pos);
 
-                    if (pos.Y + aboutImage.BackgroundImage.Height <= this.Height)
+                    if (pos.Y + aboutImage.BackgroundImage.Height <= this.Height-bottompanel.Height)
                         movedirection = 1;
 
                     if (pos.Y >= 0)
@@ -67,6 +67,13 @@ namespace Majestic_11
                 }
                 await Task.Delay(25);
             }
+        }
+
+        // open a browser window with the source code url.
+        private void url_sourceLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            // TODO: Open link
+            Log.Line("TODO: open link.");
         }
     }
 }

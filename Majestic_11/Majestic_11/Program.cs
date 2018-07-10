@@ -65,5 +65,12 @@ namespace Majestic_11
         {
             aboutform.Start();
         }
+
+        // update all the labels on the main form.
+        public static void UpdateLabels()
+        {
+            if (controlpoller.ConnectText != mainform.ConnectText)
+                mainform.setLbl_connected(controlpoller.ConnectText);
+        }
     }
 }
