@@ -19,6 +19,30 @@ namespace Majestic_11
         private const int MOUSEEVENTF_MIDDLEDOWN = 0x20;
         private const int MOUSEEVENTF_MIDDLEUP = 0x40;
         private const int MOUSEEVENTF_WHEEL = 0x0800;
+
+        // create the point structure for the windows getcursorpos function.
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
+            public int X;
+            public int Y;
+        }
+
+        // import getcursorpos from user32.dll
+        [DllImport("user32.dll")]
+        static extern bool GetCursorPos(out POINT lpPoint);
+
+        // return the cursor position as POINT.
+        public static POINT GetCursorPosition()
+        {
+            POINT lpPoint;
+            GetCursorPos(out lpPoint);
+            return lpPoint;
+        }
+
+        // import setcursorpos from user32.dll
+        [DllImport("user32.dll")]
+        static extern bool SetCursorPos(int x, int y);
         // ENDOF WINDOWS SPECIFIC
 
         public string keyStroke; // key combination to hit when the button is pressed.
@@ -40,9 +64,17 @@ namespace Majestic_11
         // use this delegates for special functions. Default is sending a keystroke on buttonDown.
         public delegate void voidDelegate();
 
+        // this are the "events" of a controller button.
         public voidDelegate onButtonDown;
         public voidDelegate onButtonUp;
 
+        // keychars is the key combination which will be simulated when pressing that button.
+        // the following keychars-strings are special cases:
+        // "@leftmouse@" will simulate a left mouse click.
+        // "@rightmouse@" will simulate a right mouse click.
+        // "@middlemouse" will simulate a click on the wheel of the mouse.
+        // All other combinations will be simulated over the keyboard, except you 
+        // rewrite the delegate functions.
         public MJButtonTranslation(GamepadButtonFlags btn, string keychars, byte FN = 0)
         {
             this.keyStroke = keychars;
@@ -51,6 +83,23 @@ namespace Majestic_11
             // define default delegates.
             onButtonDown = new voidDelegate(hitKey);
             onButtonUp = new voidDelegate(voidFunc);
+
+            // check if it is a mouse button, then use another delegate.
+            if (keychars.ToLower() == "@leftmouse@")
+            {
+                onButtonDown = new voidDelegate(leftMouseDown);
+                onButtonUp = new voidDelegate(leftMouseUp);
+            }
+            if (keychars.ToLower() == "@rightmouse@")
+            {
+                onButtonDown = new voidDelegate(rightMouseDown);
+                onButtonUp = new voidDelegate(rightMouseUp);
+            }
+            if (keychars.ToLower() == "@middlemouse@")
+            {
+                onButtonDown = new voidDelegate(middleMouseDown);
+                onButtonUp = new voidDelegate(middleMouseUp);
+            }
         }
 
         // a function which does nothing and returns nothing.
@@ -61,6 +110,21 @@ namespace Majestic_11
         {
             // send a key combination to the system, usually at text cursor position.
             SendKeys.SendWait(this.keyStroke);
+        }
+
+        // do a click
+        public void leftMouseDown() => mouseevt(MOUSEEVENTF_LEFTDOWN);
+        public void rightMouseDown() => mouseevt(MOUSEEVENTF_RIGHTDOWN);
+        public void middleMouseDown() => mouseevt(MOUSEEVENTF_MIDDLEDOWN);
+        public void leftMouseUp() => mouseevt(MOUSEEVENTF_LEFTUP);
+        public void rightMouseUp() => mouseevt(MOUSEEVENTF_RIGHTUP);
+        public void middleMouseUp() => mouseevt(MOUSEEVENTF_MIDDLEUP);
+
+        // simulate a mouse click on the cursor position.
+        protected void mouseevt(uint func)
+        {
+            POINT p = GetCursorPosition();
+            mouse_event(func, (uint)p.X, (uint)p.Y, 0, 0);
         }
 
         public void Update(Gamepad pad, byte FNflag)

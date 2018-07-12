@@ -86,7 +86,8 @@ namespace Majestic_11
         MJConfig config = new MJConfig();
         // ENDOF NEW
 
-        // WINDOWS SPECIFIC		
+        // WINDOWS SPECIFIC
+        // OLD REMOVE
         // create the point structure for the windows getcursorpos function.
         [StructLayout(LayoutKind.Sequential)]
         public struct POINT
@@ -111,7 +112,6 @@ namespace Majestic_11
         [DllImport("user32.dll")]
         static extern bool SetCursorPos(int x, int y);
 
-// OLD, REMOVE
         // import mouse_event from user32.dll
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
         public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
@@ -134,6 +134,11 @@ namespace Majestic_11
             // TODO: Load configs.
 
             MJButtonTranslation b;
+
+            // mouse buttons.
+            b = config.addButton(GamepadButtonFlags.A, "@leftmouse@");
+            b = config.addButton(GamepadButtonFlags.B, "@rightmouse@");
+            b = config.addButton(GamepadButtonFlags.RightThumb, "@middlemouse@");
 
             // FN_1 button
             b = config.addButton(GamepadButtonFlags.LeftShoulder, "f@FN_1");
@@ -341,7 +346,7 @@ namespace Majestic_11
 
                     // simulate clicks.
                     // left click
-                    if (isButtonDown(ctrl_ButtonLeftMouse, pad) && !fnDown)
+                /*    if (isButtonDown(ctrl_ButtonLeftMouse, pad) && !fnDown)
                     {
                         if(!leftMouseDown)
                         {
@@ -393,7 +398,7 @@ namespace Majestic_11
                         }
                         middleMouseDown = false;
                     }
-
+*/
 /*                    // tabulator key button
                     if (isButtonDown(ctrl_ButtonTabulatorKey, pad) && !fnDown)
                     {
