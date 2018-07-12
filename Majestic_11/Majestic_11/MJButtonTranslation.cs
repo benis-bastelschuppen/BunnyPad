@@ -96,7 +96,12 @@ namespace Majestic_11
         // the gamepad buttons.
         protected List<MJButtonTranslation> buttons;
         // the actual FN state.
-        protected byte FNflag = 0;
+        public byte FNflag = 0;
+
+        // use such functions for setting the FN flag.
+        public void FN1Down() { FNflag = 1; }
+        public void FNUp() { FNflag = 0; }
+
         // Time to wait until the key will be pressed each frame in ms.
         // Default is 500ms, a frame is 20ms fixed.
         // Keystroke delay of 0 means that the button only will be pressed once.

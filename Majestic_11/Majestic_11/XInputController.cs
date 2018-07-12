@@ -133,8 +133,16 @@ namespace Majestic_11
             // create the default config.
             // TODO: Load configs.
 
+            MJButtonTranslation b;
+
+            // FN_1 button
+            b = config.addButton(GamepadButtonFlags.LeftShoulder, "f@FN_1");
+            b.hitDelay = 1; // smallest hitdelay possible (it's 20).
+            b.onButtonDown = config.FN1Down;    // set FN to "true", ever.
+            b.onButtonUp = config.FNUp;         // set FN to "false", once. Will be overwritten by other FN's
+
             // backspace key
-            MJButtonTranslation b = config.addButton(GamepadButtonFlags.X, "{BACKSPACE}");
+            b = config.addButton(GamepadButtonFlags.X, "{BACKSPACE}");
             b.hitDelay = config.DefaultKeyStrokeDelay;
 
             // esc key - only once
@@ -142,6 +150,19 @@ namespace Majestic_11
             // enter key
             b = config.addButton(GamepadButtonFlags.Y, "{ENTER}");
             b.hitDelay = config.DefaultKeyStrokeDelay;
+
+            // TABulator key
+            b = config.addButton(GamepadButtonFlags.RightShoulder, "{TAB}");
+            b.hitDelay = config.DefaultKeyStrokeDelay;
+
+            // ctrl-c with FN_1
+            b = config.addButton(GamepadButtonFlags.A, "^c", 1);
+            // ctrl-v with FN_1
+            b = config.addButton(GamepadButtonFlags.B, "^v", 1);
+            // ctrl-z with FN_1
+            b = config.addButton(GamepadButtonFlags.X, "^z", 1);
+            // ctrl-y with FN_1
+            b = config.addButton(GamepadButtonFlags.Y, "^y", 1);
 
             this.mainForm = frm;
             this.connectThread();
@@ -245,7 +266,9 @@ namespace Majestic_11
                 try
                 {
                     pad = controller.GetState().Gamepad;
-                    config.Update(pad); // NEW 0.4.0
+                    config.Update(pad); // NEW 0.4.x
+
+                    // OLD
 
                     // get new values
                     leftThumb.X = (pad.LeftThumbX < deadzone && pad.LeftThumbX > -deadzone) ? 0 : (int)((float)pad.LeftThumbX * multiplier);
@@ -309,12 +332,12 @@ namespace Majestic_11
                     }
 
                     // check if FN button is down and set FN flag.
-                    if ((pad.Buttons & ctrl_ButtonFN) == ctrl_ButtonFN)
+                    /*if ((pad.Buttons & ctrl_ButtonFN) == ctrl_ButtonFN)
                     {
                         fnDown = true;
                     }else{
                         fnDown = false;
-                    }
+                    }*/
 
                     // simulate clicks.
                     // left click
@@ -371,20 +394,7 @@ namespace Majestic_11
                         middleMouseDown = false;
                     }
 
-                    // REMOVE
-                    // enter key button
-/*                    if (isButtonDown(ctrl_ButtonEnterKey, pad) && !fnDown)
-                    {
-                        if (!enterKeyDown)
-                        {
-                            Log.Line("Enter key pressed.");
-                            SendKeys.SendWait("{ENTER}");
-                        }
-                        enterKeyDown = true;
-                    }else{ enterKeyDown = false; }
-*/
-
-                    // tabulator key button
+/*                    // tabulator key button
                     if (isButtonDown(ctrl_ButtonTabulatorKey, pad) && !fnDown)
                     {
                         if (!tabulatorKeyDown)
@@ -394,75 +404,7 @@ namespace Majestic_11
                         }
                         tabulatorKeyDown = true;
                     } else { tabulatorKeyDown = false; }
-
-                    // esc button
-                   /* if (isButtonDown(ctrl_ButtonEscapeKey, pad))// && !fnDown)
-                    {
-                        if (!escapeKeyDown)
-                        {
-                            Log.Line("ESC pressed.");
-                            SendKeys.SendWait("{ESC}");
-                        }
-                        escapeKeyDown = true;
-                    }else{ escapeKeyDown = false; }
-                    */
-
-                    // backspace button
-                    // REMOVE
-              /*      if (isButtonDown(ctrl_ButtonBackspaceKey, pad) && !fnDown)
-                    {
-                        if (!backspaceDown)
-                        {
-                            Log.Line("Backspace pressed.");
-                            SendKeys.SendWait("{BACKSPACE}");
-                        }
-                        backspaceDown = true;
-                    }else{ backspaceDown = false; }
-                    */
-
-                    // ctrl-c button (with FN)
-                    if (isButtonDown(ctrl_ButtonCtrlCKey, pad) && fnDown)
-                    {
-                        if (!ctrlCDown)
-                        {
-                            Log.Line("CTRL-C pressed.");
-                            SendKeys.SendWait("^c");
-                        }
-                        ctrlCDown = true;
-                    }else{ ctrlCDown = false; }
-
-                    // ctrl-v button (with FN)
-                    if (isButtonDown(ctrl_ButtonCtrlVKey, pad) && fnDown)
-                    {
-                        if (!ctrlVDown)
-                        {
-                            Log.Line("CTRL-V pressed.");
-                            SendKeys.SendWait("^v");
-                        }
-                        ctrlVDown = true;
-                    }else{ ctrlVDown = false; }
-
-                    // ctrl-z button (with FN)
-                    if (isButtonDown(ctrl_ButtonCtrlZKey, pad) && fnDown)
-                    {
-                        if (!ctrlZDown)
-                        {
-                            Log.Line("CTRL-Z pressed.");
-                            SendKeys.SendWait("^z");
-                        }
-                        ctrlZDown = true;
-                    }else{ ctrlZDown = false; }
-
-                    // ctrl-y button (with FN)
-                    if (isButtonDown(ctrl_ButtonCtrlYKey, pad) && fnDown)
-                    {
-                        if (!ctrlYDown)
-                        {
-                            Log.Line("CTRL-Y pressed.");
-                            SendKeys.SendWait("^y");
-                        }
-                        ctrlYDown = true;
-                    }else{ ctrlYDown = false; }
+*/
 
                     // show menu button
                     if (isButtonDown(ctrl_ShowMenu, pad))// && !fnDown)

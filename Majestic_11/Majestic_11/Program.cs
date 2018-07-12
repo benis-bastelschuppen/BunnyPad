@@ -82,7 +82,7 @@ namespace Majestic_11
                 mainform.Show();
                 mainform.WindowState = FormWindowState.Normal;
                 mainform.BringToFront();
-                mainform.Activate();
+                mainform.Activate(); 
             });
         }
 
