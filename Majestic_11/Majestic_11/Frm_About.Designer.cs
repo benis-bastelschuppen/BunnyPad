@@ -89,9 +89,10 @@
             this.Controls.Add(this.bottompanel);
             this.Controls.Add(this.aboutImage);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Frm_About";
-            this.Text = "About [The Joy Of A Mouse]";
+            this.Text = "About BunnyPad";
             this.Load += new System.EventHandler(this.Frm_About_Load);
             ((System.ComponentModel.ISupportInitialize)(this.aboutImage)).EndInit();
             this.bottompanel.ResumeLayout(false);
