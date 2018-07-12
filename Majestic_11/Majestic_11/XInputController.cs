@@ -1,4 +1,26 @@
-﻿using System;
+﻿/*
+ * Majestic 11
+ * a.k.a. JoyMouse
+ * [The Joy Of A Mouse]
+ * 
+ * by Benedict "Oki Wan Ben0bi" Jäggi
+ * (Joymouse) ~2002
+ * Copyright 2018 Ben0bi Enterprises
+ * 
+ * LICENSE:
+ * Use of this source code and/or the executables is free in all terms for private use,
+ * "private" hereby translated to "ONE natural person",
+ * by adding the above credentials and this license text to your end-product.
+ * Giving away, copying, and putting this product online in a LAN or WAN, altering the code,
+ * derive new products and doing the same for or with them, is free for private use,
+ * festivals, parties, events (especially eSport-events), hospitals, social institutions,
+ * and schools where the oldest school clients (scholars) are less-equal than 18 years old 
+ * (USA: 21 years). Every other commercial use is forbidden.
+ * It is forbidden to sell this product or parts of it. Commercial use is not allowed in 
+ * all terms except the ones declared above.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,10 +44,10 @@ namespace Majestic_11
         protected Controller controller;
         protected bool connected = false;
         public bool IsConnected { get { return connected;} }
-        public float deadzone = 2500;
+        public float deadzone = 5000;
 
         protected float multiplier = 50.0f / short.MaxValue;
-
+         
         protected Point leftThumb, rightThumb = new Point(0,0);
         protected byte dpad, olddpad = 0;
         protected int arrowWaitTime = 0; // wait time counter for the arrow keys.
@@ -60,6 +82,10 @@ namespace Majestic_11
         GamepadButtonFlags ctrl_ButtonCtrlZKey = GamepadButtonFlags.X;
         GamepadButtonFlags ctrl_ButtonCtrlYKey = GamepadButtonFlags.Y;
 
+        // NEW 0.4.0:
+        MJConfig config = new MJConfig();
+        // ENDOF NEW
+
         // WINDOWS SPECIFIC		
         // create the point structure for the windows getcursorpos function.
         [StructLayout(LayoutKind.Sequential)]
@@ -85,6 +111,7 @@ namespace Majestic_11
         [DllImport("user32.dll")]
         static extern bool SetCursorPos(int x, int y);
 
+// OLD, REMOVE
         // import mouse_event from user32.dll
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
         public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
@@ -97,10 +124,26 @@ namespace Majestic_11
         private const int MOUSEEVENTF_MIDDLEUP = 0x40;
         private const int MOUSEEVENTF_WHEEL = 0x0800;
         // ENDOF WINDOWS SPECIFIC
+// ENDOF REMOVE
 
         public XInputController(Frm_MJOY_Main frm)
         {
-            mainForm = frm;
+            config = new MJConfig();
+
+            // create the default config.
+            // TODO: Load configs.
+
+            // backspace key
+            MJButtonTranslation b = config.addButton(GamepadButtonFlags.X, "{BACKSPACE}");
+            b.hitDelay = config.DefaultKeyStrokeDelay;
+
+            // esc key - only once
+            b = config.addButton(GamepadButtonFlags.Back, "{ESC}");
+            // enter key
+            b = config.addButton(GamepadButtonFlags.Y, "{ENTER}");
+            b.hitDelay = config.DefaultKeyStrokeDelay;
+
+            this.mainForm = frm;
             this.connectThread();
         }
 
@@ -173,6 +216,7 @@ namespace Majestic_11
             }
         }
 
+        // TODO: Remove
         // returns true if the button is down, else false.
         protected bool isButtonDown(GamepadButtonFlags button, Gamepad gpad)
         {
@@ -180,6 +224,7 @@ namespace Majestic_11
                 return true;
             return false;
         }
+        // ENDOF REMOVE
 
         // get the controller buttons and thumbs.
         protected void Update()
@@ -188,6 +233,7 @@ namespace Majestic_11
             while(!done)
             {
                 Program.UpdateLabels();
+
                 // check if there is a controller connected.
                 if(!controller.IsConnected || !connected)
                 {
@@ -199,6 +245,8 @@ namespace Majestic_11
                 try
                 {
                     pad = controller.GetState().Gamepad;
+                    config.Update(pad); // NEW 0.4.0
+
                     // get new values
                     leftThumb.X = (pad.LeftThumbX < deadzone && pad.LeftThumbX > -deadzone) ? 0 : (int)((float)pad.LeftThumbX * multiplier);
                     leftThumb.Y = (pad.LeftThumbY < deadzone && pad.LeftThumbY > -deadzone) ? 0 : (int)((float)pad.LeftThumbY * multiplier);
@@ -323,8 +371,9 @@ namespace Majestic_11
                         middleMouseDown = false;
                     }
 
+                    // REMOVE
                     // enter key button
-                    if (isButtonDown(ctrl_ButtonEnterKey, pad) && !fnDown)
+/*                    if (isButtonDown(ctrl_ButtonEnterKey, pad) && !fnDown)
                     {
                         if (!enterKeyDown)
                         {
@@ -333,6 +382,7 @@ namespace Majestic_11
                         }
                         enterKeyDown = true;
                     }else{ enterKeyDown = false; }
+*/
 
                     // tabulator key button
                     if (isButtonDown(ctrl_ButtonTabulatorKey, pad) && !fnDown)
@@ -346,7 +396,7 @@ namespace Majestic_11
                     } else { tabulatorKeyDown = false; }
 
                     // esc button
-                    if (isButtonDown(ctrl_ButtonEscapeKey, pad))// && !fnDown)
+                   /* if (isButtonDown(ctrl_ButtonEscapeKey, pad))// && !fnDown)
                     {
                         if (!escapeKeyDown)
                         {
@@ -355,9 +405,11 @@ namespace Majestic_11
                         }
                         escapeKeyDown = true;
                     }else{ escapeKeyDown = false; }
+                    */
 
                     // backspace button
-                    if (isButtonDown(ctrl_ButtonBackspaceKey, pad) && !fnDown)
+                    // REMOVE
+              /*      if (isButtonDown(ctrl_ButtonBackspaceKey, pad) && !fnDown)
                     {
                         if (!backspaceDown)
                         {
@@ -366,6 +418,7 @@ namespace Majestic_11
                         }
                         backspaceDown = true;
                     }else{ backspaceDown = false; }
+                    */
 
                     // ctrl-c button (with FN)
                     if (isButtonDown(ctrl_ButtonCtrlCKey, pad) && fnDown)
@@ -417,7 +470,7 @@ namespace Majestic_11
                         if (!showMenuDown)
                         {
                             Log.Line("Show menu pressed.");
-                            Program.ShowMainForm();
+                            Program.SwitchMainFormVisibility();
                         }
                         showMenuDown = true;
                     }else{ showMenuDown = false; }

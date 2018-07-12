@@ -72,8 +72,7 @@ namespace Majestic_11
         // open a browser window with the source code url.
         private void url_sourceLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            // TODO: Open link
-            Log.Line("TODO: open link.");
+            System.Diagnostics.Process.Start("https://github.com/ben0bi/BunnyPad");
         }
     }
 }

@@ -30,10 +30,7 @@ namespace Majestic_11
 
         private void btn_minimize_Click(object sender, EventArgs e)
         {
-            if (Program.controlpoller.IsConnected)
-                this.Hide();
-            else
-                this.WindowState = FormWindowState.Minimized;
+            Program.HideMainForm();
         }
 
         private void btn_about_Click(object sender, EventArgs e)

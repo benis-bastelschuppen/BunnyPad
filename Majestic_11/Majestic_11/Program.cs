@@ -19,6 +19,8 @@ namespace Majestic_11
         public static XInputController controlpoller;
         public static bool Running = false;
 
+        static bool mainFormVisibility = true;
+
         [STAThread]
         static void Main()
         {
@@ -52,12 +54,35 @@ namespace Majestic_11
             Application.Run(mainform);
         }
 
+        public static void SwitchMainFormVisibility()
+        {
+            mainFormVisibility = !mainFormVisibility;
+            if (mainFormVisibility)
+                ShowMainForm();
+            else
+                HideMainForm();
+        }
+
+        public static void HideMainForm()
+        {
+            mainform.Invoke((MethodInvoker)delegate
+            {
+                mainFormVisibility = false;
+                if (Program.controlpoller.IsConnected)
+                    mainform.Hide();
+                else
+                    mainform.WindowState = FormWindowState.Minimized;
+            });
+        }
+
         public static void ShowMainForm()
         {
             mainform.Invoke((MethodInvoker)delegate {
+                mainFormVisibility = true;
                 mainform.Show();
                 mainform.WindowState = FormWindowState.Normal;
                 mainform.BringToFront();
+                mainform.Activate();
             });
         }
 
