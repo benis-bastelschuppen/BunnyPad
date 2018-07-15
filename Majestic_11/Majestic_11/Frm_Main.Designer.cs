@@ -37,6 +37,7 @@ namespace Majestic_11
             this.btn_minimize = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btn_about = new System.Windows.Forms.Button();
+            this.btn_Config = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -84,7 +85,7 @@ namespace Majestic_11
             // 
             // btn_about
             // 
-            this.btn_about.Location = new System.Drawing.Point(395, 311);
+            this.btn_about.Location = new System.Drawing.Point(294, 311);
             this.btn_about.Name = "btn_about";
             this.btn_about.Size = new System.Drawing.Size(95, 33);
             this.btn_about.TabIndex = 2;
@@ -92,12 +93,23 @@ namespace Majestic_11
             this.btn_about.UseVisualStyleBackColor = true;
             this.btn_about.Click += new System.EventHandler(this.btn_about_Click);
             // 
+            // btn_Config
+            // 
+            this.btn_Config.Location = new System.Drawing.Point(395, 311);
+            this.btn_Config.Name = "btn_Config";
+            this.btn_Config.Size = new System.Drawing.Size(95, 33);
+            this.btn_Config.TabIndex = 5;
+            this.btn_Config.Text = "Config";
+            this.btn_Config.UseVisualStyleBackColor = true;
+            this.btn_Config.Click += new System.EventHandler(this.btn_Config_Click);
+            // 
             // Frm_MJOY_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(603, 356);
             this.ControlBox = false;
+            this.Controls.Add(this.btn_Config);
             this.Controls.Add(this.btn_about);
             this.Controls.Add(this.btn_minimize);
             this.Controls.Add(this.btn_quit);
@@ -108,7 +120,7 @@ namespace Majestic_11
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Frm_MJOY_Main";
-            this.Text = "The joy of a mouse.";
+            this.Text = "BunnyPad";
             this.Load += new System.EventHandler(this.Frm_MJOY_Main_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
@@ -133,6 +145,7 @@ namespace Majestic_11
         private Button btn_minimize;
         private PictureBox pictureBox1;
         private Button btn_about;
+        private Button btn_Config;
     }
 }
 

@@ -68,6 +68,19 @@ namespace Majestic_11
         public voidDelegate onButtonDown;
         public voidDelegate onButtonUp;
 
+        protected string actionText; // which action is associated to this button in human readable form.
+        public string ActionText { get { return actionText; } set { actionText = value; } }
+        public override string ToString()
+        {
+            string f = "";
+            if (FNindex > 0)
+                f = "FN + ";
+            string rep = "";
+            if (hitDelay > 0)
+                rep = "[Repeating after " + hitDelay + "ms] ";
+            return f+button.ToString() + " => " +rep+ actionText;
+        }
+
         // keychars is the key combination which will be simulated when pressing that button.
         // the following keychars-strings are special cases:
         // "@leftmouse@" will simulate a left mouse click.
@@ -83,22 +96,26 @@ namespace Majestic_11
             // define default delegates.
             onButtonDown = new voidDelegate(hitKey);
             onButtonUp = new voidDelegate(voidFunc);
+            actionText = "Keyboard: "+keyStroke;
 
             // check if it is a mouse button, then use another delegate.
             if (keychars.ToLower() == "@leftmouse@")
             {
                 onButtonDown = new voidDelegate(leftMouseDown);
                 onButtonUp = new voidDelegate(leftMouseUp);
+                actionText = "Left Mouse Button";
             }
             if (keychars.ToLower() == "@rightmouse@")
             {
                 onButtonDown = new voidDelegate(rightMouseDown);
                 onButtonUp = new voidDelegate(rightMouseUp);
+                actionText = "Right Mouse Button";
             }
             if (keychars.ToLower() == "@middlemouse@")
             {
                 onButtonDown = new voidDelegate(middleMouseDown);
                 onButtonUp = new voidDelegate(middleMouseUp);
+                actionText = "Middle Mouse Button";
             }
         }
 
@@ -159,6 +176,8 @@ namespace Majestic_11
     {
         // the gamepad buttons.
         protected List<MJButtonTranslation> buttons;
+        public List<MJButtonTranslation> Items => buttons;
+
         // the actual FN state.
         public byte FNflag = 0;
 
@@ -182,20 +201,71 @@ namespace Majestic_11
 
         public MJButtonTranslation addButton(MJButtonTranslation bt)
         {
-            buttons.Add(bt);
+            this.buttons.Add(bt);
             return bt;
         }
 
         public MJButtonTranslation addButton(GamepadButtonFlags btn, string keys, byte FNidx = 0)
         {
             MJButtonTranslation bt = new MJButtonTranslation(btn, keys, FNidx);
-            buttons.Add(bt);
+            this.buttons.Add(bt);
             return bt;
         }
 
         public void clearButtons()
         {
-            buttons.Clear();
+            this.buttons.Clear();
+        }
+
+        public void loadHardcodedDefaultConfig()
+        {
+            this.clearButtons();
+            MJButtonTranslation b; // you can change the button config after creation with b.
+
+            // mouse buttons.
+            b = this.addButton(GamepadButtonFlags.A, "@leftmouse@");
+            b = this.addButton(GamepadButtonFlags.B, "@rightmouse@");
+            b = this.addButton(GamepadButtonFlags.RightThumb, "@middlemouse@");
+
+            // dpad buttons
+            b = this.addButton(GamepadButtonFlags.DPadUp, "{UP}");
+            b.hitDelay = this.DefaultKeyStrokeDelay;
+            b = this.addButton(GamepadButtonFlags.DPadDown, "{DOWN}");
+            b.hitDelay = this.DefaultKeyStrokeDelay;
+            b = this.addButton(GamepadButtonFlags.DPadLeft, "{LEFT}");
+            b.hitDelay = this.DefaultKeyStrokeDelay;
+            b = this.addButton(GamepadButtonFlags.DPadRight, "{RIGHT}");
+            b.hitDelay = this.DefaultKeyStrokeDelay;
+
+            // FN_1 button
+            b = this.addButton(GamepadButtonFlags.LeftShoulder, "f@FN_1");
+            b.hitDelay = 1; // smallest hitdelay possible (it's 20).
+            b.onButtonDown = this.FN1Down;    // set FN to "true", ever.
+            b.onButtonUp = this.FNUp;         // set FN to "false", once. Will be overwritten by other FN's
+            b.ActionText = "FN Modificator";
+
+            // backspace key
+            b = this.addButton(GamepadButtonFlags.X, "{BACKSPACE}");
+            b.hitDelay = this.DefaultKeyStrokeDelay;
+
+            // esc key - only once
+            b = this.addButton(GamepadButtonFlags.Back, "{ESC}");
+            // enter key
+            b = this.addButton(GamepadButtonFlags.Y, "{ENTER}");
+            b.hitDelay = this.DefaultKeyStrokeDelay;
+
+            // TABulator key
+            b = this.addButton(GamepadButtonFlags.RightShoulder, "{TAB}");
+            b.hitDelay = this.DefaultKeyStrokeDelay;
+
+            // ctrl-c with FN_1
+            b = this.addButton(GamepadButtonFlags.A, "^c", 1);
+            // ctrl-v with FN_1
+            b = this.addButton(GamepadButtonFlags.B, "^v", 1);
+            // ctrl-z with FN_1
+            b = this.addButton(GamepadButtonFlags.X, "^z", 1);
+            // ctrl-y with FN_1
+            b = this.addButton(GamepadButtonFlags.Y, "^y", 1);
         }
     }
 }

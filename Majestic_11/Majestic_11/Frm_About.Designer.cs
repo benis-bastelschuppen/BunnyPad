@@ -85,7 +85,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(602, 541);
-            this.ControlBox = false;
             this.Controls.Add(this.bottompanel);
             this.Controls.Add(this.aboutImage);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;

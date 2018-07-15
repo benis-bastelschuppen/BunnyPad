@@ -37,5 +37,10 @@ namespace Majestic_11
         {
             Program.ShowAboutForm();
         }
+
+        private void btn_Config_Click(object sender, EventArgs e)
+        {
+            Program.ShowButtonConfigForm();
+        }
     }
 }

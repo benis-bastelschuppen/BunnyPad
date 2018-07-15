@@ -77,6 +77,12 @@
     <Compile Include="actionoverlay.Designer.cs">
       <DependentUpon>actionoverlay.cs</DependentUpon>
     </Compile>
+    <Compile Include="Frm_ButtonConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_ButtonConfig.Designer.cs">
+      <DependentUpon>Frm_ButtonConfig.cs</DependentUpon>
+    </Compile>
     <Compile Include="Frm_Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -96,6 +102,9 @@
     <Compile Include="XInputController.cs" />
     <EmbeddedResource Include="actionoverlay.resx">
       <DependentUpon>actionoverlay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_ButtonConfig.resx">
+      <DependentUpon>Frm_ButtonConfig.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Frm_Main.resx">
       <DependentUpon>Frm_Main.cs</DependentUpon>

@@ -44,7 +44,9 @@ namespace Majestic_11
         {
             bgLoop();
             this.Show();
+            this.WindowState = FormWindowState.Normal;
             this.BringToFront();
+            this.Activate();
         }
 
         private async void bgLoop()

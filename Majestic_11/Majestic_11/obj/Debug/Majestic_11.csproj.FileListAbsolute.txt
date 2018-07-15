@@ -30,3 +30,4 @@ C:\Users\Ben0bi\Desktop\OfflineStick\BunnyPad\Majestic_11\Majestic_11\obj\Debug\
 C:\Users\Ben0bi\Desktop\OfflineStick\BunnyPad\Majestic_11\Majestic_11\obj\Debug\Majestic_11.pdb
 C:\Users\Ben0bi\Desktop\OfflineStick\BunnyPad\Majestic_11\Majestic_11\obj\Debug\Majestic_11.actionoverlay.resources
 C:\Users\Ben0bi\Desktop\OfflineStick\BunnyPad\Majestic_11\Majestic_11\obj\Debug\Majestic_11.Frm_About.resources
+C:\Users\Ben0bi\Desktop\OfflineStick\BunnyPad\Majestic_11\Majestic_11\obj\Debug\Majestic_11.Frm_ButtonConfig.resources

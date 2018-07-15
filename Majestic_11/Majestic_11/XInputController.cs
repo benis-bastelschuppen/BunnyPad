@@ -21,10 +21,6 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 // Use NuGet to install SharpDX and SharpDX.XInput
 using SharpDX.XInput;
@@ -32,7 +28,6 @@ using SharpDX.XInput;
 using System.Threading;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 
 namespace Majestic_11
 {
@@ -49,11 +44,10 @@ namespace Majestic_11
         protected float multiplier = 50.0f / short.MaxValue;
          
         protected Point leftThumb, rightThumb = new Point(0,0);
-        protected byte dpad, olddpad = 0;
+        protected byte dpad, olddpad;
         protected int arrowWaitTime = 0; // wait time counter for the arrow keys.
         protected float leftTrigger, rightTrigger;
-        protected bool leftMouseDown, rightMouseDown, middleMouseDown, enterKeyDown, escapeKeyDown,
-            ctrlZDown, ctrlYDown, ctrlCDown, ctrlVDown, backspaceDown, fnDown, showMenuDown, tabulatorKeyDown = false;
+        protected bool showMenuDown = false; // REMOVE
         protected float mouseSpeed = 0.2f;
 
         protected Thread thread = null;
@@ -64,26 +58,12 @@ namespace Majestic_11
         public string ConnectText => m_connectingText;
 
         // some definitions which can be configured.
-        GamepadButtonFlags ctrl_ButtonEscapeKey = GamepadButtonFlags.Back;
         GamepadButtonFlags ctrl_ShowMenu = GamepadButtonFlags.Start;
 
-        GamepadButtonFlags ctrl_ButtonLeftMouse = GamepadButtonFlags.A;
-        GamepadButtonFlags ctrl_ButtonRightMouse = GamepadButtonFlags.B;
-        GamepadButtonFlags ctrl_ButtonEnterKey = GamepadButtonFlags.Y;
-        GamepadButtonFlags ctrl_ButtonBackspaceKey = GamepadButtonFlags.X;
-        GamepadButtonFlags ctrl_ButtonTabulatorKey = GamepadButtonFlags.RightShoulder;
-        GamepadButtonFlags ctrl_ButtonMiddleMouse = GamepadButtonFlags.RightThumb;
+        // NEW 0.4.x:
+        protected MJConfig config = new MJConfig();
+        public MJConfig Config => config;
 
-        GamepadButtonFlags ctrl_ButtonFN = GamepadButtonFlags.LeftShoulder;
-
-        // FN keys
-        GamepadButtonFlags ctrl_ButtonCtrlCKey = GamepadButtonFlags.A;
-        GamepadButtonFlags ctrl_ButtonCtrlVKey = GamepadButtonFlags.B;
-        GamepadButtonFlags ctrl_ButtonCtrlZKey = GamepadButtonFlags.X;
-        GamepadButtonFlags ctrl_ButtonCtrlYKey = GamepadButtonFlags.Y;
-
-        // NEW 0.4.0:
-        MJConfig config = new MJConfig();
         // ENDOF NEW
 
         // WINDOWS SPECIFIC
@@ -130,44 +110,8 @@ namespace Majestic_11
         {
             config = new MJConfig();
 
-            // create the default config.
-            // TODO: Load configs.
-
-            MJButtonTranslation b;
-
-            // mouse buttons.
-            b = config.addButton(GamepadButtonFlags.A, "@leftmouse@");
-            b = config.addButton(GamepadButtonFlags.B, "@rightmouse@");
-            b = config.addButton(GamepadButtonFlags.RightThumb, "@middlemouse@");
-
-            // FN_1 button
-            b = config.addButton(GamepadButtonFlags.LeftShoulder, "f@FN_1");
-            b.hitDelay = 1; // smallest hitdelay possible (it's 20).
-            b.onButtonDown = config.FN1Down;    // set FN to "true", ever.
-            b.onButtonUp = config.FNUp;         // set FN to "false", once. Will be overwritten by other FN's
-
-            // backspace key
-            b = config.addButton(GamepadButtonFlags.X, "{BACKSPACE}");
-            b.hitDelay = config.DefaultKeyStrokeDelay;
-
-            // esc key - only once
-            b = config.addButton(GamepadButtonFlags.Back, "{ESC}");
-            // enter key
-            b = config.addButton(GamepadButtonFlags.Y, "{ENTER}");
-            b.hitDelay = config.DefaultKeyStrokeDelay;
-
-            // TABulator key
-            b = config.addButton(GamepadButtonFlags.RightShoulder, "{TAB}");
-            b.hitDelay = config.DefaultKeyStrokeDelay;
-
-            // ctrl-c with FN_1
-            b = config.addButton(GamepadButtonFlags.A, "^c", 1);
-            // ctrl-v with FN_1
-            b = config.addButton(GamepadButtonFlags.B, "^v", 1);
-            // ctrl-z with FN_1
-            b = config.addButton(GamepadButtonFlags.X, "^z", 1);
-            // ctrl-y with FN_1
-            b = config.addButton(GamepadButtonFlags.Y, "^y", 1);
+            // create the default config. 
+            config.loadHardcodedDefaultConfig();
 
             this.mainForm = frm;
             this.connectThread();
@@ -208,7 +152,7 @@ namespace Majestic_11
                 q++;
                 Thread.Sleep(250);
             }
-            Update();
+            UpdateLoop();
         }
 
         // the connect function itself.
@@ -253,7 +197,7 @@ namespace Majestic_11
         // ENDOF REMOVE
 
         // get the controller buttons and thumbs.
-        protected void Update()
+        protected void UpdateLoop()
         {
             bool done = false;
             while(!done)
@@ -286,7 +230,7 @@ namespace Majestic_11
                     rightTrigger = pad.RightTrigger;
                 
                     if (leftTrigger > 10 && rightTrigger <= 10)
-                        mouseSpeed = 0.05f;
+                        mouseSpeed = 0.1f;
 
                     if (rightTrigger > 10 && leftTrigger <= 10)
                         mouseSpeed = 1.0f;
@@ -304,113 +248,6 @@ namespace Majestic_11
                     if (rightThumb.Y != 0)
                         mouse_event(MOUSEEVENTF_WHEEL, (uint)cur.X, (uint)cur.Y, (uint)(rightThumb.Y*mouseSpeed), 0);
 
-                    // get digital pad keys.
-                    olddpad = dpad;
-                    switch(pad.Buttons)
-                    {
-                        case GamepadButtonFlags.DPadDown:dpad = 1; break;
-                        case GamepadButtonFlags.DPadUp: dpad = 2; break;
-                        case GamepadButtonFlags.DPadRight: dpad = 3; break;
-                        case GamepadButtonFlags.DPadLeft: dpad = 4; break;
-                        default: dpad = 0; break;
-                    }
-
-                    bool sendarrow = false;
-                    // send a key on begin of keypress..
-                    if(dpad!=olddpad)
-                    {
-                        arrowWaitTime = 0;
-                        sendarrow = true;
-                    }
-
-                    // and after some time after the key went down.
-                    if (dpad == olddpad && arrowWaitTime > 500)
-                        sendarrow = true;
-
-                    // finally send the arrow keys.
-                    if(sendarrow)
-                    {
-                        if (dpad == 1) SendKeys.SendWait("{DOWN}");
-                        if (dpad == 2) SendKeys.SendWait("{UP}");
-                        if (dpad == 3) SendKeys.SendWait("{RIGHT}");
-                        if (dpad == 4) SendKeys.SendWait("{LEFT}");
-                    }
-
-                    // check if FN button is down and set FN flag.
-                    /*if ((pad.Buttons & ctrl_ButtonFN) == ctrl_ButtonFN)
-                    {
-                        fnDown = true;
-                    }else{
-                        fnDown = false;
-                    }*/
-
-                    // simulate clicks.
-                    // left click
-                /*    if (isButtonDown(ctrl_ButtonLeftMouse, pad) && !fnDown)
-                    {
-                        if(!leftMouseDown)
-                        {
-                            Log.Line("Left mouse button down @ " + cur.X + ":" + cur.Y);
-                            mouse_event(MOUSEEVENTF_LEFTDOWN, (uint)cur.X, (uint)cur.Y, 0, 0);
-                        }
-                        leftMouseDown = true;
-                    }else{
-                        if (leftMouseDown)
-                        {
-                            Log.Line("Left mouse button up @ " + cur.X + ":" + cur.Y);
-                            mouse_event(MOUSEEVENTF_LEFTUP, (uint)cur.X, (uint)cur.Y, 0, 0);
-                        }
-                        leftMouseDown = false;
-                    }
-
-                    // right click
-                    if (isButtonDown(ctrl_ButtonRightMouse, pad) && !fnDown)
-                    { 
-                        if (!rightMouseDown)
-                        {
-                            Log.Line("Right mouse button down @ "+cur.X+":"+cur.Y);
-                            mouse_event(MOUSEEVENTF_RIGHTDOWN, (uint)cur.X, (uint)cur.Y, 0, 0);
-                        }
-                        rightMouseDown = true;
-                    }else{
-                        if (rightMouseDown)
-                        {
-                            Log.Line("Right mouse button up @ " + cur.X + ":" + cur.Y);
-                            mouse_event(MOUSEEVENTF_RIGHTUP, (uint)cur.X, (uint)cur.Y, 0, 0);
-                        }
-                        rightMouseDown = false;
-                    }
-
-                    // middle click
-                    if (isButtonDown(ctrl_ButtonMiddleMouse, pad))
-                    {
-                        if (!middleMouseDown)
-                        {
-                            Log.Line("Middle mouse button down @ " + cur.X + ":" + cur.Y);
-                            mouse_event(MOUSEEVENTF_MIDDLEDOWN, (uint)cur.X, (uint)cur.Y, 0, 0);
-                        }
-                        middleMouseDown = true;
-                    }else{
-                        if (middleMouseDown)
-                        {
-                            Log.Line("Middle mouse button up @ " + cur.X + ":" + cur.Y);
-                            mouse_event(MOUSEEVENTF_MIDDLEUP, (uint)cur.X, (uint)cur.Y, 0, 0);
-                        }
-                        middleMouseDown = false;
-                    }
-*/
-/*                    // tabulator key button
-                    if (isButtonDown(ctrl_ButtonTabulatorKey, pad) && !fnDown)
-                    {
-                        if (!tabulatorKeyDown)
-                        {
-                            Log.Line("TAB key pressed.");
-                            SendKeys.SendWait("{TAB}");
-                        }
-                        tabulatorKeyDown = true;
-                    } else { tabulatorKeyDown = false; }
-*/
-
                     // show menu button
                     if (isButtonDown(ctrl_ShowMenu, pad))// && !fnDown)
                     {
@@ -421,7 +258,8 @@ namespace Majestic_11
                         }
                         showMenuDown = true;
                     }else{ showMenuDown = false; }
-                }catch (Exception ex)
+
+                } catch (Exception ex)
                 {
                     continue;
                     //Log.Line("EXCEPTION: Gamepad not found.");
@@ -431,10 +269,14 @@ namespace Majestic_11
                 if(dpad!=0) arrowWaitTime += 20; // add those millisecs to the wait time
             }
 
+            // *10 ooops, we got thrown out of the update loop...
+
             // if the connection was lost, we try to get a new one.
             // first show the main form if it is hidden.
             Program.ShowMainForm();
+            // then try to connect again and again and again..
             connectThreadFunc();
+            // ..if there is a connection, the connect func will create a new update-loop. goto *10.
         }
     }
 }

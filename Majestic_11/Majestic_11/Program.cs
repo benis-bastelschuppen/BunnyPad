@@ -16,7 +16,11 @@ namespace Majestic_11
 
         static Frm_MJOY_Main mainform;
         static Frm_About aboutform;
+        static Frm_ButtonConfig configform;
+        // the control poller and its get-property
         public static XInputController controlpoller;
+        public static XInputController Input => controlpoller;
+
         public static bool Running = false;
 
         static bool mainFormVisibility = true;
@@ -47,10 +51,16 @@ namespace Majestic_11
             */
 
             controlpoller = new XInputController(mainform);
-            Running = true;
+
+            // create about form
             aboutform = new Frm_About();
             aboutform.Text = aboutform.Text + " v" + Application.ProductVersion;
             aboutform.Hide();
+
+            Running = true;
+            configform = new Frm_ButtonConfig();
+            configform.Hide();
+
             Application.Run(mainform);
         }
 
@@ -88,7 +98,16 @@ namespace Majestic_11
 
         public static void ShowAboutForm()
         {
+            if (aboutform.IsDisposed)
+                aboutform = new Frm_About();
             aboutform.Start();
+        }
+
+        public static void ShowButtonConfigForm()
+        {
+            if (configform.IsDisposed)
+                configform = new Frm_ButtonConfig();
+            configform.Start();
         }
 
         // update all the labels on the main form.
