@@ -39,9 +39,10 @@
             // 
             // btn_OK
             // 
-            this.btn_OK.Location = new System.Drawing.Point(525, 3);
+            this.btn_OK.Location = new System.Drawing.Point(539, 1);
+            this.btn_OK.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btn_OK.Name = "btn_OK";
-            this.btn_OK.Size = new System.Drawing.Size(65, 29);
+            this.btn_OK.Size = new System.Drawing.Size(49, 24);
             this.btn_OK.TabIndex = 1;
             this.btn_OK.Text = "OK";
             this.btn_OK.UseVisualStyleBackColor = true;
@@ -51,9 +52,10 @@
             // 
             this.aboutImage.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("aboutImage.BackgroundImage")));
             this.aboutImage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.aboutImage.Location = new System.Drawing.Point(-1, -44);
+            this.aboutImage.Location = new System.Drawing.Point(-1, -36);
+            this.aboutImage.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.aboutImage.Name = "aboutImage";
-            this.aboutImage.Size = new System.Drawing.Size(605, 905);
+            this.aboutImage.Size = new System.Drawing.Size(608, 735);
             this.aboutImage.TabIndex = 2;
             this.aboutImage.TabStop = false;
             // 
@@ -62,9 +64,10 @@
             this.url_sourceLink.AutoSize = true;
             this.url_sourceLink.BackColor = System.Drawing.SystemColors.Control;
             this.url_sourceLink.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
-            this.url_sourceLink.Location = new System.Drawing.Point(12, 9);
+            this.url_sourceLink.Location = new System.Drawing.Point(9, 7);
+            this.url_sourceLink.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.url_sourceLink.Name = "url_sourceLink";
-            this.url_sourceLink.Size = new System.Drawing.Size(236, 17);
+            this.url_sourceLink.Size = new System.Drawing.Size(186, 13);
             this.url_sourceLink.TabIndex = 3;
             this.url_sourceLink.TabStop = true;
             this.url_sourceLink.Text = "https://github.com/ben0bi/BunnyPad";
@@ -75,22 +78,24 @@
             // 
             this.bottompanel.Controls.Add(this.btn_OK);
             this.bottompanel.Controls.Add(this.url_sourceLink);
-            this.bottompanel.Location = new System.Drawing.Point(0, 507);
+            this.bottompanel.Location = new System.Drawing.Point(-1, 412);
+            this.bottompanel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.bottompanel.Name = "bottompanel";
-            this.bottompanel.Size = new System.Drawing.Size(604, 35);
+            this.bottompanel.Size = new System.Drawing.Size(608, 28);
             this.bottompanel.TabIndex = 4;
             // 
             // Frm_About
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(602, 541);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.ClientSize = new System.Drawing.Size(598, 440);
             this.Controls.Add(this.bottompanel);
             this.Controls.Add(this.aboutImage);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.MaximizeBox = false;
             this.Name = "Frm_About";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "About BunnyPad";
             this.Load += new System.EventHandler(this.Frm_About_Load);
             ((System.ComponentModel.ISupportInitialize)(this.aboutImage)).EndInit();

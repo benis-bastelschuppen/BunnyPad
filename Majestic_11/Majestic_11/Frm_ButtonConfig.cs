@@ -67,13 +67,13 @@ namespace Majestic_11
             // keyboard is the second entry, zero based.
             if(combo_Action.SelectedIndex==1)
             {
-                panel_keystuff.Show();
+                panel_keystuff.Enabled = true;
                 txt_repeattime.Text = ""+Program.Input.Config.DefaultKeyStrokeDelay;
             } else {
                 // do not repeat at all costs :)
                 chk_repeat.Checked = false;
                 txt_repeattime.Text = "0";
-                panel_keystuff.Hide();
+                panel_keystuff.Enabled = false;
             }
 
             // maybe disable the FN checkbox when the FN button would need FN for itself.

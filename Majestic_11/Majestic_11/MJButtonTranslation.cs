@@ -1,17 +1,23 @@
 ﻿using SharpDX.XInput;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Majestic_11
 {
-    // a button and it's associated key config.
+    // a button and its associated key config.
     public class MJButtonTranslation
     {
+        // import keyboard event only for setting the volume.
+        [DllImport("user32.dll")]
+        static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
+
         // import mouse_event from user32.dll
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
         public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
-        //Mouse actions
+        
+        //Mouse actions for the windows API.
         private const int MOUSEEVENTF_LEFTDOWN = 0x02;
         private const int MOUSEEVENTF_LEFTUP = 0x04;
         private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
@@ -70,6 +76,8 @@ namespace Majestic_11
 
         protected string actionText; // which action is associated to this button in human readable form.
         public string ActionText { get { return actionText; } set { actionText = value; } }
+
+        // returns a string which describes the buttons config.
         public override string ToString()
         {
             string f = "";
@@ -85,7 +93,10 @@ namespace Majestic_11
         // the following keychars-strings are special cases:
         // "@leftmouse@" will simulate a left mouse click.
         // "@rightmouse@" will simulate a right mouse click.
-        // "@middlemouse" will simulate a click on the wheel of the mouse.
+        // "@middlemouse@" will simulate a click on the wheel of the mouse.
+        // "@volumeup@" will raise the system volume.
+        // "@volumedown@" will lower the system volume.
+        // "@volumemute@" will mute the system volume.
         // All other combinations will be simulated over the keyboard, except you 
         // rewrite the delegate functions.
         public MJButtonTranslation(GamepadButtonFlags btn, string keychars, byte FN = 0)
@@ -93,6 +104,7 @@ namespace Majestic_11
             this.keyStroke = keychars;
             this.button = btn;
             this.FNindex = FN;
+
             // define default delegates.
             onButtonDown = new voidDelegate(hitKey);
             onButtonUp = new voidDelegate(voidFunc);
@@ -117,6 +129,23 @@ namespace Majestic_11
                 onButtonUp = new voidDelegate(middleMouseUp);
                 actionText = "Middle Mouse Button";
             }
+
+            // or maybe we want to set another volume?
+            if(keychars.ToLower() == "@volumeup@")
+            {
+                onButtonDown = new voidDelegate(volumeUp);
+                actionText = "Volume UP";
+            }
+            if (keychars.ToLower() == "@volumedown@")
+            {
+                onButtonDown = new voidDelegate(volumeDown);
+                actionText = "Volume DOWN";
+            }
+            if (keychars.ToLower() == "@volumemute@")
+            {
+                onButtonDown = new voidDelegate(volumeMute);
+                actionText = "MUTE Volume";
+            }
         }
 
         // a function which does nothing and returns nothing.
@@ -137,6 +166,11 @@ namespace Majestic_11
         public void rightMouseUp() => mouseevt(MOUSEEVENTF_RIGHTUP);
         public void middleMouseUp() => mouseevt(MOUSEEVENTF_MIDDLEUP);
 
+        // adjust the system volume.
+        public void volumeUp() => keybd_event((byte)Keys.VolumeUp, 0, 0, 0);
+        public void volumeDown() => keybd_event((byte)Keys.VolumeDown, 0, 0, 0);
+        public void volumeMute() => keybd_event((byte)Keys.VolumeMute, 0, 0, 0);
+
         // simulate a mouse click on the cursor position.
         protected void mouseevt(uint func)
         {
@@ -152,8 +186,7 @@ namespace Majestic_11
                 if (!buttonDown)
                     this.onButtonDown();
                 buttonDown = true;
-            } else
-            {
+            } else {
                 if (buttonDown)
                     this.onButtonUp();
                 hitDelayCount = 0;
@@ -193,6 +226,15 @@ namespace Majestic_11
         public MJConfig() { buttons = new List<MJButtonTranslation>(); }
         public void Update(Gamepad pad)
         {
+            // first, just check for FN flags.
+            // This is the bugfix which made 0.4.x to 0.5.x
+            FNflag = 0;
+            foreach (MJButtonTranslation btn in buttons)
+            {
+                if(btn.keyStroke=="@FN@")
+                    btn.Update(pad, FNflag);
+            }
+            // then update the buttons.
             foreach (MJButtonTranslation btn in buttons)
             {
                 btn.Update(pad, FNflag);
@@ -238,10 +280,10 @@ namespace Majestic_11
             b.hitDelay = this.DefaultKeyStrokeDelay;
 
             // FN_1 button
-            b = this.addButton(GamepadButtonFlags.LeftShoulder, "f@FN_1");
-            b.hitDelay = 1; // smallest hitdelay possible (it's 20).
+            b = this.addButton(GamepadButtonFlags.LeftShoulder, "@FN@");
+            b.hitDelay = 1;                   // smallest hitdelay possible (it's 20).
             b.onButtonDown = this.FN1Down;    // set FN to "true", ever.
-            b.onButtonUp = this.FNUp;         // set FN to "false", once. Will be overwritten by other FN's
+           // b.onButtonUp = this.FNUp;         // set FN to "false", once. Will be overwritten by other FN's
             b.ActionText = "FN Modificator";
 
             // backspace key
@@ -266,6 +308,15 @@ namespace Majestic_11
             b = this.addButton(GamepadButtonFlags.X, "^z", 1);
             // ctrl-y with FN_1
             b = this.addButton(GamepadButtonFlags.Y, "^y", 1);
+
+            // volume UP with FN_1
+            b = this.addButton(GamepadButtonFlags.DPadUp, "@volumeup@", 1);
+            b.hitDelay = this.DefaultKeyStrokeDelay;
+            // volume DOWN with FN_1
+            b = this.addButton(GamepadButtonFlags.DPadDown, "@volumedown@",1);
+            b.hitDelay = this.DefaultKeyStrokeDelay;
+            // MUTE volume with FN_1
+            b = this.addButton(GamepadButtonFlags.DPadLeft, "@volumemute@",1);
         }
     }
 }

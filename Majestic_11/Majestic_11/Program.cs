@@ -113,6 +113,10 @@ namespace Majestic_11
         // update all the labels on the main form.
         public static void UpdateLabels()
         {
+            // BUGFIX_1: This gets called in another thread and it could create an exception when closing the
+            // program. That is why we ask for the Running flag first. 
+            if (!Program.Running)
+                return;
             if (controlpoller.ConnectText != mainform.ConnectText)
                 mainform.setLbl_connected(controlpoller.ConnectText);
         }
