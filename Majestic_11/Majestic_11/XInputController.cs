@@ -249,7 +249,7 @@ namespace Majestic_11
                         mouse_event(MOUSEEVENTF_WHEEL, (uint)cur.X, (uint)cur.Y, (uint)(rightThumb.Y*mouseSpeed), 0);
 
                     // show menu button
-                    if (isButtonDown(ctrl_ShowMenu, pad))// && !fnDown)
+                   /* if (isButtonDown(ctrl_ShowMenu, pad))// && !fnDown)
                     {
                         if (!showMenuDown)
                         {
@@ -258,11 +258,13 @@ namespace Majestic_11
                         }
                         showMenuDown = true;
                     }else{ showMenuDown = false; }
+                    */
 
-                } catch (Exception ex)
-                {
+                } catch (Exception ex) {
+                    // sometimes the gamepad will not be found, like when you
+                    // get the computer back from hibernation or something like this.
+                    // to not crash the program then, we just continue here.
                     continue;
-                    //Log.Line("EXCEPTION: Gamepad not found.");
                 }
 
                 Thread.Sleep(20);

@@ -254,6 +254,31 @@ namespace Majestic_11
             return bt;
         }
 
+        public bool removeButton(int index)
+        {
+            MJButtonTranslation btn = this.buttons[index];
+            Log.Line("Remove button from config: " + btn.keyStroke.ToLower());
+            if (btn.keyStroke.ToLower() == "@mainmenu@")
+            {
+                // TODO: check for other main menu.
+                uint count = 0;
+                foreach (MJButtonTranslation b in buttons)
+                {
+                    if (b.keyStroke.ToLower() == "@mainmenu@")
+                        count++;
+                }
+                if (count > 1)
+                {
+                    this.buttons.RemoveAt(index);
+                    return true;
+                } else {
+                    MessageBox.Show("You need at least one MAIN MENU button.", "Deletion not allowed!");
+                    return false;
+                }
+            }
+            else { this.buttons.RemoveAt(index); return true; }
+        }
+
         public void clearButtons()
         {
             this.buttons.Clear();
@@ -264,7 +289,12 @@ namespace Majestic_11
             this.clearButtons();
             MJButtonTranslation b; // you can change the button config after creation with b.
 
-            // mouse buttons.
+            // the main menu button => needs this keystroke!
+            b = this.addButton(GamepadButtonFlags.Start, "@mainmenu@");
+            b.onButtonDown = Program.SwitchMainFormVisibility;
+            b.ActionText = "MENU BUTTON";
+
+            // mouse buttons => need this keystroke!
             b = this.addButton(GamepadButtonFlags.A, "@leftmouse@");
             b = this.addButton(GamepadButtonFlags.B, "@rightmouse@");
             b = this.addButton(GamepadButtonFlags.RightThumb, "@middlemouse@");
@@ -279,7 +309,7 @@ namespace Majestic_11
             b = this.addButton(GamepadButtonFlags.DPadRight, "{RIGHT}");
             b.hitDelay = this.DefaultKeyStrokeDelay;
 
-            // FN_1 button
+            // FN_1 button = need this keystroke!
             b = this.addButton(GamepadButtonFlags.LeftShoulder, "@FN@");
             b.hitDelay = 1;                   // smallest hitdelay possible (it's 20).
             b.onButtonDown = this.FN1Down;    // set FN to "true", ever.
@@ -309,13 +339,13 @@ namespace Majestic_11
             // ctrl-y with FN_1
             b = this.addButton(GamepadButtonFlags.Y, "^y", 1);
 
-            // volume UP with FN_1
+            // volume UP with FN_1 => need this keystroke!
             b = this.addButton(GamepadButtonFlags.DPadUp, "@volumeup@", 1);
             b.hitDelay = this.DefaultKeyStrokeDelay;
-            // volume DOWN with FN_1
+            // volume DOWN with FN_1 => need this keystroke!
             b = this.addButton(GamepadButtonFlags.DPadDown, "@volumedown@",1);
             b.hitDelay = this.DefaultKeyStrokeDelay;
-            // MUTE volume with FN_1
+            // MUTE volume with FN_1 => need this keystroke!
             b = this.addButton(GamepadButtonFlags.DPadLeft, "@volumemute@",1);
         }
     }

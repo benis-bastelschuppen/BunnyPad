@@ -31,6 +31,9 @@ namespace Majestic_11
             combo_Action.Items.Add("Left Mouse Button");
             combo_Action.Items.Add("Right Mouse Button");
             combo_Action.Items.Add("Middle Mouse Button");
+            combo_Action.Items.Add("Volume UP");
+            combo_Action.Items.Add("Volume DOWN");
+            combo_Action.Items.Add("MUTE Volume");
             combo_Action.Items.Add("FN Modificator");
 
             LoadActualConfig();
@@ -65,10 +68,19 @@ namespace Majestic_11
         {
             // show key stuff if the keyboard action is selected.
             // keyboard is the second entry, zero based.
-            if(combo_Action.SelectedIndex==1)
+            string itm = "";
+            if (combo_Action.SelectedIndex >= 0)
+                itm = combo_Action.Items[combo_Action.SelectedIndex].ToString();
+
+            itm = itm.ToLower();
+            if(itm=="keyboard combination" || itm=="volume up" || itm=="volume down")
             {
                 panel_keystuff.Enabled = true;
                 txt_repeattime.Text = ""+Program.Input.Config.DefaultKeyStrokeDelay;
+                if (itm == "keyboard combination")
+                    txt_keystroke.Enabled = true;
+                else
+                    txt_keystroke.Enabled = false;
             } else {
                 // do not repeat at all costs :)
                 chk_repeat.Checked = false;
@@ -78,7 +90,7 @@ namespace Majestic_11
 
             // maybe disable the FN checkbox when the FN button would need FN for itself.
             // FN is the last entry.
-            if(combo_Action.SelectedIndex == combo_Action.Items.Count-1)
+            if(itm == "fn modificator")
             {
                 chk_FN.Checked = false;
                 chk_FN.Enabled = false;
@@ -132,6 +144,18 @@ namespace Majestic_11
                 btn_UpdateSelected.Enabled = false;
             }
             return valid;
+        }
+
+        // remove a button from the config.
+        private void btn_removeButton_Click(object sender, EventArgs e)
+        {
+            int idx = ListBox_Buttons.SelectedIndex;
+            if (idx >= 0)
+            {
+                // only reload if the remove was successfull.
+                if(Program.Input.Config.removeButton(idx))
+                    LoadActualConfig();
+            }
         }
     }
 }

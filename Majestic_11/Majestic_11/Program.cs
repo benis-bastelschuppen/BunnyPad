@@ -32,6 +32,8 @@ namespace Majestic_11
             Application.SetCompatibleTextRenderingDefault(false);
             mainform = new Frm_MJOY_Main();
 
+            // the action overlay is the overlay which shows the virtual keyboard.
+
             //actionoverlay overlay = new actionoverlay();
 
             // set actionoverlay position
@@ -50,23 +52,30 @@ namespace Majestic_11
             overlay.TopMost = true;
             */
 
+            // this is the main poller for the controls.
             controlpoller = new XInputController(mainform);
 
-            // create about form
+            // create an about form
             aboutform = new Frm_About();
             aboutform.Text = aboutform.Text + " v" + Application.ProductVersion;
             aboutform.Hide();
 
-            Running = true;
+            // create a config form.
             configform = new Frm_ButtonConfig();
             configform.Hide();
 
+            Running = true;
+
             Application.Run(mainform);
         }
-
+        
+        // show or hide the main form.
         public static void SwitchMainFormVisibility()
         {
             mainFormVisibility = !mainFormVisibility;
+            if (mainform.WindowState == FormWindowState.Minimized)
+                mainFormVisibility = true;
+
             if (mainFormVisibility)
                 ShowMainForm();
             else

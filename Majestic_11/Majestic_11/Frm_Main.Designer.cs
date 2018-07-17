@@ -78,7 +78,7 @@ namespace Majestic_11
             this.btn_quit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.btn_quit.ForeColor = System.Drawing.Color.White;
             this.btn_quit.Location = new System.Drawing.Point(532, 272);
-            this.btn_quit.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btn_quit.Margin = new System.Windows.Forms.Padding(2);
             this.btn_quit.Name = "btn_quit";
             this.btn_quit.Size = new System.Drawing.Size(71, 27);
             this.btn_quit.TabIndex = 3;
@@ -89,7 +89,7 @@ namespace Majestic_11
             // btn_minimize
             // 
             this.btn_minimize.Location = new System.Drawing.Point(532, 303);
-            this.btn_minimize.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btn_minimize.Margin = new System.Windows.Forms.Padding(2);
             this.btn_minimize.Name = "btn_minimize";
             this.btn_minimize.Size = new System.Drawing.Size(71, 27);
             this.btn_minimize.TabIndex = 1;
@@ -101,10 +101,10 @@ namespace Majestic_11
             // 
             this.pictureBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.BackgroundImage")));
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.pictureBox1.Location = new System.Drawing.Point(11, 11);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pictureBox1.Location = new System.Drawing.Point(2, 11);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(603, 288);
+            this.pictureBox1.Size = new System.Drawing.Size(611, 288);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox1.TabIndex = 4;
             this.pictureBox1.TabStop = false;
@@ -112,7 +112,7 @@ namespace Majestic_11
             // btn_about
             // 
             this.btn_about.Location = new System.Drawing.Point(457, 303);
-            this.btn_about.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btn_about.Margin = new System.Windows.Forms.Padding(2);
             this.btn_about.Name = "btn_about";
             this.btn_about.Size = new System.Drawing.Size(71, 27);
             this.btn_about.TabIndex = 2;
@@ -123,7 +123,7 @@ namespace Majestic_11
             // btn_Config
             // 
             this.btn_Config.Location = new System.Drawing.Point(382, 303);
-            this.btn_Config.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btn_Config.Margin = new System.Windows.Forms.Padding(2);
             this.btn_Config.Name = "btn_Config";
             this.btn_Config.Size = new System.Drawing.Size(71, 27);
             this.btn_Config.TabIndex = 5;
@@ -144,7 +144,7 @@ namespace Majestic_11
             this.Controls.Add(this.pictureBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Frm_MJOY_Main";
