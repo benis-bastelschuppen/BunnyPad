@@ -216,7 +216,7 @@ namespace Majestic_11
 
         // use such functions for setting the FN flag.
         public void FN1Down() { FNflag = 1; }
-        public void FNUp() { FNflag = 0; }
+        //public void FNUp() { FNflag = 0; }
 
         // Time to wait until the key will be pressed each frame in ms.
         // Default is 500ms, a frame is 20ms fixed.
@@ -294,6 +294,13 @@ namespace Majestic_11
             b.onButtonDown = Program.SwitchMainFormVisibility;
             b.ActionText = "MENU BUTTON";
 
+            // FN_1 button = need this keystroke!
+            b = this.addButton(GamepadButtonFlags.LeftShoulder, "@FN@");
+            b.hitDelay = 1;                   // smallest hitdelay possible (it's 20).
+            b.onButtonDown = this.FN1Down;    // set FN to "true", ever.
+                                              // b.onButtonUp = this.FNUp;         // set FN to "false", once. Will be overwritten by other FN's
+            b.ActionText = "FN Modificator";  // TODO: remove that.  
+
             // mouse buttons => need this keystroke!
             b = this.addButton(GamepadButtonFlags.A, "@leftmouse@");
             b = this.addButton(GamepadButtonFlags.B, "@rightmouse@");
@@ -308,13 +315,6 @@ namespace Majestic_11
             b.hitDelay = this.DefaultKeyStrokeDelay;
             b = this.addButton(GamepadButtonFlags.DPadRight, "{RIGHT}");
             b.hitDelay = this.DefaultKeyStrokeDelay;
-
-            // FN_1 button = need this keystroke!
-            b = this.addButton(GamepadButtonFlags.LeftShoulder, "@FN@");
-            b.hitDelay = 1;                   // smallest hitdelay possible (it's 20).
-            b.onButtonDown = this.FN1Down;    // set FN to "true", ever.
-           // b.onButtonUp = this.FNUp;         // set FN to "false", once. Will be overwritten by other FN's
-            b.ActionText = "FN Modificator";
 
             // backspace key
             b = this.addButton(GamepadButtonFlags.X, "{BACKSPACE}");

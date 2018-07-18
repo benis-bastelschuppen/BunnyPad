@@ -7,6 +7,19 @@ using SharpDX.XInput;
 
 namespace Majestic_11
 {
+    public enum EMJFUNCTION
+    {
+        SHOW_MENU = 291,
+        KEYBOARD_COMBINATION=1111,
+        LEFT_MOUSE_BUTTON = 2000,
+        RIGHT_MOUSE_BUTTON,
+        MIDDLE_MOUSE_BUTTON,
+        VOLUME_UP=3000,
+        VOLUME_DOWN,
+        MUTE_VOLUME,
+        FN_MODIFICATOR
+    }
+
     public partial class Frm_ButtonConfig : Form
     {
         public Frm_ButtonConfig()
@@ -26,6 +39,13 @@ namespace Majestic_11
 
             // fill the other combo box with the actions
             combo_Action.Items.Clear();
+            Array atvalues = Enum.GetValues(typeof(EMJFUNCTION));
+            foreach (EMJFUNCTION atval in atvalues)
+            {
+                combo_Action.Items.Add(atval);
+            }
+
+/*          combo_Action.Items.Clear();
             combo_Action.Items.Add("Show Menu");
             combo_Action.Items.Add("Keyboard Combination");
             combo_Action.Items.Add("Left Mouse Button");
@@ -35,6 +55,7 @@ namespace Majestic_11
             combo_Action.Items.Add("Volume DOWN");
             combo_Action.Items.Add("MUTE Volume");
             combo_Action.Items.Add("FN Modificator");
+*/
 
             LoadActualConfig();
             combo_Action.SelectedIndex = 0;
@@ -68,16 +89,15 @@ namespace Majestic_11
         {
             // show key stuff if the keyboard action is selected.
             // keyboard is the second entry, zero based.
-            string itm = "";
+            EMJFUNCTION itm = EMJFUNCTION.SHOW_MENU;
             if (combo_Action.SelectedIndex >= 0)
-                itm = combo_Action.Items[combo_Action.SelectedIndex].ToString();
+                itm = (EMJFUNCTION) combo_Action.Items[combo_Action.SelectedIndex];
 
-            itm = itm.ToLower();
-            if(itm=="keyboard combination" || itm=="volume up" || itm=="volume down")
+            if(itm==EMJFUNCTION.KEYBOARD_COMBINATION || itm==EMJFUNCTION.VOLUME_UP || itm==EMJFUNCTION.VOLUME_DOWN)
             {
                 panel_keystuff.Enabled = true;
                 txt_repeattime.Text = ""+Program.Input.Config.DefaultKeyStrokeDelay;
-                if (itm == "keyboard combination")
+                if (itm == EMJFUNCTION.KEYBOARD_COMBINATION)
                     txt_keystroke.Enabled = true;
                 else
                     txt_keystroke.Enabled = false;
@@ -90,7 +110,7 @@ namespace Majestic_11
 
             // maybe disable the FN checkbox when the FN button would need FN for itself.
             // FN is the last entry.
-            if(itm == "fn modificator")
+            if(itm == EMJFUNCTION.FN_MODIFICATOR)
             {
                 chk_FN.Checked = false;
                 chk_FN.Enabled = false;
@@ -156,6 +176,123 @@ namespace Majestic_11
                 if(Program.Input.Config.removeButton(idx))
                     LoadActualConfig();
             }
+        }
+
+        // add the actual button config in the above field to the list.
+        private void btn_AddNew_Click(object sender, EventArgs e)
+        {
+            // we need a string here because it could be something 
+            // other than gamepadbuttonflags.
+            string selbtn = combo_Button.SelectedItem.ToString();
+            EMJFUNCTION selaction = (EMJFUNCTION) combo_Action.SelectedItem;
+            string mykeys = txt_keystroke.Text;
+            byte fnidx = 0;
+            int hitdelay = 0;
+
+            // get the new hit delay.
+            if (chk_repeat.Checked == true)
+                hitdelay = Int32.Parse(txt_repeattime.Text);
+
+            // set fn index.
+            if (chk_FN.Checked == true)
+                fnidx = 1;
+
+            // get the desired button.
+            GamepadButtonFlags button = GamepadButtonFlags.None;
+            Array btvalues = Enum.GetValues(typeof(GamepadButtonFlags));
+            foreach (GamepadButtonFlags b in btvalues)
+            {
+                if (b.ToString() == selbtn)
+                    button = b;
+            }
+
+            // check if the button works.
+            switch(selaction)
+            { 
+                case EMJFUNCTION.KEYBOARD_COMBINATION:
+                    if (mykeys == "")
+                    {
+                        MessageBox.Show("You need to set a key combination.", "Cannot create button:");
+                        return;
+                    }
+
+                   /* if(mykeys==" ")
+                    {
+                        MessageBox.Show("The key combination is invalid! (overflow)", "Cannot create button.");
+                        return;
+
+                    }*/
+
+                    // check if the keyboard combination works.
+                    try
+                    {
+                        // create the button for testing.
+                        MJButtonTranslation testbtn = new MJButtonTranslation(button, mykeys, fnidx);
+                        // select the test box so nothing bad can happen.
+                        txt_Test.Focus();
+                        testbtn.hitKey();
+                        btn_AddNew.Focus();
+                    }
+                    catch
+                    {
+                        MessageBox.Show("The key combination is invalid! (break)", "Cannot create button.");
+                        return;
+                    }
+                    break;
+                case EMJFUNCTION.LEFT_MOUSE_BUTTON:
+                    mykeys = "@leftmouse@";
+                    break;
+                case EMJFUNCTION.RIGHT_MOUSE_BUTTON:
+                    mykeys = "@rightmouse@";
+                    break;
+                case EMJFUNCTION.MIDDLE_MOUSE_BUTTON:
+                    mykeys = "@middlemouse@";
+                    break;
+                case EMJFUNCTION.VOLUME_UP:
+                    mykeys = "@volumeup@";
+                    break;
+                case EMJFUNCTION.VOLUME_DOWN:
+                    mykeys = "@volumedown@";
+                    break;
+                case EMJFUNCTION.MUTE_VOLUME:
+                    mykeys = "@mutevolume@";
+                    break;
+                case EMJFUNCTION.FN_MODIFICATOR:
+                    mykeys = "@FN@";
+                    break;
+                case EMJFUNCTION.SHOW_MENU:
+                    mykeys = "@mainmenu@";
+                    break;
+                default:
+                    MessageBox.Show("Function not known!");
+                    Log.Line("Function not known! "+selaction.ToString());
+                    break;
+            }
+
+            // create the button
+            MJButtonTranslation btn = new MJButtonTranslation(button, mykeys, fnidx);
+            btn.hitDelay = (uint)hitdelay;
+
+            // TODO: remove this two selactions!
+            // check if the button works.
+            switch (selaction)
+            {
+                case EMJFUNCTION.FN_MODIFICATOR:
+                    btn.onButtonDown = Program.Input.Config.FN1Down;
+                    btn.hitDelay = 1;
+                    btn.ActionText = "FN MODIFICATOR";
+                    break;
+                case EMJFUNCTION.SHOW_MENU:
+                    btn.onButtonDown = Program.SwitchMainFormVisibility;
+                    btn.ActionText = "MAIN MENU";
+                    break;
+                default:
+                    break;
+            }
+
+            // if nothing went wrong, add it to the configuration.
+            Program.Input.Config.addButton(btn);
+            this.LoadActualConfig();
         }
     }
 }

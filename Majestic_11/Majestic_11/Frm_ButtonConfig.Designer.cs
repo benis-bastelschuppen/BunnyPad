@@ -45,6 +45,7 @@
             this.lbl_ms = new System.Windows.Forms.Label();
             this.lbl_keys = new System.Windows.Forms.Label();
             this.panel_keystuff = new System.Windows.Forms.Panel();
+            this.txt_Test = new System.Windows.Forms.TextBox();
             this.grp_newBtn.SuspendLayout();
             this.panel_keystuff.SuspendLayout();
             this.SuspendLayout();
@@ -128,6 +129,7 @@
             this.btn_AddNew.TabIndex = 7;
             this.btn_AddNew.Text = "Add";
             this.btn_AddNew.UseVisualStyleBackColor = true;
+            this.btn_AddNew.Click += new System.EventHandler(this.btn_AddNew_Click);
             // 
             // chk_FN
             // 
@@ -228,6 +230,14 @@
             this.panel_keystuff.Size = new System.Drawing.Size(375, 35);
             this.panel_keystuff.TabIndex = 7;
             // 
+            // txt_Test
+            // 
+            this.txt_Test.Location = new System.Drawing.Point(16, 277);
+            this.txt_Test.Name = "txt_Test";
+            this.txt_Test.Size = new System.Drawing.Size(77, 20);
+            this.txt_Test.TabIndex = 8;
+            this.txt_Test.Text = "Test";
+            // 
             // Frm_ButtonConfig
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -238,6 +248,7 @@
             this.Controls.Add(this.btn_removeButton);
             this.Controls.Add(this.ListBox_Buttons);
             this.Controls.Add(this.grp_newBtn);
+            this.Controls.Add(this.txt_Test);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
@@ -250,6 +261,7 @@
             this.panel_keystuff.ResumeLayout(false);
             this.panel_keystuff.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -271,5 +283,6 @@
         private System.Windows.Forms.Label lbl_keys;
         private System.Windows.Forms.Panel panel_keystuff;
         private System.Windows.Forms.CheckBox chk_FN;
+        private System.Windows.Forms.TextBox txt_Test;
     }
 }
