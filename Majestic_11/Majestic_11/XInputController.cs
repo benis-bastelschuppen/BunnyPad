@@ -222,20 +222,6 @@ namespace Majestic_11
                     rightThumb.X = (pad.RightThumbX < deadzone && pad.RightThumbX > -deadzone) ? 0 : (int)((float)pad.RightThumbX * multiplier);
                     rightThumb.Y = (pad.RightThumbY < deadzone && pad.RightThumbY > -deadzone) ? 0 : (int)((float)pad.RightThumbY * multiplier);
 
-                    // triggers are used to speed the mouse up or down.
-                  /*  leftTrigger = pad.LeftTrigger;
-                    rightTrigger = pad.RightTrigger;
-                
-                    if (leftTrigger > 10 && rightTrigger <= 10)
-                        mouseSpeed = 0.1f;
-
-                    if (rightTrigger > 10 && leftTrigger <= 10)
-                        mouseSpeed = 1.0f;
-
-                    if (rightTrigger <= 10 && leftTrigger <= 10)
-                        mouseSpeed = 0.5f;
-                    */
-
                     // set new mouse values
                     POINT cur = GetCursorPosition();
                     cur.X = (int)(cur.X + leftThumb.X * mouseSpeed);

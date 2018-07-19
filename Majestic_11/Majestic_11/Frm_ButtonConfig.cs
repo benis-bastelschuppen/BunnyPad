@@ -126,19 +126,27 @@ namespace Majestic_11
 
         private void ListBox_Buttons_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(ListBox_Buttons.SelectedIndex >=0 )
-            {
-                checkForAddOrUpdate();
-                btn_removeButton.Enabled = true;
-            } else {
-                btn_UpdateSelected.Enabled = false ;
-                btn_removeButton.Enabled = false;
-            }
+            enableButtons();
         }
 
         private void combo_Button_SelectedIndexChanged(object sender, EventArgs e)
         {
             checkForAddOrUpdate();
+        }
+
+        // enable or disable the remove, add and update button.
+        private void enableButtons()
+        {
+            checkForAddOrUpdate();
+            if (ListBox_Buttons.SelectedIndex >= 0)
+            {
+                btn_removeButton.Enabled = true;
+            }
+            else
+            {
+                btn_UpdateSelected.Enabled = false;
+                btn_removeButton.Enabled = false;
+            }
         }
 
         // check if all the values are right and the button can be added or updated.
@@ -170,6 +178,7 @@ namespace Majestic_11
                 if(Program.Input.Config.removeButton(idx))
                     LoadActualConfig();
             }
+            enableButtons();
         }
 
         // add the actual button config in the above field to the list.
@@ -243,6 +252,12 @@ namespace Majestic_11
                 case EMJFUNCTION.SHOW_MENU:
                     mykeys = "@mainmenu@";
                     break;
+                case EMJFUNCTION.SLOWER_MOUSE:
+                    mykeys = "@slowermouse@";
+                    break;
+                case EMJFUNCTION.FASTER_MOUSE:
+                    mykeys = "@fastermouse@";
+                    break;
                 default:
                     MessageBox.Show("Function not known!");
                     Log.Line("Function not known! "+selaction.ToString());
@@ -276,7 +291,6 @@ namespace Majestic_11
                     btn.onButtonUp = Program.Input.Config.mouseFaster_release;
                     btn.ActionText = "Faster Mouse";
                     break;
-
                 default:
                     break;
             }
@@ -284,8 +298,10 @@ namespace Majestic_11
             // if nothing went wrong, add it to the configuration.
             Program.Input.Config.addButton(btn);
             this.LoadActualConfig();
+            enableButtons();
         }
 
+        // show the doc for sendkeys function on msdn.
         private void lbl_keys_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             System.Diagnostics.Process.Start("https://docs.microsoft.com/dotnet/api/system.windows.forms.sendkeys");
