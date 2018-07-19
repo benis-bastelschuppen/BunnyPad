@@ -63,7 +63,7 @@ namespace Majestic_11
 
         // import mouse_event from user32.dll
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-        public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
+        public static extern void mouse_event(uint dwFlags, int dx, int dy, uint cButtons, uint dwExtraInfo);
         //Mouse actions
         private const int MOUSEEVENTF_LEFTDOWN = 0x02;
         private const int MOUSEEVENTF_LEFTUP = 0x04;
@@ -72,6 +72,9 @@ namespace Majestic_11
         private const int MOUSEEVENTF_MIDDLEDOWN = 0x20;
         private const int MOUSEEVENTF_MIDDLEUP = 0x40;
         private const int MOUSEEVENTF_WHEEL = 0x0800;
+        private const int MOUSEEVENTF_MOVE = 0x0001;
+        private const int MOUSEEVENTF_ABSOLUTE = 0x8000;
+
         // ENDOF WINDOWS SPECIFIC
 // ENDOF REMOVE
 
@@ -196,13 +199,18 @@ namespace Majestic_11
                     // set new mouse values
                     // 0.5.18: use Cursor instead of Win32 API.
                     Point cur = new Point(Cursor.Position.X, Cursor.Position.Y); //GetCursorPosition();
-                    cur.X = (int)(cur.X + leftThumb.X * mouseSpeed);
-                    cur.Y = (int)(cur.Y - leftThumb.Y * mouseSpeed);
-                    Cursor.Position = cur;
+//                    cur.X = (int)(cur.X + leftThumb.X * mouseSpeed);
+//                    cur.Y = (int)(cur.Y - leftThumb.Y * mouseSpeed);
+                    cur.X = (int)(leftThumb.X * mouseSpeed);
+                    cur.Y = -(int)(leftThumb.Y * mouseSpeed);
+                    //Cursor.Position = cur;
+                    // 0.5.19 BugFix: we need to use mouse_event to show the mouse after login.
+                    mouse_event(MOUSEEVENTF_MOVE, cur.X, cur.Y, 0, 0);
+
 
                     // maybe use the scroll wheel.
                     if (rightThumb.Y != 0)
-                        mouse_event(MOUSEEVENTF_WHEEL, (uint)cur.X, (uint)cur.Y, (uint)(rightThumb.Y*mouseSpeed), 0);
+                        mouse_event(MOUSEEVENTF_WHEEL, (int)cur.X, (int)cur.Y, (uint)(rightThumb.Y*mouseSpeed), 0);
 
                 } catch (Exception ex) {
                     // sometimes the gamepad will not be found, like when you

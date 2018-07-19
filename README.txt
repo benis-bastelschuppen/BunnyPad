@@ -80,10 +80,6 @@ which are fixed right now, you can do every thinkable configuration and even may
 + Show the main menu with the Start button.
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-KNOWN BUGS:
-After login, the mouse cursor will be invisible until you use the real mouse.
-I could not simulate the mouse waive or bring it to work otherways until now.
-
 
 TODO / Nice-To-Have:
 --> Virtual keyboard. Show or hide it with the left thumbstick.
