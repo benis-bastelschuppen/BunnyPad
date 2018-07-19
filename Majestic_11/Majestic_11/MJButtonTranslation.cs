@@ -1,4 +1,27 @@
-﻿using SharpDX.XInput;
+﻿/*
+ * BunnyPad 
+ * Work title: Majestic 11
+ * a.k.a. JoyMouse
+ * [The Joy Of A Mouse]
+ * 
+ * by Benedict "Oki Wan Ben0bi" Jäggi
+ * (Joymouse) ~2002
+ * Copyright 2018 Ben0bi Enterprises
+ * 
+ * LICENSE:
+ * Use of this source code and/or the executables is free in all terms for private use,
+ * "private" hereby translated to "ONE natural person",
+ * by adding the above credentials and this license text to your end-product.
+ * Giving away, copying, and putting this product online in a LAN or WAN, altering the code,
+ * derive new products and doing the same for or with them, is free for private use,
+ * festivals, parties, events (especially eSport-events), hospitals, social institutions,
+ * and schools where the oldest school clients (scholars) are less-equal than 18 years old 
+ * (USA: 21 years). Every other commercial use is forbidden.
+ * It is forbidden to sell this product or parts of it. Commercial use is not allowed in 
+ * all terms except the ones declared above.
+ */
+
+ using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -6,6 +29,44 @@ using System.Windows.Forms;
 
 namespace Majestic_11
 {
+    // What can we do with a button?
+    public enum EMJFUNCTION
+    {
+        SHOW_MENU = 291,
+        KEYBOARD_COMBINATION = 1000,
+        LEFT_MOUSE_BUTTON = 2000,
+        RIGHT_MOUSE_BUTTON,
+        MIDDLE_MOUSE_BUTTON,
+        VOLUME_UP = 3000,
+        VOLUME_DOWN,
+        MUTE_VOLUME,
+        FN_MODIFICATOR = 4000,
+        SLOWER_MOUSE = 5000,
+        FASTER_MOUSE
+    }
+
+    public enum EMJBUTTON
+    {
+        None = GamepadButtonFlags.None,
+        DPadUp = GamepadButtonFlags.DPadUp,
+        DPadDown = GamepadButtonFlags.DPadDown,
+        DPadLeft = GamepadButtonFlags.DPadLeft,
+        DPadRight = GamepadButtonFlags.DPadRight,
+        Start = GamepadButtonFlags.Start,
+        Back = GamepadButtonFlags.Back,
+        LeftThumb = GamepadButtonFlags.LeftThumb,
+        RightThumb = GamepadButtonFlags.RightThumb,
+        LeftShoulder = GamepadButtonFlags.LeftShoulder,
+        RightShoulder = GamepadButtonFlags.RightShoulder,
+        A = GamepadButtonFlags.A,
+        B = GamepadButtonFlags.B,
+        X = GamepadButtonFlags.X,
+        Y = GamepadButtonFlags.Y,
+        // Special buttons are < 0
+        LeftTrigger = -1,
+        RightTrigger = -2
+    }
+
     // a button and its associated key config.
     public class MJButtonTranslation
     {
@@ -52,7 +113,7 @@ namespace Majestic_11
         // ENDOF WINDOWS SPECIFIC
 
         public string keyStroke; // key combination to hit when the button is pressed.
-        public GamepadButtonFlags button; // the associated gamepad button.
+        public EMJBUTTON button; // the associated gamepad button.
 
         // FNindex is the FN flag. There can be FN-buttons from 1  to 10.
         // if FNindex is 0, it will be used as primary button without holding an FN button.
@@ -99,7 +160,7 @@ namespace Majestic_11
         // "@volumemute@" will mute the system volume.
         // All other combinations will be simulated over the keyboard, except you 
         // rewrite the delegate functions.
-        public MJButtonTranslation(GamepadButtonFlags btn, string keychars, byte FN = 0)
+        public MJButtonTranslation(EMJBUTTON btn, string keychars, byte FN = 0)
         {
             this.keyStroke = keychars;
             this.button = btn;
@@ -141,7 +202,7 @@ namespace Majestic_11
                 onButtonDown = new voidDelegate(volumeDown);
                 actionText = "Volume DOWN";
             }
-            if (keychars.ToLower() == "@volumemute@")
+            if (keychars.ToLower() == "@mutevolume@")
             {
                 onButtonDown = new voidDelegate(volumeMute);
                 actionText = "MUTE Volume";
@@ -181,12 +242,41 @@ namespace Majestic_11
         public void Update(Gamepad pad, byte FNflag)
         {
             // check if the button is down or not and call the delegates if needed.
-            if ((FNflag == FNindex) && ((pad.Buttons & this.button) == this.button))
+            GamepadButtonFlags fl = GamepadButtonFlags.None;
+            bool isdown = false;
+            // first check if it is a button, then check if it is down.
+            if (this.button >= 0)
+            {
+                fl = (GamepadButtonFlags)this.button;
+                if ((FNflag == FNindex) && ((pad.Buttons & fl) == fl))
+                    isdown = true;
+            }else{
+                //it's a special button, we need to do something other..
+                byte trigger = 0;
+                isdown = false;
+                switch(this.button)
+                {
+                    case EMJBUTTON.RightTrigger:
+                        trigger = pad.RightTrigger;
+                        break;
+                    case EMJBUTTON.LeftTrigger:
+                        trigger = pad.LeftTrigger;
+                        break;
+                    default:
+                        isdown = false;
+                        break;
+                }
+                if (trigger >= 10)
+                    isdown = true;
+            }
+
+            // ok, the button is down.
+            if (isdown)
             {
                 if (!buttonDown)
                     this.onButtonDown();
                 buttonDown = true;
-            } else {
+            } else { // ..or not.
                 if (buttonDown)
                     this.onButtonUp();
                 hitDelayCount = 0;
@@ -210,6 +300,16 @@ namespace Majestic_11
         // the gamepad buttons.
         protected List<MJButtonTranslation> buttons;
         public List<MJButtonTranslation> Items => buttons;
+
+        // 0.5.12: new flags for the mouse speed.
+        protected bool mousespeed_slower = false;
+        protected bool mousespeed_faster = false;
+        public bool MouseSpeed_Slower => mousespeed_slower;
+        public bool MouseSpeed_Faster => mousespeed_faster;
+        public void mouseSlower() { mousespeed_slower = true; }
+        public void mouseSlower_release() { mousespeed_slower = false; }
+        public void mouseFaster() { mousespeed_faster = true; }
+        public void mouseFaster_release() { mousespeed_faster = false; }
 
         // the actual FN state.
         public byte FNflag = 0;
@@ -241,19 +341,23 @@ namespace Majestic_11
             }
         }
 
+        // TODO: Check if button already exists.
+        // add a button to the config. the button must exist.
         public MJButtonTranslation addButton(MJButtonTranslation bt)
         {
             this.buttons.Add(bt);
             return bt;
         }
 
-        public MJButtonTranslation addButton(GamepadButtonFlags btn, string keys, byte FNidx = 0)
+        // add a new button to the config. you can alter it afterwards.
+        public MJButtonTranslation addButton(EMJBUTTON btn, string keys, byte FNidx = 0)
         {
             MJButtonTranslation bt = new MJButtonTranslation(btn, keys, FNidx);
             this.buttons.Add(bt);
             return bt;
         }
 
+        // remove a button from the config.
         public bool removeButton(int index)
         {
             MJButtonTranslation btn = this.buttons[index];
@@ -279,74 +383,87 @@ namespace Majestic_11
             else { this.buttons.RemoveAt(index); return true; }
         }
 
+        // remove all buttons from the config.
         public void clearButtons()
         {
             this.buttons.Clear();
         }
 
+        // load the developers test config. ;)
         public void loadHardcodedDefaultConfig()
         {
             this.clearButtons();
             MJButtonTranslation b; // you can change the button config after creation with b.
 
             // the main menu button => needs this keystroke!
-            b = this.addButton(GamepadButtonFlags.Start, "@mainmenu@");
+            b = this.addButton(EMJBUTTON.Start, "@mainmenu@");
             b.onButtonDown = Program.SwitchMainFormVisibility;
             b.ActionText = "MENU BUTTON";
 
             // FN_1 button = need this keystroke!
-            b = this.addButton(GamepadButtonFlags.LeftShoulder, "@FN@");
+            b = this.addButton(EMJBUTTON.LeftShoulder, "@FN@");
             b.hitDelay = 1;                   // smallest hitdelay possible (it's 20).
             b.onButtonDown = this.FN1Down;    // set FN to "true", ever.
                                               // b.onButtonUp = this.FNUp;         // set FN to "false", once. Will be overwritten by other FN's
             b.ActionText = "FN Modificator";  // TODO: remove that.  
 
             // mouse buttons => need this keystroke!
-            b = this.addButton(GamepadButtonFlags.A, "@leftmouse@");
-            b = this.addButton(GamepadButtonFlags.B, "@rightmouse@");
-            b = this.addButton(GamepadButtonFlags.RightThumb, "@middlemouse@");
+            b = this.addButton(EMJBUTTON.A, "@leftmouse@");
+            b = this.addButton(EMJBUTTON.B, "@rightmouse@");
+            b = this.addButton(EMJBUTTON.RightThumb, "@middlemouse@");
+
+            // mouse slower and faster.
+            b = this.addButton(EMJBUTTON.LeftTrigger, "@slowermouse@");
+            b.onButtonDown = this.mouseSlower;
+            b.onButtonUp = this.mouseSlower_release;
+            b.ActionText = "Slower Mouse";
+
+            b = this.addButton(EMJBUTTON.RightTrigger, "@fastermouse@");
+            b.onButtonDown = this.mouseFaster;
+            b.onButtonUp = this.mouseFaster_release;
+            b.ActionText = "Faster Mouse";
 
             // dpad buttons
-            b = this.addButton(GamepadButtonFlags.DPadUp, "{UP}");
+            b = this.addButton(EMJBUTTON.DPadUp, "{UP}");
             b.hitDelay = this.DefaultKeyStrokeDelay;
-            b = this.addButton(GamepadButtonFlags.DPadDown, "{DOWN}");
+            b = this.addButton(EMJBUTTON.DPadDown, "{DOWN}");
             b.hitDelay = this.DefaultKeyStrokeDelay;
-            b = this.addButton(GamepadButtonFlags.DPadLeft, "{LEFT}");
+            b = this.addButton(EMJBUTTON.DPadLeft, "{LEFT}");
             b.hitDelay = this.DefaultKeyStrokeDelay;
-            b = this.addButton(GamepadButtonFlags.DPadRight, "{RIGHT}");
+            b = this.addButton(EMJBUTTON.DPadRight, "{RIGHT}");
             b.hitDelay = this.DefaultKeyStrokeDelay;
 
             // backspace key
-            b = this.addButton(GamepadButtonFlags.X, "{BACKSPACE}");
+            b = this.addButton(EMJBUTTON.X, "{BACKSPACE}");
             b.hitDelay = this.DefaultKeyStrokeDelay;
 
             // esc key - only once
-            b = this.addButton(GamepadButtonFlags.Back, "{ESC}");
+            b = this.addButton(EMJBUTTON.Back, "{ESC}");
             // enter key
-            b = this.addButton(GamepadButtonFlags.Y, "{ENTER}");
+            b = this.addButton(EMJBUTTON.Y, "{ENTER}");
             b.hitDelay = this.DefaultKeyStrokeDelay;
 
             // TABulator key
-            b = this.addButton(GamepadButtonFlags.RightShoulder, "{TAB}");
+            b = this.addButton(EMJBUTTON.RightShoulder, "{TAB}");
             b.hitDelay = this.DefaultKeyStrokeDelay;
 
             // ctrl-c with FN_1
-            b = this.addButton(GamepadButtonFlags.A, "^c", 1);
+            b = this.addButton(EMJBUTTON.A, "^c", 1);
             // ctrl-v with FN_1
-            b = this.addButton(GamepadButtonFlags.B, "^v", 1);
+            b = this.addButton(EMJBUTTON.B, "^v", 1);
             // ctrl-z with FN_1
-            b = this.addButton(GamepadButtonFlags.X, "^z", 1);
+            b = this.addButton(EMJBUTTON.X, "^z", 1);
             // ctrl-y with FN_1
-            b = this.addButton(GamepadButtonFlags.Y, "^y", 1);
+            b = this.addButton(EMJBUTTON.Y, "^y", 1);
 
             // volume UP with FN_1 => need this keystroke!
-            b = this.addButton(GamepadButtonFlags.DPadUp, "@volumeup@", 1);
+            b = this.addButton(EMJBUTTON.DPadUp, "@volumeup@", 1);
             b.hitDelay = this.DefaultKeyStrokeDelay;
             // volume DOWN with FN_1 => need this keystroke!
-            b = this.addButton(GamepadButtonFlags.DPadDown, "@volumedown@",1);
+            b = this.addButton(EMJBUTTON.DPadDown, "@volumedown@",1);
             b.hitDelay = this.DefaultKeyStrokeDelay;
             // MUTE volume with FN_1 => need this keystroke!
-            b = this.addButton(GamepadButtonFlags.DPadLeft, "@volumemute@",1);
+            b = this.addButton(EMJBUTTON.DPadLeft, "@mutevolume@",1);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿/*
- * Majestic 11
+ * BunnyPad 
+ * Work title: Majestic 11
  * a.k.a. JoyMouse
  * [The Joy Of A Mouse]
  * 
@@ -28,6 +29,7 @@ using SharpDX.XInput;
 using System.Threading;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace Majestic_11
 {
@@ -46,9 +48,8 @@ namespace Majestic_11
         protected Point leftThumb, rightThumb = new Point(0,0);
         protected byte dpad, olddpad;
         protected int arrowWaitTime = 0; // wait time counter for the arrow keys.
-        protected float leftTrigger, rightTrigger;
-        protected bool showMenuDown = false; // REMOVE
-        protected float mouseSpeed = 0.2f;
+        //protected float leftTrigger, rightTrigger;
+        //protected bool showMenuDown = false; // REMOVE
 
         protected Thread thread = null;
         protected int pollcount = 0;
@@ -57,14 +58,11 @@ namespace Majestic_11
         protected string m_connectingText = "-=+ connection status not known yet +=-";
         public string ConnectText => m_connectingText;
 
-        // some definitions which can be configured.
-        GamepadButtonFlags ctrl_ShowMenu = GamepadButtonFlags.Start;
+        protected float mouseSpeed = 0.5f;
 
         // NEW 0.4.x:
         protected MJConfig config = new MJConfig();
         public MJConfig Config => config;
-
-        // ENDOF NEW
 
         // WINDOWS SPECIFIC
         // OLD REMOVE
@@ -171,8 +169,9 @@ namespace Majestic_11
                 txt += "Bat. Type: " + q + " | ";
                 txt += "Bat. Lvl.: " + controller.GetBatteryInformation(BatteryDeviceType.Gamepad).BatteryLevel + "\n";
                 m_connectingText = txt;
-                // this will be done in the update function.
-                //mainForm.setLbl_connected(m_connectingText);
+                // maybe we need to show the cursor 
+                // when the computer comes back from hibernation.
+                Cursor.Show();
                 Log.Line("Controller connected.");
                 pollcount = 0;
             }else{
@@ -185,16 +184,6 @@ namespace Majestic_11
                 pollcount++;
             }
         }
-
-        // TODO: Remove
-        // returns true if the button is down, else false.
-        protected bool isButtonDown(GamepadButtonFlags button, Gamepad gpad)
-        {
-            if ((gpad.Buttons & button) == button)
-                return true;
-            return false;
-        }
-        // ENDOF REMOVE
 
         // get the controller buttons and thumbs.
         protected void UpdateLoop()
@@ -217,6 +206,14 @@ namespace Majestic_11
                     pad = controller.GetState().Gamepad;
                     config.Update(pad); // NEW 0.4.x
 
+                    // 0.5.12: update mouse speed
+                    if (!config.MouseSpeed_Slower && !config.MouseSpeed_Faster)
+                        mouseSpeed = 0.5f;
+                    if (config.MouseSpeed_Slower && !config.MouseSpeed_Faster)
+                        mouseSpeed = 0.1f;
+                    if (!config.MouseSpeed_Slower && config.MouseSpeed_Faster)
+                        mouseSpeed = 1.0f;
+                    
                     // OLD
 
                     // get new values
@@ -226,7 +223,7 @@ namespace Majestic_11
                     rightThumb.Y = (pad.RightThumbY < deadzone && pad.RightThumbY > -deadzone) ? 0 : (int)((float)pad.RightThumbY * multiplier);
 
                     // triggers are used to speed the mouse up or down.
-                    leftTrigger = pad.LeftTrigger;
+                  /*  leftTrigger = pad.LeftTrigger;
                     rightTrigger = pad.RightTrigger;
                 
                     if (leftTrigger > 10 && rightTrigger <= 10)
@@ -237,6 +234,7 @@ namespace Majestic_11
 
                     if (rightTrigger <= 10 && leftTrigger <= 10)
                         mouseSpeed = 0.5f;
+                    */
 
                     // set new mouse values
                     POINT cur = GetCursorPosition();
@@ -248,18 +246,6 @@ namespace Majestic_11
                     if (rightThumb.Y != 0)
                         mouse_event(MOUSEEVENTF_WHEEL, (uint)cur.X, (uint)cur.Y, (uint)(rightThumb.Y*mouseSpeed), 0);
 
-                    // show menu button
-                   /* if (isButtonDown(ctrl_ShowMenu, pad))// && !fnDown)
-                    {
-                        if (!showMenuDown)
-                        {
-                            Log.Line("Show menu pressed.");
-                            Program.SwitchMainFormVisibility();
-                        }
-                        showMenuDown = true;
-                    }else{ showMenuDown = false; }
-                    */
-
                 } catch (Exception ex) {
                     // sometimes the gamepad will not be found, like when you
                     // get the computer back from hibernation or something like this.
@@ -268,7 +254,6 @@ namespace Majestic_11
                 }
 
                 Thread.Sleep(20);
-                if(dpad!=0) arrowWaitTime += 20; // add those millisecs to the wait time
             }
 
             // *10 ooops, we got thrown out of the update loop...

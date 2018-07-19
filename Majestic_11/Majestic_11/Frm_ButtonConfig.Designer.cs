@@ -43,9 +43,10 @@
             this.chk_repeat = new System.Windows.Forms.CheckBox();
             this.txt_repeattime = new System.Windows.Forms.TextBox();
             this.lbl_ms = new System.Windows.Forms.Label();
-            this.lbl_keys = new System.Windows.Forms.Label();
             this.panel_keystuff = new System.Windows.Forms.Panel();
             this.txt_Test = new System.Windows.Forms.TextBox();
+            this.lbl_keys = new System.Windows.Forms.LinkLabel();
+            this.lbl_keyinfo = new System.Windows.Forms.LinkLabel();
             this.grp_newBtn.SuspendLayout();
             this.panel_keystuff.SuspendLayout();
             this.SuspendLayout();
@@ -205,29 +206,18 @@
             this.lbl_ms.TabIndex = 9;
             this.lbl_ms.Text = "ms";
             // 
-            // lbl_keys
-            // 
-            this.lbl_keys.AutoSize = true;
-            this.lbl_keys.Location = new System.Drawing.Point(186, 9);
-            this.lbl_keys.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lbl_keys.Name = "lbl_keys";
-            this.lbl_keys.Size = new System.Drawing.Size(33, 13);
-            this.lbl_keys.TabIndex = 10;
-            this.lbl_keys.Text = "Keys:";
-            this.lbl_keys.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
             // panel_keystuff
             // 
-            this.panel_keystuff.Controls.Add(this.txt_keystroke);
             this.panel_keystuff.Controls.Add(this.lbl_keys);
+            this.panel_keystuff.Controls.Add(this.txt_keystroke);
             this.panel_keystuff.Controls.Add(this.txt_repeattime);
             this.panel_keystuff.Controls.Add(this.chk_repeat);
             this.panel_keystuff.Controls.Add(this.lbl_ms);
             this.panel_keystuff.Enabled = false;
-            this.panel_keystuff.Location = new System.Drawing.Point(14, 52);
+            this.panel_keystuff.Location = new System.Drawing.Point(14, 53);
             this.panel_keystuff.Margin = new System.Windows.Forms.Padding(2);
             this.panel_keystuff.Name = "panel_keystuff";
-            this.panel_keystuff.Size = new System.Drawing.Size(375, 35);
+            this.panel_keystuff.Size = new System.Drawing.Size(375, 34);
             this.panel_keystuff.TabIndex = 7;
             // 
             // txt_Test
@@ -238,17 +228,40 @@
             this.txt_Test.TabIndex = 8;
             this.txt_Test.Text = "Test";
             // 
+            // lbl_keys
+            // 
+            this.lbl_keys.AutoSize = true;
+            this.lbl_keys.Location = new System.Drawing.Point(178, 9);
+            this.lbl_keys.Name = "lbl_keys";
+            this.lbl_keys.Size = new System.Drawing.Size(37, 13);
+            this.lbl_keys.TabIndex = 10;
+            this.lbl_keys.TabStop = true;
+            this.lbl_keys.Text = "Keys*:";
+            this.lbl_keys.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbl_keys_LinkClicked);
+            // 
+            // lbl_keyinfo
+            // 
+            this.lbl_keyinfo.AutoSize = true;
+            this.lbl_keyinfo.Location = new System.Drawing.Point(12, 313);
+            this.lbl_keyinfo.Name = "lbl_keyinfo";
+            this.lbl_keyinfo.Size = new System.Drawing.Size(286, 13);
+            this.lbl_keyinfo.TabIndex = 10;
+            this.lbl_keyinfo.TabStop = true;
+            this.lbl_keyinfo.Text = "* view the Remarks in the doc for correct keystroke setting.";
+            this.lbl_keyinfo.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbl_keyinfo_LinkClicked);
+            // 
             // Frm_ButtonConfig
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(483, 314);
-            this.Controls.Add(this.panel_keystuff);
+            this.ClientSize = new System.Drawing.Size(483, 335);
+            this.Controls.Add(this.lbl_keyinfo);
             this.Controls.Add(this.btn_UpdateSelected);
             this.Controls.Add(this.btn_OK);
             this.Controls.Add(this.btn_removeButton);
             this.Controls.Add(this.ListBox_Buttons);
-            this.Controls.Add(this.grp_newBtn);
             this.Controls.Add(this.txt_Test);
+            this.Controls.Add(this.panel_keystuff);
+            this.Controls.Add(this.grp_newBtn);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
@@ -280,9 +293,10 @@
         private System.Windows.Forms.CheckBox chk_repeat;
         private System.Windows.Forms.Label lbl_ms;
         private System.Windows.Forms.TextBox txt_repeattime;
-        private System.Windows.Forms.Label lbl_keys;
         private System.Windows.Forms.Panel panel_keystuff;
         private System.Windows.Forms.CheckBox chk_FN;
         private System.Windows.Forms.TextBox txt_Test;
+        private System.Windows.Forms.LinkLabel lbl_keys;
+        private System.Windows.Forms.LinkLabel lbl_keyinfo;
     }
 }

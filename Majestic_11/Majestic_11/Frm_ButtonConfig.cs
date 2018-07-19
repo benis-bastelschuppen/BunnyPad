@@ -7,19 +7,6 @@ using SharpDX.XInput;
 
 namespace Majestic_11
 {
-    public enum EMJFUNCTION
-    {
-        SHOW_MENU = 291,
-        KEYBOARD_COMBINATION=1111,
-        LEFT_MOUSE_BUTTON = 2000,
-        RIGHT_MOUSE_BUTTON,
-        MIDDLE_MOUSE_BUTTON,
-        VOLUME_UP=3000,
-        VOLUME_DOWN,
-        MUTE_VOLUME,
-        FN_MODIFICATOR
-    }
-
     public partial class Frm_ButtonConfig : Form
     {
         public Frm_ButtonConfig()
@@ -31,8 +18,8 @@ namespace Majestic_11
         {
             // fill the combo box with the buttons.
             combo_Button.Items.Clear();
-            Array btvalues = Enum.GetValues(typeof(GamepadButtonFlags));
-            foreach (GamepadButtonFlags btval in btvalues)
+            Array btvalues = Enum.GetValues(typeof(EMJBUTTON));
+            foreach (EMJBUTTON btval in btvalues)
             {
                 combo_Button.Items.Add(btval);
             }
@@ -93,14 +80,21 @@ namespace Majestic_11
             if (combo_Action.SelectedIndex >= 0)
                 itm = (EMJFUNCTION) combo_Action.Items[combo_Action.SelectedIndex];
 
+            // show repeating flag and keyboard keys.
             if(itm==EMJFUNCTION.KEYBOARD_COMBINATION || itm==EMJFUNCTION.VOLUME_UP || itm==EMJFUNCTION.VOLUME_DOWN)
             {
                 panel_keystuff.Enabled = true;
                 txt_repeattime.Text = ""+Program.Input.Config.DefaultKeyStrokeDelay;
                 if (itm == EMJFUNCTION.KEYBOARD_COMBINATION)
+                {
                     txt_keystroke.Enabled = true;
+                    lbl_keys.Enabled = true;
+                }
                 else
+                {
                     txt_keystroke.Enabled = false;
+                    lbl_keys.Enabled = false;
+                }
             } else {
                 // do not repeat at all costs :)
                 chk_repeat.Checked = false;
@@ -183,7 +177,7 @@ namespace Majestic_11
         {
             // we need a string here because it could be something 
             // other than gamepadbuttonflags.
-            string selbtn = combo_Button.SelectedItem.ToString();
+            EMJBUTTON selbtn = (EMJBUTTON)combo_Button.SelectedItem;
             EMJFUNCTION selaction = (EMJFUNCTION) combo_Action.SelectedItem;
             string mykeys = txt_keystroke.Text;
             byte fnidx = 0;
@@ -198,14 +192,7 @@ namespace Majestic_11
                 fnidx = 1;
 
             // get the desired button.
-            GamepadButtonFlags button = GamepadButtonFlags.None;
-            Array btvalues = Enum.GetValues(typeof(GamepadButtonFlags));
-            foreach (GamepadButtonFlags b in btvalues)
-            {
-                if (b.ToString() == selbtn)
-                    button = b;
-            }
-
+            EMJBUTTON button = selbtn; // EMJBUTTON.None;
             // check if the button works.
             switch(selaction)
             { 
@@ -215,13 +202,6 @@ namespace Majestic_11
                         MessageBox.Show("You need to set a key combination.", "Cannot create button:");
                         return;
                     }
-
-                   /* if(mykeys==" ")
-                    {
-                        MessageBox.Show("The key combination is invalid! (overflow)", "Cannot create button.");
-                        return;
-
-                    }*/
 
                     // check if the keyboard combination works.
                     try
@@ -274,7 +254,7 @@ namespace Majestic_11
             btn.hitDelay = (uint)hitdelay;
 
             // TODO: remove this two selactions!
-            // check if the button works.
+            // set functions and stuff.
             switch (selaction)
             {
                 case EMJFUNCTION.FN_MODIFICATOR:
@@ -286,6 +266,17 @@ namespace Majestic_11
                     btn.onButtonDown = Program.SwitchMainFormVisibility;
                     btn.ActionText = "MAIN MENU";
                     break;
+                case EMJFUNCTION.SLOWER_MOUSE:
+                    btn.onButtonDown = Program.Input.Config.mouseSlower;
+                    btn.onButtonUp = Program.Input.Config.mouseSlower_release;
+                    btn.ActionText = "Slower Mouse";
+                    break;
+                case EMJFUNCTION.FASTER_MOUSE:
+                    btn.onButtonDown = Program.Input.Config.mouseFaster;
+                    btn.onButtonUp = Program.Input.Config.mouseFaster_release;
+                    btn.ActionText = "Faster Mouse";
+                    break;
+
                 default:
                     break;
             }
@@ -293,6 +284,16 @@ namespace Majestic_11
             // if nothing went wrong, add it to the configuration.
             Program.Input.Config.addButton(btn);
             this.LoadActualConfig();
+        }
+
+        private void lbl_keys_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://docs.microsoft.com/dotnet/api/system.windows.forms.sendkeys");
+        }
+
+        private void lbl_keyinfo_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            lbl_keys_LinkClicked(sender, e);
         }
     }
 }

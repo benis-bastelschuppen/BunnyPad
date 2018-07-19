@@ -15,7 +15,7 @@ namespace Majestic_11
         /// Verwendete Ressourcen bereinigen.
         /// </summary>
         /// <param name="disposing">True, wenn verwaltete Ressourcen gelöscht werden sollen; andernfalls False.</param>
-        private byte vsUnblockErrorCount = 0;
+        //private byte vsUnblockErrorCount = 0;
         protected override void Dispose(bool disposing)
         {
             /* *Bug overrun - The bug is probably fixed, see BUGFIX_1 in Program.cs
