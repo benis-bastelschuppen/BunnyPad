@@ -49,6 +49,7 @@ namespace Majestic_11
             combo_Button.SelectedIndex = 0;
         }
 
+        // load the config into the UI.
         private void LoadActualConfig()
         {
             // fill the listbox with the actual configuration.
@@ -59,6 +60,7 @@ namespace Majestic_11
             }
         }
 
+        // call this after creating the window.
         public void Start()
         {
             this.Show();
@@ -67,11 +69,13 @@ namespace Majestic_11
             this.Activate();
         }
 
+        // configuration is ok.
         private void btn_OK_Click(object sender, EventArgs e)
         {
             this.Hide();
         }
 
+        // another action selected, show or hide some stuff.
         private void combo_Action_SelectedIndexChanged(object sender, EventArgs e)
         {
             // show key stuff if the keyboard action is selected.
@@ -113,6 +117,7 @@ namespace Majestic_11
             }
         }
 
+        // repeating the keystroke or not?
         private void chk_repeat_CheckedChanged(object sender, EventArgs e)
         {
             // enable the wait-for-repeat-time textbox.
@@ -131,41 +136,37 @@ namespace Majestic_11
 
         private void combo_Button_SelectedIndexChanged(object sender, EventArgs e)
         {
-            checkForAddOrUpdate();
+            enableButtons();
         }
 
         // enable or disable the remove, add and update button.
         private void enableButtons()
         {
-            checkForAddOrUpdate();
+            bool valid = true;
+            // if the button is none, valid is false.
+            if (combo_Button.Items[combo_Button.SelectedIndex].ToString() == "None")
+                valid = false;
+
+            // button is ok, enable the add button.
+            if (valid)
+                btn_AddNew.Enabled = true;
+            else
+                btn_AddNew.Enabled = false;
+
+            // check if a listbox item is selected and enable some things.
             if (ListBox_Buttons.SelectedIndex >= 0)
             {
                 btn_removeButton.Enabled = true;
+                if(valid)
+                    btn_UpdateSelected.Enabled = true;
+                else
+                    btn_UpdateSelected.Enabled = false;
             }
             else
             {
                 btn_UpdateSelected.Enabled = false;
                 btn_removeButton.Enabled = false;
             }
-        }
-
-        // check if all the values are right and the button can be added or updated.
-        private bool checkForAddOrUpdate()
-        {
-            bool valid = true;
-            if (combo_Button.Items[combo_Button.SelectedIndex].ToString() == "None")
-                valid = false;
-
-            if (valid)
-            {
-                btn_AddNew.Enabled = true;
-                if (ListBox_Buttons.SelectedIndex >= 0)
-                    btn_UpdateSelected.Enabled = true;
-            } else {
-                btn_AddNew.Enabled = false;
-                btn_UpdateSelected.Enabled = false;
-            }
-            return valid;
         }
 
         // remove a button from the config.
@@ -252,11 +253,11 @@ namespace Majestic_11
                 case EMJFUNCTION.SHOW_MENU:
                     mykeys = "@mainmenu@";
                     break;
-                case EMJFUNCTION.SLOWER_MOUSE:
-                    mykeys = "@slowermouse@";
+                case EMJFUNCTION.SLOWER_MOVEMENT:
+                    mykeys = "@slowermovement@";
                     break;
-                case EMJFUNCTION.FASTER_MOUSE:
-                    mykeys = "@fastermouse@";
+                case EMJFUNCTION.FASTER_MOVEMENT:
+                    mykeys = "@fastermovement@";
                     break;
                 default:
                     MessageBox.Show("Function not known!");
@@ -281,15 +282,15 @@ namespace Majestic_11
                     btn.onButtonDown = Program.SwitchMainFormVisibility;
                     btn.ActionText = "MAIN MENU";
                     break;
-                case EMJFUNCTION.SLOWER_MOUSE:
+                case EMJFUNCTION.SLOWER_MOVEMENT:
                     btn.onButtonDown = Program.Input.Config.mouseSlower;
                     btn.onButtonUp = Program.Input.Config.mouseSlower_release;
-                    btn.ActionText = "Slower Mouse";
+                    btn.ActionText = "Slower movement";
                     break;
-                case EMJFUNCTION.FASTER_MOUSE:
+                case EMJFUNCTION.FASTER_MOVEMENT:
                     btn.onButtonDown = Program.Input.Config.mouseFaster;
                     btn.onButtonUp = Program.Input.Config.mouseFaster_release;
-                    btn.ActionText = "Faster Mouse";
+                    btn.ActionText = "Faster movement";
                     break;
                 default:
                     break;

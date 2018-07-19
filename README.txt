@@ -28,15 +28,35 @@ It will search for a controller until it found one.
 If you press "Hide Me" on the main window without a controller, 
 it will minimize. With a controller, it will hide completely and not 
 be visible in the taskbar or somewhere else - running in the background.
-You can get back the main menu by pressing the Start (Right middle) button
+You can get back the main menu by pressing the Start MAIN MENU* button
 or by disconnecting the controller.
 
 You can do the following stuff right now:
+(Versions below 1.0.0, like 0.1.2, are alpha- and beta-versions "in development").
+(Each beta version has another focus. 0.5.x has the focus on the configuration.)
+
+v0.5.x
+
+Configure each button for yourself in the configuration window.
+You can also make double button configs and stuff, like you want.
+*All it needs to have configured is the MAIN MENU button.
+
+There are several functions which you can assign to each button. 
+Keyboard actions can be repeated, and the volume-up and -down actions.
+Every button can have the FN flag so you need to press the FN-button for it.
+Configure it like you want. Except for the sticks (Mouse movement and scroll wheel), 
+which are fixed right now, you can do every thinkable configuration and even maybe more. :)
+
+(It does not save or load right now!)
+
+<= v0.4
 
 + Move the mouse cursor with the left thumbstick.
 + Simulate the mouse wheel with the right thumbstick.
 + Use the arrow keys with the digital pad. 
 	It waits 500ms after the first keystroke, then it will do it faster.
+
++ Adjust the system volume with FN + DPad-Up/-Down/-Left for volume up, down and mute.
 
 (Main Buttons)
 + Left click with A.
@@ -58,6 +78,12 @@ You can do the following stuff right now:
 + Speed up mouse/scrollwheel speed with the right trigger (RT).
 
 + Show the main menu with the Start button.
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+KNOWN BUGS:
+After login, the mouse cursor will be invisible until you use the real mouse.
+I could not simulate the mouse waive or bring it to work otherways until now.
+
 
 TODO / Nice-To-Have:
 --> Virtual keyboard. Show or hide it with the left thumbstick.

@@ -46,10 +46,6 @@ namespace Majestic_11
         protected float multiplier = 50.0f / short.MaxValue;
          
         protected Point leftThumb, rightThumb = new Point(0,0);
-        protected byte dpad, olddpad;
-        protected int arrowWaitTime = 0; // wait time counter for the arrow keys.
-        //protected float leftTrigger, rightTrigger;
-        //protected bool showMenuDown = false; // REMOVE
 
         protected Thread thread = null;
         protected int pollcount = 0;
@@ -64,31 +60,6 @@ namespace Majestic_11
         protected MJConfig config = new MJConfig();
         public MJConfig Config => config;
 
-        // WINDOWS SPECIFIC
-        // OLD REMOVE
-        // create the point structure for the windows getcursorpos function.
-        [StructLayout(LayoutKind.Sequential)]
-        public struct POINT
-        {
-            public int X;
-            public int Y;
-        }
-
-        // import getcursorpos from user32.dll
-        [DllImport("user32.dll")]
-        static extern bool GetCursorPos(out POINT lpPoint);
-
-        // return the cursor position as POINT.
-        public static POINT GetCursorPosition()
-        {
-            POINT lpPoint;
-            GetCursorPos(out lpPoint);
-            return lpPoint;
-        }
-
-        // import setcursorpos from user32.dll
-        [DllImport("user32.dll")]
-        static extern bool SetCursorPos(int x, int y);
 
         // import mouse_event from user32.dll
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
@@ -223,10 +194,11 @@ namespace Majestic_11
                     rightThumb.Y = (pad.RightThumbY < deadzone && pad.RightThumbY > -deadzone) ? 0 : (int)((float)pad.RightThumbY * multiplier);
 
                     // set new mouse values
-                    POINT cur = GetCursorPosition();
+                    // 0.5.18: use Cursor instead of Win32 API.
+                    Point cur = new Point(Cursor.Position.X, Cursor.Position.Y); //GetCursorPosition();
                     cur.X = (int)(cur.X + leftThumb.X * mouseSpeed);
                     cur.Y = (int)(cur.Y - leftThumb.Y * mouseSpeed);
-                    SetCursorPos(cur.X, cur.Y);
+                    Cursor.Position = cur;
 
                     // maybe use the scroll wheel.
                     if (rightThumb.Y != 0)

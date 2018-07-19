@@ -44,8 +44,8 @@
             this.txt_repeattime = new System.Windows.Forms.TextBox();
             this.lbl_ms = new System.Windows.Forms.Label();
             this.panel_keystuff = new System.Windows.Forms.Panel();
-            this.txt_Test = new System.Windows.Forms.TextBox();
             this.lbl_keys = new System.Windows.Forms.LinkLabel();
+            this.txt_Test = new System.Windows.Forms.TextBox();
             this.lbl_keyinfo = new System.Windows.Forms.LinkLabel();
             this.grp_newBtn.SuspendLayout();
             this.panel_keystuff.SuspendLayout();
@@ -123,10 +123,10 @@
             // btn_AddNew
             // 
             this.btn_AddNew.Enabled = false;
-            this.btn_AddNew.Location = new System.Drawing.Point(385, 18);
+            this.btn_AddNew.Location = new System.Drawing.Point(385, 17);
             this.btn_AddNew.Margin = new System.Windows.Forms.Padding(2);
             this.btn_AddNew.Name = "btn_AddNew";
-            this.btn_AddNew.Size = new System.Drawing.Size(82, 50);
+            this.btn_AddNew.Size = new System.Drawing.Size(82, 52);
             this.btn_AddNew.TabIndex = 7;
             this.btn_AddNew.Text = "Add";
             this.btn_AddNew.UseVisualStyleBackColor = true;
@@ -220,14 +220,6 @@
             this.panel_keystuff.Size = new System.Drawing.Size(375, 34);
             this.panel_keystuff.TabIndex = 7;
             // 
-            // txt_Test
-            // 
-            this.txt_Test.Location = new System.Drawing.Point(16, 277);
-            this.txt_Test.Name = "txt_Test";
-            this.txt_Test.Size = new System.Drawing.Size(77, 20);
-            this.txt_Test.TabIndex = 8;
-            this.txt_Test.Text = "Test";
-            // 
             // lbl_keys
             // 
             this.lbl_keys.AutoSize = true;
@@ -238,6 +230,14 @@
             this.lbl_keys.TabStop = true;
             this.lbl_keys.Text = "Keys*:";
             this.lbl_keys.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbl_keys_LinkClicked);
+            // 
+            // txt_Test
+            // 
+            this.txt_Test.Location = new System.Drawing.Point(16, 277);
+            this.txt_Test.Name = "txt_Test";
+            this.txt_Test.Size = new System.Drawing.Size(77, 20);
+            this.txt_Test.TabIndex = 8;
+            this.txt_Test.Text = "Test";
             // 
             // lbl_keyinfo
             // 

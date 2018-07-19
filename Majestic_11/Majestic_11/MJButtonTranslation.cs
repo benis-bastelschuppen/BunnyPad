@@ -22,7 +22,6 @@
  */
 
  using SharpDX.XInput;
-using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -41,8 +40,8 @@ namespace Majestic_11
         VOLUME_DOWN,
         MUTE_VOLUME,
         FN_MODIFICATOR = 4000,
-        SLOWER_MOUSE = 5000,
-        FASTER_MOUSE
+        SLOWER_MOVEMENT = 5000,
+        FASTER_MOVEMENT
     }
 
     public enum EMJBUTTON
@@ -70,6 +69,7 @@ namespace Majestic_11
     // a button and its associated key config.
     public class MJButtonTranslation
     {
+        // WINDOWS SPECIFIC
         // import keyboard event only for setting the volume.
         [DllImport("user32.dll")]
         static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
@@ -86,30 +86,6 @@ namespace Majestic_11
         private const int MOUSEEVENTF_MIDDLEDOWN = 0x20;
         private const int MOUSEEVENTF_MIDDLEUP = 0x40;
         private const int MOUSEEVENTF_WHEEL = 0x0800;
-
-        // create the point structure for the windows getcursorpos function.
-        [StructLayout(LayoutKind.Sequential)]
-        public struct POINT
-        {
-            public int X;
-            public int Y;
-        }
-
-        // import getcursorpos from user32.dll
-        [DllImport("user32.dll")]
-        static extern bool GetCursorPos(out POINT lpPoint);
-
-        // return the cursor position as POINT.
-        public static POINT GetCursorPosition()
-        {
-            POINT lpPoint;
-            GetCursorPos(out lpPoint);
-            return lpPoint;
-        }
-
-        // import setcursorpos from user32.dll
-        [DllImport("user32.dll")]
-        static extern bool SetCursorPos(int x, int y);
         // ENDOF WINDOWS SPECIFIC
 
         public string keyStroke; // key combination to hit when the button is pressed.
@@ -235,8 +211,7 @@ namespace Majestic_11
         // simulate a mouse click on the cursor position.
         protected void mouseevt(uint func)
         {
-            POINT p = GetCursorPosition();
-            mouse_event(func, (uint)p.X, (uint)p.Y, 0, 0);
+            mouse_event(func, (uint)Cursor.Position.X, (uint)Cursor.Position.Y, 0, 0);
         }
 
         public void Update(Gamepad pad, byte FNflag)

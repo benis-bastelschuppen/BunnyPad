@@ -1,0 +1,5 @@
+﻿Changes.
+Log begins with version 0.5.18
+
+
+0.5.18:	Removed Windows API calls for mouse moving, using Cursor from WinForms.
