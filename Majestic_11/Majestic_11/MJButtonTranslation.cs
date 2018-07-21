@@ -22,7 +22,9 @@
  */
 
  using SharpDX.XInput;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -76,7 +78,7 @@ namespace Majestic_11
 
         // import mouse_event from user32.dll
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-        public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
+        static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
         
         //Mouse actions for the windows API.
         private const int MOUSEEVENTF_LEFTDOWN = 0x02;
@@ -86,10 +88,14 @@ namespace Majestic_11
         private const int MOUSEEVENTF_MIDDLEDOWN = 0x20;
         private const int MOUSEEVENTF_MIDDLEUP = 0x40;
         private const int MOUSEEVENTF_WHEEL = 0x0800;
+        private const int MOUSEEVENTF_MOVE = 0x0001;
+        private const int MOUSEEVENTF_ABSOLUTE = 0x8000;
         // ENDOF WINDOWS SPECIFIC
 
         public string keyStroke; // key combination to hit when the button is pressed.
         public EMJBUTTON button; // the associated gamepad button.
+        protected EMJFUNCTION function; // the associated function.
+        public EMJFUNCTION Function => function; // you cannot set the function directly.
 
         // FNindex is the FN flag. There can be FN-buttons from 1  to 10.
         // if FNindex is 0, it will be used as primary button without holding an FN button.
@@ -126,6 +132,7 @@ namespace Majestic_11
             return f+button.ToString() + " => " +rep+ actionText;
         }
 
+        // OLD <=0.5.20
         // keychars is the key combination which will be simulated when pressing that button.
         // the following keychars-strings are special cases:
         // "@leftmouse@" will simulate a left mouse click.
@@ -136,7 +143,7 @@ namespace Majestic_11
         // "@volumemute@" will mute the system volume.
         // All other combinations will be simulated over the keyboard, except you 
         // rewrite the delegate functions.
-        public MJButtonTranslation(EMJBUTTON btn, string keychars, byte FN = 0)
+      /*  public MJButtonTranslation(EMJBUTTON btn, string keychars, byte FN = 0)
         {
             this.keyStroke = keychars;
             this.button = btn;
@@ -184,9 +191,67 @@ namespace Majestic_11
                 actionText = "MUTE Volume";
             }
         }
+        */
+
+        // 0.5.21 New constructor.
+        public MJButtonTranslation(EMJBUTTON btn, EMJFUNCTION func, byte FN = 0, string keychars="")
+        {
+            this.keyStroke = keychars;
+            this.button = btn;
+            this.FNindex = FN;
+            this.assignFunction(func);
+        }
+
+        public void assignFunction(EMJFUNCTION func)
+        {
+            this.function = func;
+
+            // define default delegates.
+            onButtonDown = new voidDelegate(hitKey);
+            onButtonUp = new voidDelegate(voidFunc);
+            actionText = "Keyboard: " + keyStroke;
+
+            switch(this.function)
+            {
+                case EMJFUNCTION.LEFT_MOUSE_BUTTON:
+                    onButtonDown = new voidDelegate(leftMouseDown);
+                    onButtonUp = new voidDelegate(leftMouseUp);
+                    actionText = "Left Mouse Button";
+                    break;
+                case EMJFUNCTION.RIGHT_MOUSE_BUTTON:
+                    onButtonDown = new voidDelegate(rightMouseDown);
+                    onButtonUp = new voidDelegate(rightMouseUp);
+                    actionText = "Right Mouse Button";
+                    break;
+                case EMJFUNCTION.MIDDLE_MOUSE_BUTTON:
+                    onButtonDown = new voidDelegate(middleMouseDown);
+                    onButtonUp = new voidDelegate(middleMouseUp);
+                    actionText = "Middle Mouse Button";
+                    break;
+                case EMJFUNCTION.VOLUME_UP:
+                    onButtonDown = new voidDelegate(volumeUp);
+                    actionText = "Volume UP";
+                    break;
+                case EMJFUNCTION.VOLUME_DOWN:
+                    onButtonDown = new voidDelegate(volumeDown);
+                    actionText = "Volume DOWN";
+                    break;
+                case EMJFUNCTION.MUTE_VOLUME:
+                    onButtonDown = new voidDelegate(volumeMute);
+                    actionText = "MUTE Volume";
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // simulate a mouse click on the cursor position.
+        protected void mouseevt(uint func) => mouse_event(func, (uint)Cursor.Position.X, (uint)Cursor.Position.Y, 0, 0);
+
+        // some functions for the delegates.
 
         // a function which does nothing and returns nothing.
-        public void voidFunc() { }
+        public static void voidFunc() { }
 
         // simulate a key hit.
         public void hitKey()
@@ -208,12 +273,7 @@ namespace Majestic_11
         public void volumeDown() => keybd_event((byte)Keys.VolumeDown, 0, 0, 0);
         public void volumeMute() => keybd_event((byte)Keys.VolumeMute, 0, 0, 0);
 
-        // simulate a mouse click on the cursor position.
-        protected void mouseevt(uint func)
-        {
-            mouse_event(func, (uint)Cursor.Position.X, (uint)Cursor.Position.Y, 0, 0);
-        }
-
+        // update the button
         public void Update(Gamepad pad, byte FNflag)
         {
             // check if the button is down or not and call the delegates if needed.
@@ -306,7 +366,7 @@ namespace Majestic_11
             FNflag = 0;
             foreach (MJButtonTranslation btn in buttons)
             {
-                if(btn.keyStroke=="@FN@")
+                if(btn.Function == EMJFUNCTION.FN_MODIFICATOR)
                     btn.Update(pad, FNflag);
             }
             // then update the buttons.
@@ -325,9 +385,9 @@ namespace Majestic_11
         }
 
         // add a new button to the config. you can alter it afterwards.
-        public MJButtonTranslation addButton(EMJBUTTON btn, string keys, byte FNidx = 0)
+        public MJButtonTranslation addButton(EMJBUTTON btn, EMJFUNCTION func, byte FNidx = 0, string keys ="")
         {
-            MJButtonTranslation bt = new MJButtonTranslation(btn, keys, FNidx);
+            MJButtonTranslation bt = new MJButtonTranslation(btn, func, FNidx, keys);
             this.buttons.Add(bt);
             return bt;
         }
@@ -364,6 +424,40 @@ namespace Majestic_11
             this.buttons.Clear();
         }
 
+        // assign a "not button translation conform" function to a button.
+        public MJButtonTranslation assignExternalFunction(MJButtonTranslation bt)
+        {
+            // check if the button has an external function and
+            // assign the functions for it.
+            switch(bt.Function)
+            {
+                case EMJFUNCTION.SHOW_MENU:
+                    bt.onButtonDown = Program.SwitchMainFormVisibility;
+                    bt.onButtonUp = MJButtonTranslation.voidFunc;
+                    bt.ActionText = "MENU BUTTON";
+                    break;
+                case EMJFUNCTION.FN_MODIFICATOR:
+                    bt.hitDelay = 1;
+                    bt.onButtonUp = MJButtonTranslation.voidFunc;
+                    bt.onButtonDown = this.FN1Down;
+                    bt.ActionText = "FN Modificator";
+                    break;
+                case EMJFUNCTION.SLOWER_MOVEMENT:
+                    bt.onButtonDown = this.mouseSlower;
+                    bt.onButtonUp = this.mouseSlower_release;
+                    bt.ActionText = "Slower movement";
+                    break;
+                case EMJFUNCTION.FASTER_MOVEMENT:
+                    bt.onButtonDown = this.mouseFaster;
+                    bt.onButtonUp = this.mouseFaster_release;
+                    bt.ActionText = "Faster movement";
+                    break;
+                default:
+                    break;
+            }
+            return bt;
+        }
+
         // load the developers test config. ;)
         public void loadHardcodedDefaultConfig()
         {
@@ -371,74 +465,149 @@ namespace Majestic_11
             MJButtonTranslation b; // you can change the button config after creation with b.
 
             // the main menu button => needs this keystroke!
-            b = this.addButton(EMJBUTTON.Start, "@mainmenu@");
-            b.onButtonDown = Program.SwitchMainFormVisibility;
-            b.ActionText = "MENU BUTTON";
+            b = this.addButton(EMJBUTTON.Start, EMJFUNCTION.SHOW_MENU);
+            assignExternalFunction(b);
 
             // FN_1 button = need this keystroke!
-            b = this.addButton(EMJBUTTON.LeftShoulder, "@FN@");
-            b.hitDelay = 1;                   // smallest hitdelay possible (it's 20).
-            b.onButtonDown = this.FN1Down;    // set FN to "true", ever.
-                                              // b.onButtonUp = this.FNUp;         // set FN to "false", once. Will be overwritten by other FN's
-            b.ActionText = "FN Modificator";  // TODO: remove that.  
+            b = this.addButton(EMJBUTTON.LeftShoulder, EMJFUNCTION.FN_MODIFICATOR);
+            assignExternalFunction(b);
 
             // mouse buttons => need this keystroke!
-            b = this.addButton(EMJBUTTON.A, "@leftmouse@");
-            b = this.addButton(EMJBUTTON.B, "@rightmouse@");
-            b = this.addButton(EMJBUTTON.RightThumb, "@middlemouse@");
+            b = this.addButton(EMJBUTTON.A, EMJFUNCTION.LEFT_MOUSE_BUTTON);
+            b = this.addButton(EMJBUTTON.B, EMJFUNCTION.RIGHT_MOUSE_BUTTON);
+            b = this.addButton(EMJBUTTON.RightThumb, EMJFUNCTION.MIDDLE_MOUSE_BUTTON);
 
             // mouse slower and faster.
-            b = this.addButton(EMJBUTTON.LeftTrigger, "@slowermouse@");
-            b.onButtonDown = this.mouseSlower;
-            b.onButtonUp = this.mouseSlower_release;
-            b.ActionText = "Slower Mouse";
+            b = this.addButton(EMJBUTTON.LeftTrigger, EMJFUNCTION.SLOWER_MOVEMENT);
+            assignExternalFunction(b);
 
-            b = this.addButton(EMJBUTTON.RightTrigger, "@fastermouse@");
-            b.onButtonDown = this.mouseFaster;
-            b.onButtonUp = this.mouseFaster_release;
-            b.ActionText = "Faster Mouse";
+            b = this.addButton(EMJBUTTON.RightTrigger, EMJFUNCTION.FASTER_MOVEMENT);
+            assignExternalFunction(b);
 
             // dpad buttons
-            b = this.addButton(EMJBUTTON.DPadUp, "{UP}");
+            b = this.addButton(EMJBUTTON.DPadUp, EMJFUNCTION.KEYBOARD_COMBINATION, 0, "{UP}");
             b.hitDelay = this.DefaultKeyStrokeDelay;
-            b = this.addButton(EMJBUTTON.DPadDown, "{DOWN}");
+            b = this.addButton(EMJBUTTON.DPadDown, EMJFUNCTION.KEYBOARD_COMBINATION,0,"{DOWN}");
             b.hitDelay = this.DefaultKeyStrokeDelay;
-            b = this.addButton(EMJBUTTON.DPadLeft, "{LEFT}");
+            b = this.addButton(EMJBUTTON.DPadLeft, EMJFUNCTION.KEYBOARD_COMBINATION, 0, "{LEFT}");
             b.hitDelay = this.DefaultKeyStrokeDelay;
-            b = this.addButton(EMJBUTTON.DPadRight, "{RIGHT}");
+            b = this.addButton(EMJBUTTON.DPadRight, EMJFUNCTION.KEYBOARD_COMBINATION, 0, "{RIGHT}");
             b.hitDelay = this.DefaultKeyStrokeDelay;
 
             // backspace key
-            b = this.addButton(EMJBUTTON.X, "{BACKSPACE}");
+            b = this.addButton(EMJBUTTON.X, EMJFUNCTION.KEYBOARD_COMBINATION, 0, "{BACKSPACE}");
             b.hitDelay = this.DefaultKeyStrokeDelay;
 
             // esc key - only once
-            b = this.addButton(EMJBUTTON.Back, "{ESC}");
+            b = this.addButton(EMJBUTTON.Back, EMJFUNCTION.KEYBOARD_COMBINATION, 0, "{ESC}");
             // enter key
-            b = this.addButton(EMJBUTTON.Y, "{ENTER}");
+            b = this.addButton(EMJBUTTON.Y, EMJFUNCTION.KEYBOARD_COMBINATION, 0, "{ENTER}");
             b.hitDelay = this.DefaultKeyStrokeDelay;
 
             // TABulator key
-            b = this.addButton(EMJBUTTON.RightShoulder, "{TAB}");
+            b = this.addButton(EMJBUTTON.RightShoulder, EMJFUNCTION.KEYBOARD_COMBINATION, 0, "{TAB}");
             b.hitDelay = this.DefaultKeyStrokeDelay;
 
             // ctrl-c with FN_1
-            b = this.addButton(EMJBUTTON.A, "^c", 1);
+            b = this.addButton(EMJBUTTON.A, EMJFUNCTION.KEYBOARD_COMBINATION, 1, "^c");
             // ctrl-v with FN_1
-            b = this.addButton(EMJBUTTON.B, "^v", 1);
+            b = this.addButton(EMJBUTTON.B, EMJFUNCTION.KEYBOARD_COMBINATION, 1, "^v");
             // ctrl-z with FN_1
-            b = this.addButton(EMJBUTTON.X, "^z", 1);
+            b = this.addButton(EMJBUTTON.X, EMJFUNCTION.KEYBOARD_COMBINATION, 1, "^z");
             // ctrl-y with FN_1
-            b = this.addButton(EMJBUTTON.Y, "^y", 1);
+            b = this.addButton(EMJBUTTON.Y, EMJFUNCTION.KEYBOARD_COMBINATION, 1, "^y");
 
             // volume UP with FN_1 => need this keystroke!
-            b = this.addButton(EMJBUTTON.DPadUp, "@volumeup@", 1);
+            b = this.addButton(EMJBUTTON.DPadUp, EMJFUNCTION.VOLUME_UP, 1);
             b.hitDelay = this.DefaultKeyStrokeDelay;
             // volume DOWN with FN_1 => need this keystroke!
-            b = this.addButton(EMJBUTTON.DPadDown, "@volumedown@",1);
+            b = this.addButton(EMJBUTTON.DPadDown, EMJFUNCTION.VOLUME_DOWN,1);
             b.hitDelay = this.DefaultKeyStrokeDelay;
             // MUTE volume with FN_1 => need this keystroke!
-            b = this.addButton(EMJBUTTON.DPadLeft, "@mutevolume@",1);
+            b = this.addButton(EMJBUTTON.DPadLeft, EMJFUNCTION.MUTE_VOLUME,1);
+        }
+
+        // we use this version to determine if the fileloader works.
+        // config files have this number as first byte.
+        protected byte configFileDeterminator = 129;
+        // the version number is the second byte.
+        protected byte configFileVersion = 1;
+        public bool SaveTo(string filename)
+        {
+            try
+            {
+                Log.Line("Opening " + filename + " for saving the configuration..");
+                FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.Write);
+                BinaryWriter bw = new BinaryWriter(fs);
+
+                Log.Append("done.");
+                // write determinator and version
+                bw.Write(configFileDeterminator);
+                bw.Write(configFileVersion);
+
+                // write count of mjbuttons.
+                Log.Line("Writing " + this.buttons.Count + " buttons..");
+                bw.Write((Int16)this.buttons.Count);
+                foreach(MJButtonTranslation btn in this.buttons)
+                {
+//                    btn.serialize(bw);
+                }
+
+                bw.Close();
+                Log.Line("Saving success.");
+                return true;
+            }
+            catch
+            {
+                Log.Line("ERROR: Could not create file " + filename+"! Is it write protected?");
+                MessageBox.Show("Could not create or open " + filename + ". Is it write protected?", "I/O Error");
+                return false;
+            }
+        }
+
+        public bool LoadFrom(string filename)
+        {
+            try
+            {
+                Log.Line("Opening " + filename + " for loading the configuration..");
+                FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
+                BinaryReader bw = new BinaryReader(fs);
+
+                Log.Append("done.");
+                // read determinator and version
+                byte cd = bw.ReadByte();
+                if(cd == configFileDeterminator)
+                {
+                    // determinator is ok, now read version.
+                    cd = bw.ReadByte();
+                    if(cd==configFileVersion)
+                    {
+                        // TODO: load here.
+                        int count = bw.ReadInt16();
+                        Log.Line("Loading " + count + " buttons..");
+                    }
+                    else
+                    {
+                        Log.Line("Wrong file version: " + (int)cd + " [actual: " + (int)configFileVersion+"]");
+                        MessageBox.Show("Wrong file version, sorry.", "I/O Error");
+                    }
+                }
+                else
+                {
+                    Log.Line("Unknown filetype.");
+                    MessageBox.Show("Invalid file.", "I/O Error");
+                }
+
+                bw.Close();
+                Log.Line("Loading success.");
+                return true;
+            }
+            catch
+            {
+                Log.Line("ERROR: Could not open file " + filename + "! Is it write protected?");
+                MessageBox.Show("Could not open " + filename + ". Is it write protected?", "I/O Error");
+                return false;
+            }
         }
     }
 }

@@ -81,7 +81,7 @@ namespace Majestic_11
             this.btn_quit.Margin = new System.Windows.Forms.Padding(2);
             this.btn_quit.Name = "btn_quit";
             this.btn_quit.Size = new System.Drawing.Size(71, 27);
-            this.btn_quit.TabIndex = 3;
+            this.btn_quit.TabIndex = 4;
             this.btn_quit.Text = "X Quit X";
             this.btn_quit.UseVisualStyleBackColor = false;
             this.btn_quit.Click += new System.EventHandler(this.btn_quit_Click);
@@ -115,7 +115,7 @@ namespace Majestic_11
             this.btn_about.Margin = new System.Windows.Forms.Padding(2);
             this.btn_about.Name = "btn_about";
             this.btn_about.Size = new System.Drawing.Size(71, 27);
-            this.btn_about.TabIndex = 2;
+            this.btn_about.TabIndex = 3;
             this.btn_about.Text = "About";
             this.btn_about.UseVisualStyleBackColor = true;
             this.btn_about.Click += new System.EventHandler(this.btn_about_Click);
@@ -126,7 +126,7 @@ namespace Majestic_11
             this.btn_Config.Margin = new System.Windows.Forms.Padding(2);
             this.btn_Config.Name = "btn_Config";
             this.btn_Config.Size = new System.Drawing.Size(71, 27);
-            this.btn_Config.TabIndex = 5;
+            this.btn_Config.TabIndex = 2;
             this.btn_Config.Text = "Config";
             this.btn_Config.UseVisualStyleBackColor = true;
             this.btn_Config.Click += new System.EventHandler(this.btn_Config_Click);

@@ -185,10 +185,11 @@ namespace Majestic_11
         // add the actual button config in the above field to the list.
         private void btn_AddNew_Click(object sender, EventArgs e)
         {
-            // we need a string here because it could be something 
-            // other than gamepadbuttonflags.
-            EMJBUTTON selbtn = (EMJBUTTON)combo_Button.SelectedItem;
+            // Get the button.
+            EMJBUTTON button = (EMJBUTTON)combo_Button.SelectedItem;
+            // Get the action.
             EMJFUNCTION selaction = (EMJFUNCTION) combo_Action.SelectedItem;
+            // keystroke, hitdelay and FN index.
             string mykeys = txt_keystroke.Text;
             byte fnidx = 0;
             int hitdelay = 0;
@@ -197,100 +198,51 @@ namespace Majestic_11
             if (chk_repeat.Checked == true)
                 hitdelay = Int32.Parse(txt_repeattime.Text);
 
-            // set fn index.
+            // get fn index.
             if (chk_FN.Checked == true)
                 fnidx = 1;
 
             // get the desired button.
-            EMJBUTTON button = selbtn; // EMJBUTTON.None;
             // check if the button works.
-            switch(selaction)
-            { 
-                case EMJFUNCTION.KEYBOARD_COMBINATION:
-                    if (mykeys == "")
-                    {
-                        MessageBox.Show("You need to set a key combination.", "Cannot create button:");
-                        return;
-                    }
+            if (selaction == EMJFUNCTION.KEYBOARD_COMBINATION)
+            {
+                // it's a keyboard combination, it needs some keys.
+                if (mykeys == "")
+                {
+                    MessageBox.Show("You need to set a key combination.", "Cannot create button:");
+                    return;
+                }
 
-                    // check if the keyboard combination works.
-                    try
-                    {
-                        // create the button for testing.
-                        MJButtonTranslation testbtn = new MJButtonTranslation(button, mykeys, fnidx);
-                        // select the test box so nothing bad can happen.
-                        txt_Test.Focus();
-                        testbtn.hitKey();
-                        btn_AddNew.Focus();
-                    }
-                    catch
-                    {
-                        MessageBox.Show("The key combination is invalid! (break)", "Cannot create button.");
-                        return;
-                    }
-                    break;
-                case EMJFUNCTION.LEFT_MOUSE_BUTTON:
-                    mykeys = "@leftmouse@";
-                    break;
-                case EMJFUNCTION.RIGHT_MOUSE_BUTTON:
-                    mykeys = "@rightmouse@";
-                    break;
-                case EMJFUNCTION.MIDDLE_MOUSE_BUTTON:
-                    mykeys = "@middlemouse@";
-                    break;
-                case EMJFUNCTION.VOLUME_UP:
-                    mykeys = "@volumeup@";
-                    break;
-                case EMJFUNCTION.VOLUME_DOWN:
-                    mykeys = "@volumedown@";
-                    break;
-                case EMJFUNCTION.MUTE_VOLUME:
-                    mykeys = "@mutevolume@";
-                    break;
-                case EMJFUNCTION.FN_MODIFICATOR:
-                    mykeys = "@FN@";
-                    break;
-                case EMJFUNCTION.SHOW_MENU:
-                    mykeys = "@mainmenu@";
-                    break;
-                case EMJFUNCTION.SLOWER_MOVEMENT:
-                    mykeys = "@slowermovement@";
-                    break;
-                case EMJFUNCTION.FASTER_MOVEMENT:
-                    mykeys = "@fastermovement@";
-                    break;
-                default:
-                    MessageBox.Show("Function not known!");
-                    Log.Line("Function not known! "+selaction.ToString());
-                    break;
+                // check if the keyboard combination works.
+                try
+                {
+                    // create the button for testing.
+                    MJButtonTranslation testbtn = new MJButtonTranslation(button, EMJFUNCTION.KEYBOARD_COMBINATION, fnidx, mykeys);
+                    // select the test box so nothing bad can happen.
+                    txt_Test.Focus();
+                    testbtn.hitKey();
+                    btn_AddNew.Focus();
+                }
+                catch
+                {
+                    MessageBox.Show("The key combination is invalid! (break)", "Cannot create button.");
+                    return;
+                }
             }
 
             // create the button
-            MJButtonTranslation btn = new MJButtonTranslation(button, mykeys, fnidx);
+            MJButtonTranslation btn = new MJButtonTranslation(button, selaction, fnidx, mykeys);
             btn.hitDelay = (uint)hitdelay;
 
-            // TODO: remove this two selactions!
+            // "external" settings.
             // set functions and stuff.
             switch (selaction)
             {
                 case EMJFUNCTION.FN_MODIFICATOR:
-                    btn.onButtonDown = Program.Input.Config.FN1Down;
-                    btn.hitDelay = 1;
-                    btn.ActionText = "FN MODIFICATOR";
-                    break;
                 case EMJFUNCTION.SHOW_MENU:
-                    btn.onButtonDown = Program.SwitchMainFormVisibility;
-                    btn.ActionText = "MAIN MENU";
-                    break;
                 case EMJFUNCTION.SLOWER_MOVEMENT:
-                    btn.onButtonDown = Program.Input.Config.mouseSlower;
-                    btn.onButtonUp = Program.Input.Config.mouseSlower_release;
-                    btn.ActionText = "Slower movement";
-                    break;
                 case EMJFUNCTION.FASTER_MOVEMENT:
-                    btn.onButtonDown = Program.Input.Config.mouseFaster;
-                    btn.onButtonUp = Program.Input.Config.mouseFaster_release;
-                    btn.ActionText = "Faster movement";
+                    Program.Input.Config.assignExternalFunction(btn);
                     break;
                 default:
                     break;
@@ -311,6 +263,43 @@ namespace Majestic_11
         private void lbl_keyinfo_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             lbl_keys_LinkClicked(sender, e);
+        }
+
+        private void btn_saveConfig_Click(object sender, EventArgs e)
+        {
+            dlg_saveConfig.ShowDialog();
+        }
+
+        private void btn_loadConfig_Click(object sender, EventArgs e)
+        {
+            dlg_loadConfig.ShowDialog();
+        }
+
+        private void dlg_loadConfig_FileOk(object sender, CancelEventArgs e)
+        {
+            string file = dlg_loadConfig.FileName;
+            Log.Line("Loading config from: " + file);
+            Program.Input.Config.LoadFrom(file);
+        }
+
+        private void dlg_saveConfig_FileOk(object sender, CancelEventArgs e)
+        {
+            string file = dlg_saveConfig.FileName;
+            Log.Line("Saving config to: "+file);
+            Program.Input.Config.SaveTo(file);
+        }
+
+        // reset the config to the hardcoded defaults.
+        private void button1_Click(object sender, EventArgs e)
+        {
+            MessageBoxButtons btns = MessageBoxButtons.YesNo;
+            DialogResult result = MessageBox.Show("This will overwrite the actual configuration.", "Really load default config?", btns);
+            if(result == DialogResult.Yes)
+            {
+                Program.Input.Config.loadHardcodedDefaultConfig();
+                this.LoadActualConfig();
+                Log.Line("Default config loaded.");
+            }
         }
     }
 }

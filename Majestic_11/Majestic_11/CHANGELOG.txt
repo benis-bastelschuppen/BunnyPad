@@ -1,5 +1,18 @@
 ﻿Changes.
 Log begins with version 0.5.18
-
+0.5.25: [Default Config] button. Loads the hardcoded default config.
+0.5.24: Function assignExternalFunction in MJConfig: 
+	assigns the external function to a button if there is one.
+	Rewritten code for using assignExternalFunction.
+0.5.23: 
+	Restricted filename endings to *.bpc in the dialogs.
+	File save and load wrappers which opens the files.
+gjj                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 	Load and save functions work, just need to load and save the buttons now.
+0.5.22: Load and Save config buttons and dialogs. (Not working yet.)
+0.5.21: 
+	Set the function from string to EMJFUNCTION in MJButtonTranslation.
+	New Constructor for MJButtonTranslation.
+	Rewrite of all addbutton functions and calls.
+0.5.20: Changed the TabIndex on the forms.
 0.5.19: BugFix: Now showing the mouse cursor after login.
 0.5.18:	Removed Windows API calls for mouse moving, using Cursor from WinForms.
