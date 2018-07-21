@@ -1,5 +1,7 @@
 ﻿Changes.
 Log begins with version 0.5.18
+
+0.6.0: Config loading and saving works.
 0.5.25: [Default Config] button. Loads the hardcoded default config.
 0.5.24: Function assignExternalFunction in MJConfig: 
 	assigns the external function to a button if there is one.

@@ -280,6 +280,7 @@ namespace Majestic_11
             string file = dlg_loadConfig.FileName;
             Log.Line("Loading config from: " + file);
             Program.Input.Config.LoadFrom(file);
+            this.LoadActualConfig();
         }
 
         private void dlg_saveConfig_FileOk(object sender, CancelEventArgs e)

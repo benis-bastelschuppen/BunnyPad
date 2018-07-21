@@ -132,67 +132,6 @@ namespace Majestic_11
             return f+button.ToString() + " => " +rep+ actionText;
         }
 
-        // OLD <=0.5.20
-        // keychars is the key combination which will be simulated when pressing that button.
-        // the following keychars-strings are special cases:
-        // "@leftmouse@" will simulate a left mouse click.
-        // "@rightmouse@" will simulate a right mouse click.
-        // "@middlemouse@" will simulate a click on the wheel of the mouse.
-        // "@volumeup@" will raise the system volume.
-        // "@volumedown@" will lower the system volume.
-        // "@volumemute@" will mute the system volume.
-        // All other combinations will be simulated over the keyboard, except you 
-        // rewrite the delegate functions.
-      /*  public MJButtonTranslation(EMJBUTTON btn, string keychars, byte FN = 0)
-        {
-            this.keyStroke = keychars;
-            this.button = btn;
-            this.FNindex = FN;
-
-            // define default delegates.
-            onButtonDown = new voidDelegate(hitKey);
-            onButtonUp = new voidDelegate(voidFunc);
-            actionText = "Keyboard: "+keyStroke;
-
-            // check if it is a mouse button, then use another delegate.
-            if (keychars.ToLower() == "@leftmouse@")
-            {
-                onButtonDown = new voidDelegate(leftMouseDown);
-                onButtonUp = new voidDelegate(leftMouseUp);
-                actionText = "Left Mouse Button";
-            }
-            if (keychars.ToLower() == "@rightmouse@")
-            {
-                onButtonDown = new voidDelegate(rightMouseDown);
-                onButtonUp = new voidDelegate(rightMouseUp);
-                actionText = "Right Mouse Button";
-            }
-            if (keychars.ToLower() == "@middlemouse@")
-            {
-                onButtonDown = new voidDelegate(middleMouseDown);
-                onButtonUp = new voidDelegate(middleMouseUp);
-                actionText = "Middle Mouse Button";
-            }
-
-            // or maybe we want to set another volume?
-            if(keychars.ToLower() == "@volumeup@")
-            {
-                onButtonDown = new voidDelegate(volumeUp);
-                actionText = "Volume UP";
-            }
-            if (keychars.ToLower() == "@volumedown@")
-            {
-                onButtonDown = new voidDelegate(volumeDown);
-                actionText = "Volume DOWN";
-            }
-            if (keychars.ToLower() == "@mutevolume@")
-            {
-                onButtonDown = new voidDelegate(volumeMute);
-                actionText = "MUTE Volume";
-            }
-        }
-        */
-
         // 0.5.21 New constructor.
         public MJButtonTranslation(EMJBUTTON btn, EMJFUNCTION func, byte FN = 0, string keychars="")
         {
@@ -202,6 +141,46 @@ namespace Majestic_11
             this.assignFunction(func);
         }
 
+        // 0.6.0: save the button.
+        public bool serialize(TextWriter bw)
+        {
+            try
+            {
+                // write all values to the file.
+                bw.WriteLine((int)this.button);
+                bw.WriteLine(this.keyStroke);
+                bw.WriteLine(this.FNindex);
+                bw.WriteLine((int)this.Function);
+                bw.WriteLine(this.hitDelay);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        // 0.6.0: Another new constructor for loading a button.
+        public MJButtonTranslation(TextReader br)
+        {
+            // read all the values from the file.
+            string t=br.ReadLine();
+            this.button = (EMJBUTTON)int.Parse(t);
+
+            this.keyStroke = br.ReadLine();
+
+            t = br.ReadLine();
+            this.FNindex = byte.Parse(t);
+
+            t = br.ReadLine();
+            EMJFUNCTION func = (EMJFUNCTION)int.Parse(t);
+
+            t = br.ReadLine();
+            this.hitDelay = uint.Parse(t);
+
+            this.assignFunction(func);
+        }
+
+        // assign some of the functions (internal ones)
         public void assignFunction(EMJFUNCTION func)
         {
             this.function = func;
@@ -528,29 +507,29 @@ namespace Majestic_11
         }
 
         // we use this version to determine if the fileloader works.
-        // config files have this number as first byte.
+        // config files have this number as first line.
         protected byte configFileDeterminator = 129;
-        // the version number is the second byte.
-        protected byte configFileVersion = 1;
+        // the version number is the second line.
+        protected byte configFileVersion = 3;
         public bool SaveTo(string filename)
         {
             try
             {
                 Log.Line("Opening " + filename + " for saving the configuration..");
                 FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.Write);
-                BinaryWriter bw = new BinaryWriter(fs);
+                StreamWriter bw = new StreamWriter(fs);
 
                 Log.Append("done.");
                 // write determinator and version
-                bw.Write(configFileDeterminator);
-                bw.Write(configFileVersion);
+                bw.WriteLine(configFileDeterminator);
+                bw.WriteLine(configFileVersion);
 
                 // write count of mjbuttons.
                 Log.Line("Writing " + this.buttons.Count + " buttons..");
-                bw.Write((Int16)this.buttons.Count);
+                bw.WriteLine(this.buttons.Count);
                 foreach(MJButtonTranslation btn in this.buttons)
                 {
-//                    btn.serialize(bw);
+                    btn.serialize(bw);
                 }
 
                 bw.Close();
@@ -565,26 +544,42 @@ namespace Majestic_11
             }
         }
 
+        // load a configuration.
         public bool LoadFrom(string filename)
         {
             try
             {
                 Log.Line("Opening " + filename + " for loading the configuration..");
                 FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
-                BinaryReader bw = new BinaryReader(fs);
+                StreamReader br = new StreamReader(fs);
 
                 Log.Append("done.");
                 // read determinator and version
-                byte cd = bw.ReadByte();
+                string t= br.ReadLine();
+                byte cd = byte.Parse(t);
                 if(cd == configFileDeterminator)
                 {
                     // determinator is ok, now read version.
-                    cd = bw.ReadByte();
-                    if(cd==configFileVersion)
+                    t = br.ReadLine();
+                    cd = byte.Parse(t);
+                    if (cd==configFileVersion)
                     {
-                        // TODO: load here.
-                        int count = bw.ReadInt16();
+                        // OK File and File Version are ok.
+                        // clear the buttons..
+                        this.clearButtons();
+
+                        // load count of buttons.
+                        t = br.ReadLine();
+                        int count = int.Parse(t);
+                        // .. and load the new ones.
                         Log.Line("Loading " + count + " buttons..");
+                        for (int c = 0;c < count; c++)
+                        {
+                            // create a button and load it.
+                            MJButtonTranslation b = new MJButtonTranslation(br);
+                            assignExternalFunction(b);  // maybe assign an external function.
+                            this.addButton(b);
+                        }
                     }
                     else
                     {
@@ -598,14 +593,14 @@ namespace Majestic_11
                     MessageBox.Show("Invalid file.", "I/O Error");
                 }
 
-                bw.Close();
+                br.Close();
                 Log.Line("Loading success.");
                 return true;
             }
             catch
             {
-                Log.Line("ERROR: Could not open file " + filename + "! Is it write protected?");
-                MessageBox.Show("Could not open " + filename + ". Is it write protected?", "I/O Error");
+                Log.Line("ERROR: Could not open file " + filename + "! Is it read protected?");
+                MessageBox.Show("Could not open " + filename + ". Is it read protected?", "I/O Error");
                 return false;
             }
         }
