@@ -174,6 +174,7 @@
             this.btn_UpdateSelected.TabIndex = 2;
             this.btn_UpdateSelected.Text = "<= Update ^";
             this.btn_UpdateSelected.UseVisualStyleBackColor = true;
+            this.btn_UpdateSelected.Click += new System.EventHandler(this.btn_UpdateSelected_Click);
             // 
             // txt_keystroke
             // 

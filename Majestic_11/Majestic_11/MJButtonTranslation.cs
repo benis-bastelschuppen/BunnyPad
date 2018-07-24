@@ -481,6 +481,23 @@ namespace Majestic_11
             return bt;
         }
 
+        // update a specific button in the list with a new one.
+        public MJButtonTranslation updateButton(MJButtonTranslation target, MJButtonTranslation newone)
+        {
+            int i = 0;
+            foreach(MJButtonTranslation bt in this.buttons)
+            {
+                if(bt == target)
+                {
+                    this.buttons.Insert(i, newone);
+                    this.buttons.Remove(bt);
+                    return newone;
+                }
+                i++;
+            }
+            return newone;
+        }
+
         // add a new button to the config. you can alter it afterwards.
         public MJButtonTranslation addButton(EMJBUTTON btn, EMJFUNCTION func, byte FNidx = 0, string keys ="")
         {

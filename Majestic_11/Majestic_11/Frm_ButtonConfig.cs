@@ -221,13 +221,17 @@ namespace Majestic_11
             enableButtons();
         }
 
-        // add the actual button config in the above field to the list.
-        private void btn_AddNew_Click(object sender, EventArgs e)
+        // 0.6.9: create a button from the given values and return it.
+        // was previously in the add-button function
+        private MJButtonTranslation createButtonFromValues()
         {
+            // empty button.
+            MJButtonTranslation nobtn = new MJButtonTranslation(EMJBUTTON.None, EMJFUNCTION.SHOW_MENU);
+
             // Get the button.
             EMJBUTTON button = (EMJBUTTON)combo_Button.SelectedItem;
             // Get the action.
-            EMJFUNCTION selaction = (EMJFUNCTION) combo_Action.SelectedItem;
+            EMJFUNCTION selaction = (EMJFUNCTION)combo_Action.SelectedItem;
             // keystroke, hitdelay and FN index.
             string mykeys = txt_keystroke.Text;
             byte fnidx = 0;
@@ -249,7 +253,7 @@ namespace Majestic_11
                 if (mykeys == "")
                 {
                     MessageBox.Show("You need to set a key combination.", "Cannot create button:");
-                    return;
+                    return nobtn;
                 }
 
                 // check if the keyboard combination works.
@@ -265,7 +269,7 @@ namespace Majestic_11
                 catch
                 {
                     MessageBox.Show("The key combination is invalid! (break)", "Cannot create button.");
-                    return;
+                    return nobtn;
                 }
             }
 
@@ -287,11 +291,34 @@ namespace Majestic_11
                     break;
             }
 
-            // if nothing went wrong, add it to the configuration.
-            Program.Input.Config.addButton(btn);
-            this.LoadActualConfig();
-            enableButtons();
+            // return the new button.
+            return btn;
         }
+
+        // add the actual button config in the above field to the list.
+        private void btn_AddNew_Click(object sender, EventArgs e)
+        {
+            MJButtonTranslation btn = createButtonFromValues();
+            // if nothing went wrong, add it to the configuration.
+            if(btn.button != EMJBUTTON.None)
+                Program.Input.Config.addButton(btn);
+            this.LoadActualConfig();
+            this.enableButtons();
+        }
+
+        // update the selected item.
+        private void btn_UpdateSelected_Click(object sender, EventArgs e)
+        {
+            MJButtonTranslation btn = createButtonFromValues();
+            int si = ListBox_Buttons.SelectedIndex;
+            // if nothing went wrong, add it to the configuration.
+            if (btn.button != EMJBUTTON.None)
+                Program.Input.Config.updateButton((MJButtonTranslation)ListBox_Buttons.SelectedItem, btn);
+            this.LoadActualConfig();
+            ListBox_Buttons.SelectedIndex = si;
+            this.enableButtons();
+        }
+
 
         // show the doc for sendkeys function on msdn.
         private void lbl_keys_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

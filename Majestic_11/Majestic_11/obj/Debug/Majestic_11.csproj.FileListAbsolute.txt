@@ -49,3 +49,7 @@ D:\GIT\GitHub\BunnyPad\Majestic_11\Majestic_11\obj\Debug\Majestic_11.Properties.
 D:\GIT\GitHub\BunnyPad\Majestic_11\Majestic_11\obj\Debug\Majestic_11.csproj.GenerateResource.cache
 D:\GIT\GitHub\BunnyPad\Majestic_11\Majestic_11\obj\Debug\Majestic_11.csproj.CoreCompileInputs.cache
 D:\GIT\GitHub\BunnyPad\Majestic_11\Majestic_11\obj\Debug\Majestic_11.csproj.CopyComplete
+D:\GIT\GitHub\BunnyPad\Majestic_11\Majestic_11\bin\Debug\Majestic_11.exe.manifest
+D:\GIT\GitHub\BunnyPad\Majestic_11\Majestic_11\bin\Debug\Majestic_11.application
+D:\GIT\GitHub\BunnyPad\Majestic_11\Majestic_11\obj\Debug\Majestic_11.exe.manifest
+D:\GIT\GitHub\BunnyPad\Majestic_11\Majestic_11\obj\Debug\Majestic_11.application
