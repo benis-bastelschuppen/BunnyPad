@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
-
-using SharpDX.XInput;
 
 namespace Majestic_11
 {
@@ -24,32 +21,50 @@ namespace Majestic_11
                 combo_Button.Items.Add(btval);
             }
 
+            combo_Button.SelectedIndex = 0;
             // fill the other combo box with the actions
-            combo_Action.Items.Clear();
-            Array atvalues = Enum.GetValues(typeof(EMJFUNCTION));
-            foreach (EMJFUNCTION atval in atvalues)
-            {
-                combo_Action.Items.Add(atval);
-            }
-
-/*          combo_Action.Items.Clear();
-            combo_Action.Items.Add("Show Menu");
-            combo_Action.Items.Add("Keyboard Combination");
-            combo_Action.Items.Add("Left Mouse Button");
-            combo_Action.Items.Add("Right Mouse Button");
-            combo_Action.Items.Add("Middle Mouse Button");
-            combo_Action.Items.Add("Volume UP");
-            combo_Action.Items.Add("Volume DOWN");
-            combo_Action.Items.Add("MUTE Volume");
-            combo_Action.Items.Add("FN Modificator");
-*/
+            updateFunctionCombo();
+           // combo_Action.SelectedIndex = 0;
 
             LoadActualConfig();
-            combo_Action.SelectedIndex = 0;
-            combo_Button.SelectedIndex = 0;
+            // show the config name.
+            setActualConfigLbl();
         }
 
-        // load the config into the UI.
+        // update the function combobox.
+        protected byte actualFunctions = 0;
+        protected void updateFunctionCombo()
+        {
+            byte actual = 1;
+            switch(combo_Button.SelectedItem)
+            {
+                // if it is a stick, set actual to 2
+                case EMJBUTTON.LeftThumbstick:
+                case EMJBUTTON.RightThumbstick:
+                    actual = 2;
+                    break;
+                default:
+                    break;
+            }
+
+            // only reset if the button type changed.
+            if (actual != actualFunctions)
+            {
+                combo_Action.Items.Clear();
+                Array atvalues = Enum.GetValues(typeof(EMJFUNCTION));
+                // check if it is a stick or button.
+                foreach (EMJFUNCTION atval in atvalues)
+                {
+                    if((actual==1 && atval < EMJFUNCTION.__STICK_FUNCTIONS__) ||
+                        (actual == 2 && atval > EMJFUNCTION.__STICK_FUNCTIONS__))
+                            combo_Action.Items.Add(atval);
+                }
+            }
+            actualFunctions = actual;
+            combo_Action.SelectedIndex = 0;
+        }
+
+        // load the config into the UIs Listbox.
         private void LoadActualConfig()
         {
             // fill the listbox with the actual configuration.
@@ -129,13 +144,37 @@ namespace Majestic_11
             }
         }
 
+        // another list item was selected.
         private void ListBox_Buttons_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // 0.6.6: update the configuration items.
+            MJButtonTranslation b = (MJButtonTranslation)ListBox_Buttons.SelectedItem;
+
+            combo_Button.SelectedItem = b.button;
+            combo_Action.SelectedItem = b.Function;
+            if (b.FNindex > 0)
+                chk_FN.Checked = true;
+            else
+                chk_FN.Checked = false;
+
+            if(b.hitDelay>0)
+            {
+                chk_repeat.Checked = true;
+                txt_repeattime.Text = b.hitDelay.ToString();
+            }else{
+                chk_repeat.Checked = false;
+                txt_repeattime.Text = "0";
+            }
+
+            txt_keystroke.Text = b.keyStroke;
+
             enableButtons();
         }
 
+        // another button was selected.
         private void combo_Button_SelectedIndexChanged(object sender, EventArgs e)
         {
+            updateFunctionCombo();
             enableButtons();
         }
 
@@ -281,6 +320,7 @@ namespace Majestic_11
             Log.Line("Loading config from: " + file);
             Program.Input.Config.LoadFrom(file);
             this.LoadActualConfig();
+            setActualConfigLbl();
         }
 
         private void dlg_saveConfig_FileOk(object sender, CancelEventArgs e)
@@ -288,6 +328,13 @@ namespace Majestic_11
             string file = dlg_saveConfig.FileName;
             Log.Line("Saving config to: "+file);
             Program.Input.Config.SaveTo(file);
+            setActualConfigLbl();
+        }
+
+        // set the text of the actual config label.
+        private void setActualConfigLbl()
+        {
+            lbl_actualConfig.Text = "Actual config: "+Program.Input.Config.ConfigName;
         }
 
         // reset the config to the hardcoded defaults.
@@ -298,6 +345,7 @@ namespace Majestic_11
             if(result == DialogResult.Yes)
             {
                 Program.Input.Config.loadHardcodedDefaultConfig();
+                lbl_actualConfig.Text = Program.Input.Config.ConfigName;
                 this.LoadActualConfig();
                 Log.Line("Default config loaded.");
             }

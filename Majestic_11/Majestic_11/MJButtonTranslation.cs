@@ -24,6 +24,7 @@
  using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -43,7 +44,12 @@ namespace Majestic_11
         MUTE_VOLUME,
         FN_MODIFICATOR = 4000,
         SLOWER_MOVEMENT = 5000,
-        FASTER_MOVEMENT
+        FASTER_MOVEMENT,
+        __STICK_FUNCTIONS__ = 10000,
+        MOUSE_MOVEMENT = 11000,
+        ARROW_KEYS,
+        WASD_KEYS,
+        MOUSE_WHEEL
     }
 
     public enum EMJBUTTON
@@ -59,13 +65,17 @@ namespace Majestic_11
         RightThumb = GamepadButtonFlags.RightThumb,
         LeftShoulder = GamepadButtonFlags.LeftShoulder,
         RightShoulder = GamepadButtonFlags.RightShoulder,
+        // Special buttons are < 0
+        LeftTrigger = -1,
+        RightTrigger = -2,
+        // main buttons.
         A = GamepadButtonFlags.A,
         B = GamepadButtonFlags.B,
         X = GamepadButtonFlags.X,
         Y = GamepadButtonFlags.Y,
-        // Special buttons are < 0
-        LeftTrigger = -1,
-        RightTrigger = -2
+        // The thumbsticks.
+        LeftThumbstick=-10,
+        RightThumbstick=-11
     }
 
     // a button and its associated key config.
@@ -78,7 +88,7 @@ namespace Majestic_11
 
         // import mouse_event from user32.dll
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-        static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
+        static extern void mouse_event(uint dwFlags, int dx, int dy, uint cButtons, uint dwExtraInfo);
         
         //Mouse actions for the windows API.
         private const int MOUSEEVENTF_LEFTDOWN = 0x02;
@@ -159,6 +169,7 @@ namespace Majestic_11
                 return false;
             }
         }
+
         // 0.6.0: Another new constructor for loading a button.
         public MJButtonTranslation(TextReader br)
         {
@@ -186,12 +197,16 @@ namespace Majestic_11
             this.function = func;
 
             // define default delegates.
-            onButtonDown = new voidDelegate(hitKey);
+            onButtonDown = new voidDelegate(voidFunc);
             onButtonUp = new voidDelegate(voidFunc);
-            actionText = "Keyboard: " + keyStroke;
+            actionText = "!NOTHING!";
 
             switch(this.function)
             {
+                case EMJFUNCTION.KEYBOARD_COMBINATION:
+                    onButtonDown = new voidDelegate(hitKey);
+                    actionText = "Keyboard: " + keyStroke;
+                    break;
                 case EMJFUNCTION.LEFT_MOUSE_BUTTON:
                     onButtonDown = new voidDelegate(leftMouseDown);
                     onButtonUp = new voidDelegate(leftMouseUp);
@@ -219,13 +234,27 @@ namespace Majestic_11
                     onButtonDown = new voidDelegate(volumeMute);
                     actionText = "MUTE Volume";
                     break;
+                // The stick functions do not need to be assigned.
+                // They are executed otherwise.
+                case EMJFUNCTION.ARROW_KEYS:
+                    actionText = "Arrow Keys";
+                    break;
+                case EMJFUNCTION.WASD_KEYS:
+                    actionText = "W A S D Keys";
+                    break;
+                case EMJFUNCTION.MOUSE_MOVEMENT:
+                    actionText = "Mouse Movement";
+                    break;
+                case EMJFUNCTION.MOUSE_WHEEL:
+                    actionText = "Mouse Wheel";
+                    break;
                 default:
                     break;
             }
         }
 
         // simulate a mouse click on the cursor position.
-        protected void mouseevt(uint func) => mouse_event(func, (uint)Cursor.Position.X, (uint)Cursor.Position.Y, 0, 0);
+        protected void mouseevt(uint func) => mouse_event(func, (int)Cursor.Position.X, (int)Cursor.Position.Y, 0, 0);
 
         // some functions for the delegates.
 
@@ -259,6 +288,8 @@ namespace Majestic_11
             GamepadButtonFlags fl = GamepadButtonFlags.None;
             bool isdown = false;
             // first check if it is a button, then check if it is down.
+            // each value >= 0 is copied from GamepadButtonFlags.
+            // own values (sticks and triggers) are <0.
             if (this.button >= 0)
             {
                 fl = (GamepadButtonFlags)this.button;
@@ -276,6 +307,13 @@ namespace Majestic_11
                     case EMJBUTTON.LeftTrigger:
                         trigger = pad.LeftTrigger;
                         break;
+                    case EMJBUTTON.LeftThumbstick:
+                    case EMJBUTTON.RightThumbstick:
+                        // it's a stick function, lets do
+                        // some stick magic.
+                        this.updateSticks(pad);
+                        // we don't need the stuff below then.
+                        return;
                     default:
                         isdown = false;
                         break;
@@ -306,6 +344,84 @@ namespace Majestic_11
                     hitDelayCount += 20; // add 20 ms.
             }
         }
+
+        // update the sticks and do the function for them.
+        protected void updateSticks(Gamepad pad)
+        {
+            // TODO: remove stuff from program.input
+
+            float stickx = 0;
+            float sticky = 0;
+            // get the raw values.
+            switch (this.button)
+            {
+                case EMJBUTTON.LeftThumbstick:
+                    stickx = pad.LeftThumbX;
+                    sticky = pad.LeftThumbY;
+                    break;
+                case EMJBUTTON.RightThumbstick:
+                    stickx = pad.RightThumbX;
+                    sticky = pad.RightThumbY;
+                    break;
+                default:
+                    break;
+            }
+
+            // implement deadzone
+            float dzone = Program.Input.deadzone;
+            if (stickx < dzone && stickx > -dzone)
+                stickx = 0;
+            if (sticky < dzone && sticky > -dzone)
+                sticky = 0;
+
+            // normalize the values
+            stickx *= Program.Input.StickMultiplier;
+            sticky *= Program.Input.StickMultiplier;
+
+            int curx = Cursor.Position.X;
+            int cury = Cursor.Position.Y;
+
+            // simulate mouse movement or button hits.
+            switch (this.Function)
+            {
+                case EMJFUNCTION.MOUSE_MOVEMENT:
+                    // move mouse
+                    curx = (int)(stickx * Program.Input.MouseSpeed);
+                    cury = -(int)(sticky * Program.Input.MouseSpeed);
+                    mouse_event(MOUSEEVENTF_MOVE, curx, cury, 0, 0);
+                    break;
+                case EMJFUNCTION.MOUSE_WHEEL:
+                    // turn mouse wheel
+                    if(sticky != 0)
+                        mouse_event(MOUSEEVENTF_WHEEL, curx, cury, (uint)(sticky*Program.Input.MouseSpeed), 0);
+                    break;
+                case EMJFUNCTION.ARROW_KEYS:
+                case EMJFUNCTION.WASD_KEYS:
+                    // simulate keypresses.
+                    string updown = "";
+                    string leftright = "";
+                    if(this.Function == EMJFUNCTION.ARROW_KEYS)
+                    {
+                        if (stickx < 0) leftright = "{LEFT}";
+                        if (stickx > 0) leftright = "{RIGHT}";
+                        if (sticky > 0) updown = "{UP}";
+                        if (sticky < 0) updown = "{DOWN}";
+                    }else{
+                        if (stickx < 0) leftright = "a";
+                        if (stickx > 0) leftright = "d";
+                        if (sticky > 0) updown = "w";
+                        if (sticky < 0) updown = "s";
+                    }
+                    if (updown != "")
+                        SendKeys.SendWait(updown);
+                    if (leftright!="")
+                        SendKeys.SendWait(leftright);
+                    break;
+                // TODO: add the other functions.
+                default:
+                    break;
+            }
+        }
     }
 
     // a configuration.
@@ -330,12 +446,14 @@ namespace Majestic_11
 
         // use such functions for setting the FN flag.
         public void FN1Down() { FNflag = 1; }
-        //public void FNUp() { FNflag = 0; }
 
         // Time to wait until the key will be pressed each frame in ms.
         // Default is 500ms, a frame is 20ms fixed.
         // Keystroke delay of 0 means that the button only will be pressed once.
         public uint DefaultKeyStrokeDelay = 500;
+
+        protected string configName = "[unknown]";
+        public string ConfigName => configName;
 
         public MJConfig() { buttons = new List<MJButtonTranslation>(); }
         public void Update(Gamepad pad)
@@ -443,9 +561,20 @@ namespace Majestic_11
             this.clearButtons();
             MJButtonTranslation b; // you can change the button config after creation with b.
 
+            // set the configuration name.
+            this.configName = "[Hardcoded defaults]";
+            Properties.Settings.Default.StartupConfig = "!default!";
+            Properties.Settings.Default.Save();
+
             // the main menu button => needs this keystroke!
             b = this.addButton(EMJBUTTON.Start, EMJFUNCTION.SHOW_MENU);
             assignExternalFunction(b);
+
+            // left stick for mouse movement.
+            b = this.addButton(EMJBUTTON.LeftThumbstick, EMJFUNCTION.MOUSE_MOVEMENT);
+
+            // right stick for mouse wheel.
+            b = this.addButton(EMJBUTTON.RightThumbstick, EMJFUNCTION.MOUSE_WHEEL);
 
             // FN_1 button = need this keystroke!
             b = this.addButton(EMJBUTTON.LeftShoulder, EMJFUNCTION.FN_MODIFICATOR);
@@ -520,6 +649,14 @@ namespace Majestic_11
                 StreamWriter bw = new StreamWriter(fs);
 
                 Log.Append("done.");
+
+                // set the configname to the filename.
+                this.configName = Path.GetFileName(filename);
+                Properties.Settings.Default.StartupConfig = filename;
+                Properties.Settings.Default.Save();
+
+                // TODO: set as default config.
+
                 // write determinator and version
                 bw.WriteLine(configFileDeterminator);
                 bw.WriteLine(configFileVersion);
@@ -553,7 +690,6 @@ namespace Majestic_11
                 FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
                 StreamReader br = new StreamReader(fs);
 
-                Log.Append("done.");
                 // read determinator and version
                 string t= br.ReadLine();
                 byte cd = byte.Parse(t);
@@ -580,6 +716,13 @@ namespace Majestic_11
                             assignExternalFunction(b);  // maybe assign an external function.
                             this.addButton(b);
                         }
+
+                        // set the new config name.
+                        this.configName = Path.GetFileName(filename);
+                        Properties.Settings.Default.StartupConfig = filename;
+                        Properties.Settings.Default.Save();
+
+                        Log.Line("Loading success.");
                     }
                     else
                     {
@@ -593,14 +736,15 @@ namespace Majestic_11
                     MessageBox.Show("Invalid file.", "I/O Error");
                 }
 
+                Log.Line("DONE");
                 br.Close();
-                Log.Line("Loading success.");
                 return true;
             }
             catch
             {
                 Log.Line("ERROR: Could not open file " + filename + "! Is it read protected?");
-                MessageBox.Show("Could not open " + filename + ". Is it read protected?", "I/O Error");
+                MessageBox.Show("Could not open " + filename + ". Loading defaults.", "I/O Error");
+                this.loadHardcodedDefaultConfig();
                 return false;
             }
         }

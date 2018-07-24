@@ -64,6 +64,8 @@ namespace Majestic_11
             configform = new Frm_ButtonConfig();
             configform.Hide();
 
+            Log.Line("Startup config 2: " + Properties.Settings.Default.StartupConfig);
+
             Running = true;
 
             Application.Run(mainform);

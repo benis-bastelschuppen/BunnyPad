@@ -1,20 +1,31 @@
 ﻿Changes.
 Log begins with version 0.5.18
 
-0.6.0: Config loading and saving works.
+TODO: Update Button, Autostart, some configs.
+0.6.8:  Load last saved configuration at startup.
+0.6.7:	Show actual config file name in the button config window.
+		Config has a configname. Usually the filename.
+0.6.6:	Update the config items when a list item is clicked 
+		in the buttonconfig window.
+0.6.5:	WASD and Arrow keys are configurable for the sticks.
+0.6.4:	Mouse Wheel configuration works (again).
+		Removed some overhead code.
+0.6.3:	Extended EMJBUTTON with thumbsticks.
+		Thumbsticks are now configurable.
+		Mouse movement works. Other stuff must wait, it's late.
+0.6.2:	Extended EMJFUNCTION with thumbstick functions.
+0.6.1:	Minor UI changes.
+0.6.0:	Config loading and saving works.
 0.5.25: [Default Config] button. Loads the hardcoded default config.
 0.5.24: Function assignExternalFunction in MJConfig: 
-	assigns the external function to a button if there is one.
-	Rewritten code for using assignExternalFunction.
-0.5.23: 
-	Restricted filename endings to *.bpc in the dialogs.
-	File save and load wrappers which opens the files.
-gjj                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 	Load and save functions work, just need to load and save the buttons now.
+		assigns the external function to a button if there is one.
+		Rewritten code for using assignExternalFunction.
+0.5.23: Restricted filename endings to *.bpc in the dialogs.
+		File save and load wrappers which opens the files.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              	Load and save functions work, just need to load and save the buttons now.
 0.5.22: Load and Save config buttons and dialogs. (Not working yet.)
-0.5.21: 
-	Set the function from string to EMJFUNCTION in MJButtonTranslation.
-	New Constructor for MJButtonTranslation.
-	Rewrite of all addbutton functions and calls.
+0.5.21: Set the function from string to EMJFUNCTION in MJButtonTranslation.
+		New Constructor for MJButtonTranslation.
+		Rewrite of all addbutton functions and calls.
 0.5.20: Changed the TabIndex on the forms.
 0.5.19: BugFix: Now showing the mouse cursor after login.
 0.5.18:	Removed Windows API calls for mouse moving, using Cursor from WinForms.

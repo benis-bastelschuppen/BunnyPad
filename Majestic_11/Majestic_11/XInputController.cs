@@ -41,11 +41,12 @@ namespace Majestic_11
         protected Controller controller;
         protected bool connected = false;
         public bool IsConnected { get { return connected;} }
-        public float deadzone = 5000;
 
-        protected float multiplier = 50.0f / short.MaxValue;
-         
-        protected Point leftThumb, rightThumb = new Point(0,0);
+        // stick deadzone.
+        public float deadzone = 5000.0f;
+
+        protected float multiplier = 50.0f / (float)short.MaxValue;
+        public float StickMultiplier => multiplier;
 
         protected Thread thread = null;
         protected int pollcount = 0;
@@ -55,35 +56,24 @@ namespace Majestic_11
         public string ConnectText => m_connectingText;
 
         protected float mouseSpeed = 0.5f;
+        public float MouseSpeed => mouseSpeed;
 
         // NEW 0.4.x:
         protected MJConfig config = new MJConfig();
         public MJConfig Config => config;
 
-
-        // import mouse_event from user32.dll
-        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-        public static extern void mouse_event(uint dwFlags, int dx, int dy, uint cButtons, uint dwExtraInfo);
-        //Mouse actions
-        private const int MOUSEEVENTF_LEFTDOWN = 0x02;
-        private const int MOUSEEVENTF_LEFTUP = 0x04;
-        private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
-        private const int MOUSEEVENTF_RIGHTUP = 0x10;
-        private const int MOUSEEVENTF_MIDDLEDOWN = 0x20;
-        private const int MOUSEEVENTF_MIDDLEUP = 0x40;
-        private const int MOUSEEVENTF_WHEEL = 0x0800;
-        private const int MOUSEEVENTF_MOVE = 0x0001;
-        private const int MOUSEEVENTF_ABSOLUTE = 0x8000;
-
-        // ENDOF WINDOWS SPECIFIC
-// ENDOF REMOVE
-
         public XInputController(Frm_MJOY_Main frm)
         {
             config = new MJConfig();
 
-            // create the default config. 
-            config.loadHardcodedDefaultConfig();
+            string loadconfigfile = Properties.Settings.Default.StartupConfig;
+            Log.Line("Startup config 1: " + Properties.Settings.Default.StartupConfig);
+            
+            // maybe load a config, maybe create the default one.
+            if (loadconfigfile[0] != '!')
+                config.LoadFrom(loadconfigfile);
+            else
+                config.loadHardcodedDefaultConfig();
 
             this.mainForm = frm;
             this.connectThread();
@@ -187,30 +177,6 @@ namespace Majestic_11
                         mouseSpeed = 0.1f;
                     if (!config.MouseSpeed_Slower && config.MouseSpeed_Faster)
                         mouseSpeed = 1.0f;
-                    
-                    // OLD
-
-                    // get new values
-                    leftThumb.X = (pad.LeftThumbX < deadzone && pad.LeftThumbX > -deadzone) ? 0 : (int)((float)pad.LeftThumbX * multiplier);
-                    leftThumb.Y = (pad.LeftThumbY < deadzone && pad.LeftThumbY > -deadzone) ? 0 : (int)((float)pad.LeftThumbY * multiplier);
-                    rightThumb.X = (pad.RightThumbX < deadzone && pad.RightThumbX > -deadzone) ? 0 : (int)((float)pad.RightThumbX * multiplier);
-                    rightThumb.Y = (pad.RightThumbY < deadzone && pad.RightThumbY > -deadzone) ? 0 : (int)((float)pad.RightThumbY * multiplier);
-
-                    // set new mouse values
-                    // 0.5.18: use Cursor instead of Win32 API.
-                    Point cur = new Point(Cursor.Position.X, Cursor.Position.Y); //GetCursorPosition();
-//                    cur.X = (int)(cur.X + leftThumb.X * mouseSpeed);
-//                    cur.Y = (int)(cur.Y - leftThumb.Y * mouseSpeed);
-                    cur.X = (int)(leftThumb.X * mouseSpeed);
-                    cur.Y = -(int)(leftThumb.Y * mouseSpeed);
-                    //Cursor.Position = cur;
-                    // 0.5.19 BugFix: we need to use mouse_event to show the mouse after login.
-                    mouse_event(MOUSEEVENTF_MOVE, cur.X, cur.Y, 0, 0);
-
-
-                    // maybe use the scroll wheel.
-                    if (rightThumb.Y != 0)
-                        mouse_event(MOUSEEVENTF_WHEEL, (int)cur.X, (int)cur.Y, (uint)(rightThumb.Y*mouseSpeed), 0);
 
                 } catch (Exception ex) {
                     // sometimes the gamepad will not be found, like when you
@@ -219,6 +185,7 @@ namespace Majestic_11
                     continue;
                 }
 
+                // wait some millisecs.
                 Thread.Sleep(20);
             }
 

@@ -52,8 +52,11 @@
             this.btn_loadConfig = new System.Windows.Forms.Button();
             this.btn_saveConfig = new System.Windows.Forms.Button();
             this.btn_resetConfig = new System.Windows.Forms.Button();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.lbl_actualConfig = new System.Windows.Forms.ToolStripStatusLabel();
             this.grp_newBtn.SuspendLayout();
             this.panel_keystuff.SuspendLayout();
+            this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // ListBox_Buttons
@@ -74,12 +77,13 @@
             this.btn_removeButton.Name = "btn_removeButton";
             this.btn_removeButton.Size = new System.Drawing.Size(82, 30);
             this.btn_removeButton.TabIndex = 3;
-            this.btn_removeButton.Text = "Remove";
+            this.btn_removeButton.Text = "<= Remove";
             this.btn_removeButton.UseVisualStyleBackColor = true;
             this.btn_removeButton.Click += new System.EventHandler(this.btn_removeButton_Click);
             // 
             // btn_OK
             // 
+            this.btn_OK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btn_OK.Location = new System.Drawing.Point(394, 277);
             this.btn_OK.Margin = new System.Windows.Forms.Padding(2);
             this.btn_OK.Name = "btn_OK";
@@ -141,7 +145,7 @@
             // chk_FN
             // 
             this.chk_FN.AutoSize = true;
-            this.chk_FN.Location = new System.Drawing.Point(7, 20);
+            this.chk_FN.Location = new System.Drawing.Point(7, 22);
             this.chk_FN.Margin = new System.Windows.Forms.Padding(2);
             this.chk_FN.Name = "chk_FN";
             this.chk_FN.Size = new System.Drawing.Size(49, 17);
@@ -168,7 +172,7 @@
             this.btn_UpdateSelected.Name = "btn_UpdateSelected";
             this.btn_UpdateSelected.Size = new System.Drawing.Size(82, 30);
             this.btn_UpdateSelected.TabIndex = 2;
-            this.btn_UpdateSelected.Text = "<- Update ^";
+            this.btn_UpdateSelected.Text = "<= Update ^";
             this.btn_UpdateSelected.UseVisualStyleBackColor = true;
             // 
             // txt_keystroke
@@ -261,6 +265,7 @@
             this.dlg_loadConfig.DefaultExt = "bpc";
             this.dlg_loadConfig.FileName = "bunnyconfig.bpc";
             this.dlg_loadConfig.Filter = "Bunnypad Configuration Files (.bpc)|*.bpc";
+            this.dlg_loadConfig.InitialDirectory = "configs";
             this.dlg_loadConfig.Title = "Load Configuration";
             this.dlg_loadConfig.FileOk += new System.ComponentModel.CancelEventHandler(this.dlg_loadConfig_FileOk);
             // 
@@ -269,6 +274,7 @@
             this.dlg_saveConfig.DefaultExt = "bpc";
             this.dlg_saveConfig.FileName = "bunnyconfig.bpc";
             this.dlg_saveConfig.Filter = "BunnyPad Configuration File (.bpc)|*.bpc";
+            this.dlg_saveConfig.InitialDirectory = "configs/";
             this.dlg_saveConfig.FileOk += new System.ComponentModel.CancelEventHandler(this.dlg_saveConfig_FileOk);
             // 
             // btn_loadConfig
@@ -277,7 +283,7 @@
             this.btn_loadConfig.Margin = new System.Windows.Forms.Padding(2);
             this.btn_loadConfig.Name = "btn_loadConfig";
             this.btn_loadConfig.Size = new System.Drawing.Size(82, 30);
-            this.btn_loadConfig.TabIndex = 14;
+            this.btn_loadConfig.TabIndex = 15;
             this.btn_loadConfig.Text = "Load config...";
             this.btn_loadConfig.UseVisualStyleBackColor = true;
             this.btn_loadConfig.Click += new System.EventHandler(this.btn_loadConfig_Click);
@@ -289,7 +295,7 @@
             this.btn_saveConfig.Margin = new System.Windows.Forms.Padding(2);
             this.btn_saveConfig.Name = "btn_saveConfig";
             this.btn_saveConfig.Size = new System.Drawing.Size(82, 30);
-            this.btn_saveConfig.TabIndex = 13;
+            this.btn_saveConfig.TabIndex = 14;
             this.btn_saveConfig.Text = "Save config...";
             this.btn_saveConfig.UseVisualStyleBackColor = true;
             this.btn_saveConfig.Click += new System.EventHandler(this.btn_saveConfig_Click);
@@ -301,15 +307,34 @@
             this.btn_resetConfig.Margin = new System.Windows.Forms.Padding(2);
             this.btn_resetConfig.Name = "btn_resetConfig";
             this.btn_resetConfig.Size = new System.Drawing.Size(82, 30);
-            this.btn_resetConfig.TabIndex = 15;
+            this.btn_resetConfig.TabIndex = 13;
             this.btn_resetConfig.Text = "[Reset config]";
             this.btn_resetConfig.UseVisualStyleBackColor = true;
             this.btn_resetConfig.Click += new System.EventHandler(this.button1_Click);
             // 
+            // statusStrip
+            // 
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.lbl_actualConfig});
+            this.statusStrip.Location = new System.Drawing.Point(0, 337);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(483, 22);
+            this.statusStrip.SizingGrip = false;
+            this.statusStrip.TabIndex = 16;
+            // 
+            // lbl_actualConfig
+            // 
+            this.lbl_actualConfig.Name = "lbl_actualConfig";
+            this.lbl_actualConfig.Size = new System.Drawing.Size(138, 17);
+            this.lbl_actualConfig.Text = "Actual config: [NOT SET]";
+            // 
             // Frm_ButtonConfig
             // 
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(483, 335);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btn_OK;
+            this.ClientSize = new System.Drawing.Size(483, 359);
+            this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.btn_resetConfig);
             this.Controls.Add(this.btn_saveConfig);
             this.Controls.Add(this.btn_loadConfig);
@@ -332,6 +357,8 @@
             this.grp_newBtn.PerformLayout();
             this.panel_keystuff.ResumeLayout(false);
             this.panel_keystuff.PerformLayout();
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -362,5 +389,7 @@
         private System.Windows.Forms.Button btn_loadConfig;
         private System.Windows.Forms.Button btn_saveConfig;
         private System.Windows.Forms.Button btn_resetConfig;
+        private System.Windows.Forms.StatusStrip statusStrip;
+        private System.Windows.Forms.ToolStripStatusLabel lbl_actualConfig;
     }
 }
