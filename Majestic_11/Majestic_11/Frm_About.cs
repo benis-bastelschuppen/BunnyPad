@@ -60,10 +60,10 @@ namespace Majestic_11
                     pos.Y = pos.Y + movedirection;
                     g.DrawImage(aboutImage.BackgroundImage, pos);
 
-                    if (pos.Y + aboutImage.BackgroundImage.Height <= this.Height-bottompanel.Height)
+                    if (pos.Y + aboutImage.BackgroundImage.Height <= this.Height-bottompanel.Height*3)
                         movedirection = 1;
 
-                    if (pos.Y >= 0)
+                    if (pos.Y >= 30)
                         movedirection = -1;
 
                 }

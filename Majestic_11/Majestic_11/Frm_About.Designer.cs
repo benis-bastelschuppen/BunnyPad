@@ -40,7 +40,7 @@
             // btn_OK
             // 
             this.btn_OK.Location = new System.Drawing.Point(539, 1);
-            this.btn_OK.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btn_OK.Margin = new System.Windows.Forms.Padding(2);
             this.btn_OK.Name = "btn_OK";
             this.btn_OK.Size = new System.Drawing.Size(49, 24);
             this.btn_OK.TabIndex = 1;
@@ -53,7 +53,7 @@
             this.aboutImage.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("aboutImage.BackgroundImage")));
             this.aboutImage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.aboutImage.Location = new System.Drawing.Point(-1, -36);
-            this.aboutImage.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.aboutImage.Margin = new System.Windows.Forms.Padding(2);
             this.aboutImage.Name = "aboutImage";
             this.aboutImage.Size = new System.Drawing.Size(608, 735);
             this.aboutImage.TabIndex = 2;
@@ -79,7 +79,7 @@
             this.bottompanel.Controls.Add(this.btn_OK);
             this.bottompanel.Controls.Add(this.url_sourceLink);
             this.bottompanel.Location = new System.Drawing.Point(-1, 412);
-            this.bottompanel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.bottompanel.Margin = new System.Windows.Forms.Padding(2);
             this.bottompanel.Name = "bottompanel";
             this.bottompanel.Size = new System.Drawing.Size(608, 28);
             this.bottompanel.TabIndex = 4;
@@ -92,7 +92,7 @@
             this.Controls.Add(this.aboutImage);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
             this.Name = "Frm_About";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
