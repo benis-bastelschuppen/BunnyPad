@@ -88,7 +88,3 @@ Configure it like you want.
 
 TODO / Nice-To-Have:
 --> Virtual keyboard. Show or hide it with the left thumbstick.
---> Own configuration: (Save and load config)
---> Game configurations:
-	(Beyond Good & Evil: ASDW, Mouse, ESC, M)
---> Reset to default (desktop) config in the blink of an eye.
