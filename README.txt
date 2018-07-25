@@ -35,6 +35,14 @@ You can do the following stuff right now:
 (Versions below 1.0.0, like 0.1.2, are alpha- and beta-versions "in development").
 (Each beta version has another focus. 0.5.x has the focus on the configuration.)
 
+v0.7.0 RC1 Release Candidate 1 => See publish folder.
+
+v0.6.x
+
+Save and load the configuration from 0.5.x. 
+Load the last saved or loaded config on startup.
+Prepare RC1.
+
 v0.5.x
 
 Configure each button for yourself in the configuration window.
@@ -44,10 +52,7 @@ You can also make double button configs and stuff, like you want.
 There are several functions which you can assign to each button. 
 Keyboard actions can be repeated, and the volume-up and -down actions.
 Every button can have the FN flag so you need to press the FN-button for it.
-Configure it like you want. Except for the sticks (Mouse movement and scroll wheel), 
-which are fixed right now, you can do every thinkable configuration and even maybe more. :)
-
-(It does not save or load right now!)
+Configure it like you want.
 
 <= v0.4
 
