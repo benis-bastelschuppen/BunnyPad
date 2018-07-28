@@ -2,6 +2,10 @@
 Log begins with version 0.5.18
 
 TODO: Autostart
+0.7.12: Hit a key with the VK.
+		CreateVKArray-Function in MJConfig.
+		Array with the virtual keyboard keys.
+		It'sa working.
 0.7.11: Using the sticks too for the virtual keyboard.
 		Timer of 250ms, then it presses the cursor key each 60ms.
 0.7.10: Better VK overlay transparency: 80% opaque, black, no transparency key.

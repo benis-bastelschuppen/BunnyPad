@@ -475,7 +475,12 @@ namespace Majestic_11
         protected string configName = "[unknown]";
         public string ConfigName => configName;
 
-        public MJConfig() { buttons = new List<MJButtonTranslation>(); }
+        // Constructor.
+        public MJConfig()
+        {
+            buttons = new List<MJButtonTranslation>();
+            createVKArray(); // 0.7.12
+        }
 
         // <0.7.9 This function updates the virtual keyboard functionality.
         // Move the cursor with left or right stick.
@@ -490,10 +495,11 @@ namespace Majestic_11
         int lastVKCursorKey = -1;
         int VKtimer = 0;
         bool VKfirsttime = true;
+        bool vkshiftkey = false;
         public void UpdateVirtualKeyboard(Gamepad pad)
         {
             // Get the shift flag.
-            bool shiftkey = (pad.RightTrigger >= 10) ? true : false;
+            vkshiftkey = (pad.RightTrigger >= 10) ? true : false;
 
             // get the actual cursor moving parameter.
             // 0.7.11: also use thumbsticks
@@ -557,7 +563,10 @@ namespace Majestic_11
                     case 7:
                     case 8:
                         vkPosY = moveCursor - 5;
-                        // TODO: HIT THE KEY
+                        hitCursor();
+                        break;
+                    case 9:
+                        hitCursor();
                         break;
                     default:
                         break;
@@ -573,8 +582,16 @@ namespace Majestic_11
             }
             lastVKCursorKey = moveCursor;
             VKtimer += 20;
-            Program.UpdateVKForm(shiftkey, vkPosX, vkPosY);
+            Program.UpdateVKForm(vkshiftkey, vkPosX, vkPosY);
         }
+
+        // v0.7.12 hit the virtual keyboard key.        
+        protected void hitCursor()
+        {
+            Log.Line("VK: a");
+            SendKeys.SendWait(vkArray[vkPosX,vkPosY,(vkshiftkey==true?1:0)]);
+        }
+
 
         // this function updates all the stuff.
         public void Update(Gamepad pad)
@@ -901,6 +918,116 @@ namespace Majestic_11
                 this.loadHardcodedDefaultConfig();
                 return false;
             }
+        }
+
+        // creaate the virtual key arrays.
+        string[,,] vkArray;
+        public void createVKArray()
+        {
+            // x,y,z where z is the shift key.
+            // x and y are the layout on the VK image.
+            string[,,] ar = new string[vkMaxX,vkMaxY,2];
+            ar[0, 0, 0] = "a";
+            ar[0, 1, 0] = "b";
+            ar[0, 2, 0] = "c";
+            ar[0, 3, 0] = "d";
+
+            ar[0, 0, 1] = "A";
+            ar[0, 1, 1] = "B";
+            ar[0, 2, 1] = "C";
+            ar[0, 3, 1] = "D";
+
+            ar[1, 0, 0] = "e";
+            ar[1, 1, 0] = "f";
+            ar[1, 2, 0] = "g";
+            ar[1, 3, 0] = "h";
+
+            ar[1, 0, 1] = "E";
+            ar[1, 1, 1] = "F";
+            ar[1, 2, 1] = "G";
+            ar[1, 3, 1] = "H";
+
+            ar[2, 0, 0] = "i";
+            ar[2, 1, 0] = "j";
+            ar[2, 2, 0] = "k";
+            ar[2, 3, 0] = "l";
+
+            ar[2, 0, 1] = "I";
+            ar[2, 1, 1] = "J";
+            ar[2, 2, 1] = "K";
+            ar[2, 3, 1] = "L";
+
+            ar[3, 0, 0] = "m";
+            ar[3, 1, 0] = "n";
+            ar[3, 2, 0] = "o";
+            ar[3, 3, 0] = "p";
+
+            ar[3, 0, 1] = "M";
+            ar[3, 1, 1] = "N";
+            ar[3, 2, 1] = "O";
+            ar[3, 3, 1] = "P";
+
+            ar[4, 0, 0] = "q";
+            ar[4, 1, 0] = "r";
+            ar[4, 2, 0] = "s";
+            ar[4, 3, 0] = "t";
+
+            ar[4, 0, 1] = "Q";
+            ar[4, 1, 1] = "R";
+            ar[4, 2, 1] = "S";
+            ar[4, 3, 1] = "T";
+
+            ar[5, 0, 0] = "u";
+            ar[5, 1, 0] = "v";
+            ar[5, 2, 0] = "w";
+            ar[5, 3, 0] = "x";
+
+            ar[5, 0, 1] = "U";
+            ar[5, 1, 1] = "V";
+            ar[5, 2, 1] = "W";
+            ar[5, 3, 1] = "X";
+
+            ar[6, 0, 0] = "y";
+            ar[6, 1, 0] = "z";
+            ar[6, 2, 0] = ",";
+            ar[6, 3, 0] = ".";
+
+            ar[6, 0, 1] = "Y";
+            ar[6, 1, 1] = "Z";
+            ar[6, 2, 1] = ";";
+            ar[6, 3, 1] = ":";
+
+            ar[7, 0, 0] = "7";
+            ar[7, 1, 0] = "4";
+            ar[7, 2, 0] = "1";
+            ar[7, 3, 0] = "@";
+
+            ar[7, 0, 1] = "{+}";
+            ar[7, 1, 1] = "=";
+            ar[7, 2, 1] = "?";
+            ar[7, 3, 1] = "!";
+
+            ar[8, 0, 0] = "8";
+            ar[8, 1, 0] = "5";
+            ar[8, 2, 0] = "2";
+            ar[8, 3, 0] = "0";
+
+            ar[8, 0, 1] = "*";
+            ar[8, 1, 1] = "#";
+            ar[8, 2, 1] = "{(}";
+            ar[8, 3, 1] = "{)}";
+
+            ar[9, 0, 0] = "9";
+            ar[9, 1, 0] = "6";
+            ar[9, 2, 0] = "3";
+            ar[9, 3, 0] = "/";
+
+            ar[9, 0, 1] = "-";
+            ar[9, 1, 1] = "_";
+            ar[9, 2, 1] = "[";
+            ar[9, 3, 1] = "]";
+
+            vkArray = ar;
         }
     }
 }
