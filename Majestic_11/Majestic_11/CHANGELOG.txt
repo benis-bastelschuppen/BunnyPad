@@ -1,10 +1,29 @@
 ﻿Changes.
 Log begins with version 0.5.18
 
-TODO: Update Button, Autostart, some configs.
+TODO: Autostart
+0.7.11: Using the sticks too for the virtual keyboard.
+		Timer of 250ms, then it presses the cursor key each 60ms.
+0.7.10: Better VK overlay transparency: 80% opaque, black, no transparency key.
+0.7.9:	Move the VK cursor with the DPad.
+		Better VK cursor with lines to mark the ABXY keys.
+0.7.8:	Better overlay images with more keys.
+0.7.7:	Updated main form image with VK button.
+0.7.6:	Cursor drawing for virtual keyboard.
+0.7.5:	Better image drawing for VK overlay.
+0.7.4:  Virtual SHIFT key changes VK overlay image.
+0.7.3:  Virtual Keyboard images.
+0.7.2:	Added SWITCH_VIRTUAL_KEYBOARD to the MJFunction-Enum.
+		Created the function to switch the VK.
+		Added VK button to the hardcoded default config.
+		Showing the VK overlay when the button is pressed.
+		Stopping all buttons/sticks when VK is on.
+		(VK not working yet.)
+0.7.1:  Another about image.
 0.7.0:  Working update button.
 		Function createButtonFromValues in Frm_ButtonConfig.cs
 		Function updateButton in MJConfig
+		This is RC 1.
 0.6.8:  Load last saved configuration at startup.
 0.6.7:	Show actual config file name in the button config window.
 		Config has a configname. Usually the filename.

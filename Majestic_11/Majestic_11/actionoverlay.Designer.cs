@@ -28,43 +28,79 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.lbl_overlay = new System.Windows.Forms.Label();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(actionoverlay));
+            this.img_vkOverlay = new System.Windows.Forms.PictureBox();
+            this.img_smallChars = new System.Windows.Forms.PictureBox();
+            this.img_bigChars = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.img_vkOverlay)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.img_smallChars)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.img_bigChars)).BeginInit();
             this.SuspendLayout();
             // 
-            // lbl_overlay
+            // img_vkOverlay
             // 
-            this.lbl_overlay.AutoSize = true;
-            this.lbl_overlay.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_overlay.ForeColor = System.Drawing.Color.Yellow;
-            this.lbl_overlay.Location = new System.Drawing.Point(2, -1);
-            this.lbl_overlay.Name = "lbl_overlay";
-            this.lbl_overlay.Size = new System.Drawing.Size(71, 69);
-            this.lbl_overlay.TabIndex = 0;
-            this.lbl_overlay.Text = "A";
-            this.lbl_overlay.Click += new System.EventHandler(this.lbl_overlay_Click);
+            this.img_vkOverlay.BackColor = System.Drawing.Color.Transparent;
+            this.img_vkOverlay.Image = ((System.Drawing.Image)(resources.GetObject("img_vkOverlay.Image")));
+            this.img_vkOverlay.Location = new System.Drawing.Point(-1, 0);
+            this.img_vkOverlay.Name = "img_vkOverlay";
+            this.img_vkOverlay.Size = new System.Drawing.Size(553, 239);
+            this.img_vkOverlay.TabIndex = 1;
+            this.img_vkOverlay.TabStop = false;
+            this.img_vkOverlay.Click += new System.EventHandler(this.img_vkOverlay_Click);
+            // 
+            // img_smallChars
+            // 
+            this.img_smallChars.Image = ((System.Drawing.Image)(resources.GetObject("img_smallChars.Image")));
+            this.img_smallChars.Location = new System.Drawing.Point(-1, 2);
+            this.img_smallChars.Name = "img_smallChars";
+            this.img_smallChars.Size = new System.Drawing.Size(63, 53);
+            this.img_smallChars.TabIndex = 2;
+            this.img_smallChars.TabStop = false;
+            this.img_smallChars.Visible = false;
+            // 
+            // img_bigChars
+            // 
+            this.img_bigChars.Image = ((System.Drawing.Image)(resources.GetObject("img_bigChars.Image")));
+            this.img_bigChars.Location = new System.Drawing.Point(68, 2);
+            this.img_bigChars.Name = "img_bigChars";
+            this.img_bigChars.Size = new System.Drawing.Size(58, 53);
+            this.img_bigChars.TabIndex = 3;
+            this.img_bigChars.TabStop = false;
+            this.img_bigChars.Visible = false;
             // 
             // actionoverlay
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(74, 69);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.BackColor = System.Drawing.Color.MidnightBlue;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.ClientSize = new System.Drawing.Size(554, 245);
             this.ControlBox = false;
-            this.Controls.Add(this.lbl_overlay);
+            this.Controls.Add(this.img_bigChars);
+            this.Controls.Add(this.img_smallChars);
+            this.Controls.Add(this.img_vkOverlay);
+            this.DoubleBuffered = true;
+            this.Enabled = false;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "actionoverlay";
+            this.Opacity = 0.8D;
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "actionoverlay";
+            this.Load += new System.EventHandler(this.actionoverlay_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.img_vkOverlay)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.img_smallChars)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.img_bigChars)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Label lbl_overlay;
+        private System.Windows.Forms.PictureBox img_vkOverlay;
+        private System.Windows.Forms.PictureBox img_smallChars;
+        private System.Windows.Forms.PictureBox img_bigChars;
     }
 }

@@ -7,6 +7,7 @@
  * by Benedict "Oki Wan Ben0bi" Jäggi
  * (Joymouse) ~2002
  * Copyright 2018 Ben0bi Enterprises
+ * https://github.com/ben0bi/BunnyPad
  * 
  * LICENSE:
  * Use of this source code and/or the executables is free in all terms for private use,
@@ -22,9 +23,7 @@
  */
 
  using SharpDX.XInput;
-using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -35,6 +34,7 @@ namespace Majestic_11
     public enum EMJFUNCTION
     {
         SHOW_MENU = 291,
+        SWITCH_VIRTUAL_KEYBOARD = 821,
         KEYBOARD_COMBINATION = 1000,
         LEFT_MOUSE_BUTTON = 2000,
         RIGHT_MOUSE_BUTTON,
@@ -52,6 +52,7 @@ namespace Majestic_11
         MOUSE_WHEEL
     }
 
+    // a stick or button.
     public enum EMJBUTTON
     {
         None = GamepadButtonFlags.None,
@@ -284,6 +285,14 @@ namespace Majestic_11
         // update the button
         public void Update(Gamepad pad, byte FNflag)
         {
+            // return if the virtual keyboard is on.
+            if(Program.Input.Config.IsVirtualKeyboardOn && this.Function!=EMJFUNCTION.SWITCH_VIRTUAL_KEYBOARD && this.Function!=EMJFUNCTION.SHOW_MENU)
+            {
+                // The VK will be updated in the configs Update
+                // function, not in the MJButtonTranslation one.
+                return;
+            }
+
             // check if the button is down or not and call the delegates if needed.
             GamepadButtonFlags fl = GamepadButtonFlags.None;
             bool isdown = false;
@@ -424,6 +433,8 @@ namespace Majestic_11
         }
     }
 
+//----------------------------------------------------------------
+
     // a configuration.
     public class MJConfig
     {
@@ -447,6 +458,15 @@ namespace Majestic_11
         // use such functions for setting the FN flag.
         public void FN1Down() { FNflag = 1; }
 
+        // 0.7.2: Virtual keyboard stuff.
+        protected bool showVirtualKeyboard = false;
+        public bool IsVirtualKeyboardOn => showVirtualKeyboard;
+        public void switchVirtualKeyboard()
+        {
+            showVirtualKeyboard = !showVirtualKeyboard;
+            Program.SwitchVKVisibility(showVirtualKeyboard);
+        }
+
         // Time to wait until the key will be pressed each frame in ms.
         // Default is 500ms, a frame is 20ms fixed.
         // Keystroke delay of 0 means that the button only will be pressed once.
@@ -456,6 +476,107 @@ namespace Majestic_11
         public string ConfigName => configName;
 
         public MJConfig() { buttons = new List<MJButtonTranslation>(); }
+
+        // <0.7.9 This function updates the virtual keyboard functionality.
+        // Move the cursor with left or right stick.
+        // Use left trigger to directly hit the key under the cursor.
+        // Use A B X Y Leftshoulder for hitting the key assigned
+        // to the given button under the cursor.
+        // use right trigger for shift key.
+        int vkPosX = 0;
+        int vkPosY = 0;
+        static int vkMaxX = 10;
+        static int vkMaxY = 4;
+        int lastVKCursorKey = -1;
+        int VKtimer = 0;
+        bool VKfirsttime = true;
+        public void UpdateVirtualKeyboard(Gamepad pad)
+        {
+            // Get the shift flag.
+            bool shiftkey = (pad.RightTrigger >= 10) ? true : false;
+
+            // get the actual cursor moving parameter.
+            // 0.7.11: also use thumbsticks
+            float dzone = Program.Input.deadzone;
+            int moveCursor = -1;
+            if ((pad.Buttons & GamepadButtonFlags.DPadUp) == GamepadButtonFlags.DPadUp ||
+                pad.LeftThumbY > dzone || pad.RightThumbY > dzone)
+                moveCursor = 1; // up
+            if ((pad.Buttons & GamepadButtonFlags.DPadDown) == GamepadButtonFlags.DPadDown ||
+                pad.LeftThumbY < -dzone || pad.RightThumbY < -dzone)
+                moveCursor = 2; // down
+            if ((pad.Buttons & GamepadButtonFlags.DPadLeft) == GamepadButtonFlags.DPadLeft ||
+                pad.LeftThumbX < -dzone || pad.RightThumbX < -dzone)
+                moveCursor = 3; // left
+            if ((pad.Buttons & GamepadButtonFlags.DPadRight) == GamepadButtonFlags.DPadRight ||
+                pad.LeftThumbX > dzone || pad.RightThumbX > dzone)
+                    moveCursor = 4; // right
+
+            // set the y cursor position directly 
+            // with the shortcut keys. And then press.
+            if ((pad.Buttons & GamepadButtonFlags.A) == GamepadButtonFlags.A)
+                moveCursor = 8;
+            if ((pad.Buttons & GamepadButtonFlags.B) == GamepadButtonFlags.B)
+                moveCursor = 7;
+            if ((pad.Buttons & GamepadButtonFlags.X) == GamepadButtonFlags.X)
+                moveCursor = 6;
+            if ((pad.Buttons & GamepadButtonFlags.Y) == GamepadButtonFlags.Y)
+                moveCursor = 5;
+
+            // update the cursor position, but just once.
+            if (moveCursor!=lastVKCursorKey ||
+                (VKfirsttime==false && VKtimer > 60) ||
+                (VKfirsttime == true && VKtimer > 250))
+            {
+                switch(moveCursor)
+                {
+                    case 1: // up
+                        vkPosY -= 1;
+                        if (vkPosY < 0)
+                            vkPosY = vkMaxY - 1;
+                        break;
+                    case 2: // down
+                        vkPosY += 1;
+                        if (vkPosY >= vkMaxY)
+                            vkPosY = 0;
+                        break;
+                    case 3: // left
+                        vkPosX -= 1;
+                        if (vkPosX < 0)
+                            vkPosX = vkMaxX - 1;
+                        break;
+                    case 4: // right
+                        vkPosX += 1;
+                        if (vkPosX >= vkMaxX)
+                            vkPosX = 0;
+                        break;
+                    // special shortcut cursor 
+                    // positions with a direct keyhit.
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                        vkPosY = moveCursor - 5;
+                        // TODO: HIT THE KEY
+                        break;
+                    default:
+                        break;
+                }
+                // reset timer.
+                VKtimer = 0;
+                // reset the first timer only
+                // if another key is pressed.
+                if (moveCursor == lastVKCursorKey)
+                    VKfirsttime = false;
+                else
+                    VKfirsttime = true;
+            }
+            lastVKCursorKey = moveCursor;
+            VKtimer += 20;
+            Program.UpdateVKForm(shiftkey, vkPosX, vkPosY);
+        }
+
+        // this function updates all the stuff.
         public void Update(Gamepad pad)
         {
             // first, just check for FN flags.
@@ -463,13 +584,19 @@ namespace Majestic_11
             FNflag = 0;
             foreach (MJButtonTranslation btn in buttons)
             {
-                if(btn.Function == EMJFUNCTION.FN_MODIFICATOR)
+                if (btn.Function == EMJFUNCTION.FN_MODIFICATOR)
                     btn.Update(pad, FNflag);
             }
             // then update the buttons.
             foreach (MJButtonTranslation btn in buttons)
             {
                 btn.Update(pad, FNflag);
+            }
+
+            // update the virtual keyboard if the keyboard is on.
+            if (Program.Input.Config.IsVirtualKeyboardOn)
+            {
+                this.UpdateVirtualKeyboard(pad);
             }
         }
 
@@ -566,6 +693,12 @@ namespace Majestic_11
                     bt.onButtonUp = this.mouseFaster_release;
                     bt.ActionText = "Faster movement";
                     break;
+                case EMJFUNCTION.SWITCH_VIRTUAL_KEYBOARD:
+                    // 0.7.2: switch virtual keyboard.
+                    bt.onButtonDown = this.switchVirtualKeyboard;
+                    bt.onButtonUp = MJButtonTranslation.voidFunc;
+                    bt.ActionText = "Switch Virtual Keyboard";
+                    break;
                 default:
                     break;
             }
@@ -583,8 +716,12 @@ namespace Majestic_11
             Properties.Settings.Default.StartupConfig = "!default!";
             Properties.Settings.Default.Save();
 
-            // the main menu button => needs this keystroke!
+            // the main menu button.
             b = this.addButton(EMJBUTTON.Start, EMJFUNCTION.SHOW_MENU);
+            assignExternalFunction(b);
+
+            // the switch virtual keyboard button.
+            b = this.addButton(EMJBUTTON.LeftThumb, EMJFUNCTION.SWITCH_VIRTUAL_KEYBOARD);
             assignExternalFunction(b);
 
             // left stick for mouse movement.

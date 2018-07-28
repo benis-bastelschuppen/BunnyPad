@@ -35,6 +35,8 @@ You can do the following stuff right now:
 (Versions below 1.0.0, like 0.1.2, are alpha- and beta-versions "in development").
 (Each beta version has another focus. 0.5.x has the focus on the configuration.)
 
+v0.7.x Uh, I forgot the virtual keyboard. Working on it.
+
 v0.7.0 RC1 Release Candidate 1 => See publish folder.
 
 v0.6.x

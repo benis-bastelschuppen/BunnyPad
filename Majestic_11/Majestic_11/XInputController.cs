@@ -7,6 +7,7 @@
  * by Benedict "Oki Wan Ben0bi" Jäggi
  * (Joymouse) ~2002
  * Copyright 2018 Ben0bi Enterprises
+ * https://github.com/ben0bi/BunnyPad
  * 
  * LICENSE:
  * Use of this source code and/or the executables is free in all terms for private use,
@@ -20,6 +21,7 @@
  * It is forbidden to sell this product or parts of it. Commercial use is not allowed in 
  * all terms except the ones declared above.
  */
+
 
 using System;
 

@@ -21,6 +21,8 @@ namespace Majestic_11
         public static XInputController controlpoller;
         public static XInputController Input => controlpoller;
 
+        static actionoverlay VKoverlay;
+
         public static bool Running = false;
 
         static bool mainFormVisibility = true;
@@ -34,23 +36,26 @@ namespace Majestic_11
 
             // the action overlay is the overlay which shows the virtual keyboard.
 
-            //actionoverlay overlay = new actionoverlay();
+            VKoverlay = new actionoverlay();
 
             // set actionoverlay position
-            /*foreach (var scrn in Screen.AllScreens)
+            foreach (var scrn in Screen.AllScreens)
             {
-                if (scrn.Bounds.Contains(overlay.Location))
+                if (scrn.Bounds.Contains(VKoverlay.Location))
                 {
-                    overlay.Location = new Point(scrn.Bounds.Right - overlay.Width, scrn.Bounds.Top);
+                    VKoverlay.Location = new Point(scrn.Bounds.Right - VKoverlay.Width, scrn.Bounds.Top);
                     break;
                 }
-            }*/
+            }
 
             // set the overlay forms properties.
-            /*overlay.BackColor = System.Drawing.Color.LightGreen;
-            overlay.TransparencyKey = System.Drawing.Color.LightGreen;
-            overlay.TopMost = true;
-            */
+            // 0.7.2
+            //VKoverlay.BackColor = System.Drawing.Color.White;
+            //VKoverlay.TransparencyKey = System.Drawing.Color.White;
+            VKoverlay.Show(); // we need to show it here else it will
+                                // not show up at all.
+            VKoverlay.TopMost = true;
+            VKoverlay.Hide();
 
             // this is the main poller for the controls.
             controlpoller = new XInputController(mainform);
@@ -84,6 +89,50 @@ namespace Majestic_11
                 HideMainForm();
         }
 
+        // show or hide the virtual keyboard overlay.
+        public static void SwitchVKVisibility(bool visible)
+        {
+            VKoverlay.Invoke((MethodInvoker)delegate 
+            {  
+                if (visible)
+                {
+                    VKoverlay.Show();
+                    VKoverlay.TopMost = true;
+                }else{
+                    VKoverlay.Hide();
+                }
+            });
+        }
+
+        // update the virtual keyboard form.
+        static bool oldshift = false;
+        static byte vkCharSizeX = 47;
+        static byte vkCharSizeY = 47;
+        static int vkStartX = 90;
+        static int oldcurX = -1;
+        static int oldcurY = -1;
+        public static void UpdateVKForm(bool newshift, int curposx, int curposy)
+        {
+            if (oldshift != newshift || oldcurX != curposx || oldcurY != curposy)
+            {
+                // send the new changes to the form, thread safe.
+                VKoverlay.Invoke((MethodInvoker)delegate
+                {
+                    if (newshift)
+                    {
+                        VKoverlay.showBigChars();
+                    }else{
+                        VKoverlay.showSmallChars();
+                    }
+                    VKoverlay.updateView(vkStartX+ curposx * vkCharSizeX, curposy * vkCharSizeY);
+                });
+                oldshift = newshift;
+                oldcurX = curposx;
+                oldcurY = curposy;
+            }
+        }
+
+        // hide or minimize the main form.
         public static void HideMainForm()
         {
             mainform.Invoke((MethodInvoker)delegate
@@ -96,6 +145,7 @@ namespace Majestic_11
             });
         }
 
+        // show the main form from another thread.
         public static void ShowMainForm()
         {
             mainform.Invoke((MethodInvoker)delegate {
@@ -107,6 +157,7 @@ namespace Majestic_11
             });
         }
 
+        // show the about form.
         public static void ShowAboutForm()
         {
             if (aboutform.IsDisposed)
@@ -114,6 +165,7 @@ namespace Majestic_11
             aboutform.Start();
         }
 
+        // show the button config form.
         public static void ShowButtonConfigForm()
         {
             if (configform.IsDisposed)
