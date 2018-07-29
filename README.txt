@@ -35,6 +35,11 @@ You can do the following stuff right now:
 (Versions below 1.0.0, like 0.1.2, are alpha- and beta-versions "in development").
 (Each beta version has another focus. 0.5.x has the focus on the configuration.)
 
+v0.7.16 With virtual keyboard now but it won't work sometimes when 
+		the main menu gets hidden and it had the focus before. It will not give the focus back to the underlying app then, 
+		even when you click on it and it really *has* the focus - then you turn VK on and it does not work anymore.
+		Just press the main menu button then, click on your app and then again on the main menu button to hide it without focus.
+
 v0.7.x Uh, I forgot the virtual keyboard. Working on it.
 
 v0.7.0 RC1 Release Candidate 1 => See publish folder.
