@@ -92,13 +92,27 @@ namespace Majestic_11
         // show or hide the virtual keyboard overlay.
         public static void SwitchVKVisibility(bool visible)
         {
+            // show or hide the image.
+            // 0.7.16: show or hide the image.
+            mainform.Invoke((MethodInvoker)delegate
+            {
+                if (visible)
+                {
+                    mainform.showMainImage(true);
+                }else{
+                    mainform.showMainImage(false);
+                }
+            });
+            
             VKoverlay.Invoke((MethodInvoker)delegate 
             {  
                 if (visible)
                 {
+                   // mainform.showMainImage(true);
                     VKoverlay.Show();
                     VKoverlay.TopMost = true;
                 }else{
+                    //mainform.showMainImage(false);
                     VKoverlay.Hide();
                 }
             });
@@ -139,9 +153,14 @@ namespace Majestic_11
             {
                 mainFormVisibility = false;
                 if (Program.controlpoller.IsConnected)
+                {
+                    mainform.Enabled = false;
                     mainform.Hide();
+                }
                 else
+                {
                     mainform.WindowState = FormWindowState.Minimized;
+                }
             });
         }
 
@@ -151,6 +170,7 @@ namespace Majestic_11
             mainform.Invoke((MethodInvoker)delegate {
                 mainFormVisibility = true;
                 mainform.Show();
+                mainform.Enabled = true;
                 mainform.WindowState = FormWindowState.Normal;
                 mainform.BringToFront();
                 mainform.Activate(); 

@@ -19,7 +19,7 @@ namespace Majestic_11
 
         private void Frm_MJOY_Main_Load(object sender, EventArgs e)
         {
-
+            showMainImage();
         }
 
         private void btn_quit_Click(object sender, EventArgs e)
@@ -41,6 +41,15 @@ namespace Majestic_11
         private void btn_Config_Click(object sender, EventArgs e)
         {
             Program.ShowButtonConfigForm();
+        }
+
+        // show the main or vk image.
+        public void showMainImage(bool vk = false)
+        {
+            if (!vk)
+                img_MAIN.BackgroundImage = img_defaultConfig.Image;
+            else
+                img_MAIN.BackgroundImage = img_VKConfig.Image;
         }
     }
 }

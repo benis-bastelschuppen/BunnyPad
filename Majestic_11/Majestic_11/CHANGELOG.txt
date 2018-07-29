@@ -2,6 +2,17 @@
 Log begins with version 0.5.18
 
 TODO: Autostart
+0.7.16: Show the help image when the VK is on.
+		Sometimes it won't work with hidden main menu. 
+		Just press the main menu button then and get the focus to
+		your application. Press main menu again and it will work.
+0.7.15: Help image for the VK, not implemented yet.
+0.7.14:	Other special chars for RS button, new images for them.
+0.7.13:	Special characters for RS button.
+		New VK images.
+		RS button works for VK.
+		LS button works for VK.
+		LT works like RT for VK.
 0.7.12: Hit a key with the VK.
 		CreateVKArray-Function in MJConfig.
 		Array with the virtual keyboard keys.

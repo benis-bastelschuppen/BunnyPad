@@ -491,7 +491,7 @@ namespace Majestic_11
         int vkPosX = 0;
         int vkPosY = 0;
         static int vkMaxX = 10;
-        static int vkMaxY = 4;
+        static int vkMaxY = 5;
         int lastVKCursorKey = -1;
         int VKtimer = 0;
         bool VKfirsttime = true;
@@ -499,7 +499,7 @@ namespace Majestic_11
         public void UpdateVirtualKeyboard(Gamepad pad)
         {
             // Get the shift flag.
-            vkshiftkey = (pad.RightTrigger >= 10) ? true : false;
+            vkshiftkey = (pad.RightTrigger > 10 || pad.LeftTrigger > 10) ? true : false;
 
             // get the actual cursor moving parameter.
             // 0.7.11: also use thumbsticks
@@ -520,6 +520,8 @@ namespace Majestic_11
 
             // set the y cursor position directly 
             // with the shortcut keys. And then press.
+            if ((pad.Buttons & GamepadButtonFlags.RightShoulder) == GamepadButtonFlags.RightShoulder)
+                moveCursor = 9;
             if ((pad.Buttons & GamepadButtonFlags.A) == GamepadButtonFlags.A)
                 moveCursor = 8;
             if ((pad.Buttons & GamepadButtonFlags.B) == GamepadButtonFlags.B)
@@ -528,6 +530,10 @@ namespace Majestic_11
                 moveCursor = 6;
             if ((pad.Buttons & GamepadButtonFlags.Y) == GamepadButtonFlags.Y)
                 moveCursor = 5;
+
+            // or hit the key under the cursor directly with LS.
+            if ((pad.Buttons & GamepadButtonFlags.LeftShoulder) == GamepadButtonFlags.LeftShoulder)
+                moveCursor = 10;
 
             // update the cursor position, but just once.
             if (moveCursor!=lastVKCursorKey ||
@@ -562,10 +568,11 @@ namespace Majestic_11
                     case 6:
                     case 7:
                     case 8:
+                    case 9:
                         vkPosY = moveCursor - 5;
                         hitCursor();
                         break;
-                    case 9:
+                    case 10:
                         hitCursor();
                         break;
                     default:
@@ -588,8 +595,9 @@ namespace Majestic_11
         // v0.7.12 hit the virtual keyboard key.        
         protected void hitCursor()
         {
-            Log.Line("VK: a");
-            SendKeys.SendWait(vkArray[vkPosX,vkPosY,(vkshiftkey==true?1:0)]);
+            string hit = vkArray[vkPosX, vkPosY, (vkshiftkey == true ? 1 : 0)];
+            Log.Line("VK: "+hit);
+            SendKeys.SendWait(hit);
         }
 
 
@@ -657,7 +665,7 @@ namespace Majestic_11
             Log.Line("Remove button from config: " + btn.keyStroke.ToLower());
             if (btn.keyStroke.ToLower() == "@mainmenu@")
             {
-                // TODO: check for other main menu.
+                // Check for other main menu.
                 uint count = 0;
                 foreach (MJButtonTranslation b in buttons)
                 {
@@ -1004,8 +1012,8 @@ namespace Majestic_11
 
             ar[7, 0, 1] = "{+}";
             ar[7, 1, 1] = "=";
-            ar[7, 2, 1] = "?";
-            ar[7, 3, 1] = "!";
+            ar[7, 2, 1] = "&";
+            ar[7, 3, 1] = "{^}";
 
             ar[8, 0, 0] = "8";
             ar[8, 1, 0] = "5";
@@ -1026,6 +1034,29 @@ namespace Majestic_11
             ar[9, 1, 1] = "_";
             ar[9, 2, 1] = "[";
             ar[9, 3, 1] = "]";
+
+            // 0.7.13: Special chars for RS button.
+            ar[0, 4, 0] = "{TAB}";
+            ar[1, 4, 0] = "{ENTER}";
+            ar[2, 4, 0] = " ";
+            ar[3, 4, 0] = "{LEFT}";
+            ar[4, 4, 0] = "{RIGHT}";
+            ar[5, 4, 0] = "{UP}";
+            ar[6, 4, 0] = "{DOWN}";
+            ar[7, 4, 0] = "?";
+            ar[8, 4, 0] = "!";
+            ar[9, 4, 0] = "{BACKSPACE}";
+
+            ar[0, 4, 1] = "{TAB}";
+            ar[1, 4, 1] = "{ENTER}";
+            ar[2, 4, 1] = " ";
+            ar[3, 4, 1] = "{LEFT}";
+            ar[4, 4, 1] = "{RIGHT}";
+            ar[5, 4, 1] = "{UP}";
+            ar[6, 4, 1] = "{DOWN}";
+            ar[7, 4, 1] = "ä";
+            ar[8, 4, 1] = "ö";
+            ar[9, 4, 1] = "ü";
 
             vkArray = ar;
         }

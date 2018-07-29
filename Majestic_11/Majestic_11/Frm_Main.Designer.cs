@@ -57,10 +57,14 @@ namespace Majestic_11
             this.lbl_connected = new System.Windows.Forms.Label();
             this.btn_quit = new System.Windows.Forms.Button();
             this.btn_minimize = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.img_MAIN = new System.Windows.Forms.PictureBox();
             this.btn_about = new System.Windows.Forms.Button();
             this.btn_Config = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.img_defaultConfig = new System.Windows.Forms.PictureBox();
+            this.img_VKConfig = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.img_MAIN)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.img_defaultConfig)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.img_VKConfig)).BeginInit();
             this.SuspendLayout();
             // 
             // lbl_connected
@@ -97,17 +101,17 @@ namespace Majestic_11
             this.btn_minimize.UseVisualStyleBackColor = true;
             this.btn_minimize.Click += new System.EventHandler(this.btn_minimize_Click);
             // 
-            // pictureBox1
+            // img_MAIN
             // 
-            this.pictureBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.BackgroundImage")));
-            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.pictureBox1.Location = new System.Drawing.Point(2, 11);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(611, 288);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox1.TabIndex = 4;
-            this.pictureBox1.TabStop = false;
+            this.img_MAIN.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("img_MAIN.BackgroundImage")));
+            this.img_MAIN.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.img_MAIN.Location = new System.Drawing.Point(2, 11);
+            this.img_MAIN.Margin = new System.Windows.Forms.Padding(2);
+            this.img_MAIN.Name = "img_MAIN";
+            this.img_MAIN.Size = new System.Drawing.Size(611, 288);
+            this.img_MAIN.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.img_MAIN.TabIndex = 4;
+            this.img_MAIN.TabStop = false;
             // 
             // btn_about
             // 
@@ -131,17 +135,39 @@ namespace Majestic_11
             this.btn_Config.UseVisualStyleBackColor = true;
             this.btn_Config.Click += new System.EventHandler(this.btn_Config_Click);
             // 
+            // img_defaultConfig
+            // 
+            this.img_defaultConfig.Image = ((System.Drawing.Image)(resources.GetObject("img_defaultConfig.Image")));
+            this.img_defaultConfig.Location = new System.Drawing.Point(12, 12);
+            this.img_defaultConfig.Name = "img_defaultConfig";
+            this.img_defaultConfig.Size = new System.Drawing.Size(64, 65);
+            this.img_defaultConfig.TabIndex = 5;
+            this.img_defaultConfig.TabStop = false;
+            this.img_defaultConfig.Visible = false;
+            // 
+            // img_VKConfig
+            // 
+            this.img_VKConfig.Image = ((System.Drawing.Image)(resources.GetObject("img_VKConfig.Image")));
+            this.img_VKConfig.Location = new System.Drawing.Point(82, 11);
+            this.img_VKConfig.Name = "img_VKConfig";
+            this.img_VKConfig.Size = new System.Drawing.Size(78, 66);
+            this.img_VKConfig.TabIndex = 6;
+            this.img_VKConfig.TabStop = false;
+            this.img_VKConfig.Visible = false;
+            // 
             // Frm_MJOY_Main
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(614, 341);
             this.ControlBox = false;
+            this.Controls.Add(this.img_VKConfig);
+            this.Controls.Add(this.img_defaultConfig);
             this.Controls.Add(this.lbl_connected);
             this.Controls.Add(this.btn_Config);
             this.Controls.Add(this.btn_about);
             this.Controls.Add(this.btn_minimize);
             this.Controls.Add(this.btn_quit);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.img_MAIN);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
@@ -150,7 +176,9 @@ namespace Majestic_11
             this.Name = "Frm_MJOY_Main";
             this.Text = "BunnyPad";
             this.Load += new System.EventHandler(this.Frm_MJOY_Main_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.img_MAIN)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.img_defaultConfig)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.img_VKConfig)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -171,9 +199,11 @@ namespace Majestic_11
 
         private Button btn_quit;
         private Button btn_minimize;
-        private PictureBox pictureBox1;
+        private PictureBox img_MAIN;
         private Button btn_about;
         private Button btn_Config;
+        private PictureBox img_defaultConfig;
+        private PictureBox img_VKConfig;
     }
 }
 
