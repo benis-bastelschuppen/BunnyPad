@@ -3,7 +3,7 @@ Log begins with version 0.5.18
 
 TODO: Autostart
 0.7.16: Show the help image when the VK is on.
-		Sometimes it won't work with hidden main menu. 
+		Sometimes the VK won't work with hidden main menu. 
 		Just press the main menu button then and get the focus to
 		your application. Press main menu again and it will work.
 0.7.15: Help image for the VK, not implemented yet.

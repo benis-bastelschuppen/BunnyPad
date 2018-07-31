@@ -2,6 +2,8 @@
 <head>
 <title>BunnyPad</title>
 <meta charset="UTF-8" />
+<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"> 
+
 <style>
 html, body
 {
@@ -9,24 +11,135 @@ html, body
 	height: 100%;
 	padding: 0;
 	margin: 0;
+	font-family: "Montserrat", sans-serif;
+}
+
+#titlebar, #bottombar
+{
+	width: 100%;
+	background-color: #333366;
+	font-size: 10pt;
+	color: #FFFFFA;
 }
 
 #titlebar
 {
-	width: 100%;
 	height: 100px;
-	background-color: #333366;
 	border-bottom: 2px solid #AA0000;
 }
+
+#bottombar
+{
+	height: 50px;
+	border-top: 2px solid #AA0000;
+	text-align: center;
+	padding-top: 10px;
+}
+
+#content
+{
+	max-width: 640px;
+	width: 640px;
+	min-height: 100%;
+	margin: 0 auto;
+}
+
+#sourcelinks
+{
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	text-align: right;
+}
+
+.tlink, tlink:visited
+{
+	color: #FFAA00;
+	text-decoration: none;
+}
+
+.tlink:hover
+{
+	color: #FFFF00;
+	text-decoration: none;
+}
+
+.tfolder, tfolder:visited
+{
+	color: #FFFFFA;
+	border: 1px solid #5d910b;
+	background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #93bd20), color-stop(100%, #659e10));
+	background: -webkit-linear-gradient(#93bd20, #659e10);
+	background: -moz-linear-gradient(#93bd20, #659e10);
+	background: -o-linear-gradient(#93bd20, #659e10);
+	background: -ms-linear-gradient(#93bd20, #659e10);
+	background: linear-gradient(#93bd20, #659e10);
+	text-decoration: none;
+	border: 1px solid #666699;
+	padding: 5px;
+	display: inline-block;
+	border-radius: 3px;
+}
+
+.tfolder:hover
+{
+	color: #FFFFFA;
+	text-decoration: none;
+	background-color: #659e10;
+	border: 1px solid #527f0e;
+	background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #749619), color-stop(100%, #527f0e));
+	background: -webkit-linear-gradient(#749619, #527f0e);
+	background: -moz-linear-gradient(#749619, #527f0e);
+	background: -o-linear-gradient(#749619, #527f0e);
+	background: -ms-linear-gradient(#749619, #527f0e);
+	background: linear-gradient(#749619, #527f0e);
+}
+
 
 </style>
 </head>
 <body>
 <div id="titlebar">
 	<img src="website/logo.png" />
+	<div id="sourcelinks">
+		<nobr>
+			Source:
+			<a href="https://github.com/ben0bi/BunnyPad/tarball/master" class="tfolder">TAR</a>
+			<a href="https://github.com/ben0bi/BunnyPad/zipball/master" class="tfolder">ZIP</a>
+			<a href="https://github.com/ben0bi/BunnyPad" class="tfolder">View On Github</a>
+		</nobr>
+	</div>
 </div>
 <div id="content">
-	Please wait, site under construction...
+	<h1>Installer Download</h1>
+	The installer will follow soon. Please refer to the source code on the top right for now.
+	<h1>What is BunnyPad?</h1>
+	With BunnyPad you can use your XBox-controller to control your Windows-PC.<br />
+	<br />
+	It is intended to be used by gamers or visitors, for watching movies and other "small" stuff: 
+	You don't have to pass the whole keyboard-mouse-mousepad combination to your visitor when he wants to google something.
+	Just give him the XBox-controller. ;)<br />
+	<br />
+	You can move and use the mouse - including mouse wheel - set the system volume, press several key combinations and even use a virtual keyboard (VK).
+	With the FN-button pressed, the buttons will do another, secondary function. Also you have a button for slowing down or speeding up the mouse movement.<br />
+	<br />
+	BunnyPad can be configured to your needs. It loads the last saved or loaded configuration on startup.<br />
+	<br />
+	<h3>Usage Examples</h3>
+	I use BunnyPad myself with the following software:<br />
+	+ Browsing the internet<br />
+	++> Like using <a href="https://mangarock.com/">MangaRock.com</a> with the digipad (Arrow keys).<br />
+	+ Inkscape -> With the SLOWER_MOVEMENT function you can be even preciser than with the mouse.<br />
+	+ Several old games like "The Curse Of Monkey Island" or "Beyond Good & Evil" 
+	(the latter is untested but intended to use for because it has no own gamepad configuration.)<br />
+	
+	<h1>Readme & Changelog</h1>
+	<a href="README.txt">View README</a> (text file)&nbsp;|
+	<a href="Majestic_11/Majestic_11/CHANGELOG.txt">View Changelog</a> (text file)
+</div>
+<div id="bottombar">
+BunnyPad by Benedict "ben0bi" Jäggi in 2018<br />
+<a href="https://github.com/ben0bi" class="tlink">ben0bi on github</a>
 </div>
 </body>
 </html>
