@@ -6,23 +6,13 @@
  * 
  * by Benedict "Oki Wan Ben0bi" Jäggi
  * (Joymouse) ~2002
- * Copyright 2018 Ben0bi Enterprises
+ * Copyright 2018, 2022 Ben0bi Enterprises
  * https://github.com/ben0bi/BunnyPad
  * 
- * LICENSE:
- * Use of this source code and/or the executables is free in all terms for private use,
- * "private" hereby translated to "ONE natural person",
- * by adding the above credentials and this license text to your end-product.
- * Giving away, copying, and putting this product online in a LAN or WAN, altering the code,
- * derive new products and doing the same for or with them, is free for private use,
- * festivals, parties, events (especially eSport-events), hospitals, social institutions,
- * and schools where the oldest school clients (scholars) are less-equal than 18 years old 
- * (USA: 21 years). Every other commercial use is forbidden.
- * It is forbidden to sell this product or parts of it. Commercial use is not allowed in 
- * all terms except the ones declared above.
  */
 
- using SharpDX.XInput;
+using SharpDX.XInput;
+using SharpDX.DirectInput;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -282,8 +272,173 @@ namespace Majestic_11
         public void volumeDown() => keybd_event((byte)Keys.VolumeDown, 0, 0, 0);
         public void volumeMute() => keybd_event((byte)Keys.VolumeMute, 0, 0, 0);
 
-        // update the button
-        public void Update(Gamepad pad, byte FNflag)
+// 0.8.x > 0
+        public void DIUpdate(JoystickState stick, byte FNflag)
+        {
+            // return if the virtual keyboard is on.
+            if (Program.Input.Config.IsVirtualKeyboardOn && this.Function != EMJFUNCTION.SWITCH_VIRTUAL_KEYBOARD && this.Function != EMJFUNCTION.SHOW_MENU)
+            {
+                // The VK will be updated in the configs Update
+                // function, not in the MJButtonTranslation one.
+                return;
+            }
+
+            // check if the button is down or not and call the delegates if needed.
+            GamepadButtonFlags fl = GamepadButtonFlags.None;
+            bool isdown = false;
+
+            // first check if it is a button, then check if it is down.
+            // each value >= 0 is copied from GamepadButtonFlags.
+            // own values (sticks and triggers) are <0.
+            if (this.button >= 0)
+            {
+                fl = (GamepadButtonFlags)this.button;
+                if (FNflag == FNindex)
+                { 
+                    // 0.8.2
+                    // get all the buttons except right and left trigger.
+                    // this function is a copy of XUpdate below ;)
+                    if (stick.Buttons[0] && fl == GamepadButtonFlags.Y)
+                    {
+                        Log.Line("(DirectInput) Y pressed");
+                        isdown = true; 
+                    }
+                    if (stick.Buttons[1] && fl == GamepadButtonFlags.B)
+                    {
+                        Log.Line("(DirectInput) B pressed");
+                        isdown = true;
+                    }
+                    if (stick.Buttons[2] && fl == GamepadButtonFlags.A)
+                    {
+                        Log.Line("(DirectInput) A pressed");
+                        isdown = true;
+                    }
+                    if (stick.Buttons[3] && fl == GamepadButtonFlags.X)
+                    {
+                        Log.Line("(DirectInput) X pressed");
+                        isdown = true;
+                    }
+                    // 4 and 5 are triggers, see below
+                    if (stick.Buttons[6] && fl == GamepadButtonFlags.LeftShoulder)
+                    {
+                        Log.Line("(DirectInput) Left Shoulder pressed");
+                        isdown = true;
+                    }
+                    if (stick.Buttons[7] && fl == GamepadButtonFlags.RightShoulder)
+                    {
+                        Log.Line("(DirectInput) Right Shoulder pressed");
+                        isdown = true;
+                    }
+                    if (stick.Buttons[8] && fl == GamepadButtonFlags.Back)
+                    {
+                        Log.Line("(DirectInput) Back/Select pressed");
+                        isdown = true;
+                    }
+                    if (stick.Buttons[9] && fl == GamepadButtonFlags.Start)
+                    {
+                        Log.Line("(DirectInput) Start pressed");
+                        isdown = true;
+                    }
+                    if (stick.Buttons[10] && fl == GamepadButtonFlags.LeftThumb)
+                    {
+                        Log.Line("(DirectInput) Left Thumb pressed");
+                        isdown = true;
+                    }
+                    if (stick.Buttons[11] && fl == GamepadButtonFlags.RightThumb)
+                    {
+                        Log.Line("(DirectInput) Right Thumb pressed");
+                        isdown = true;
+                    }
+        
+                    // 0.8.3
+                    // digital pad is on pointofviewcontrollers[0]
+                    // and has value from 0 to 
+                    int dpad = stick.PointOfViewControllers[0];
+                    if (dpad >= 0)
+                    {
+                        // up is between 0, 4500 and >= 31500
+                        if ((dpad >= 31500 || (dpad >= 0 && dpad <= 4500)) && fl == GamepadButtonFlags.DPadUp)
+                        {
+                            Log.Line("(DirectInput) DPad Up pressed");
+                            isdown = true;
+                        }
+                        // right is between 4500 and 13500
+                        if ((dpad >= 4500 && dpad <= 13500) && fl == GamepadButtonFlags.DPadRight)
+                        {
+                            Log.Line("(DirectInput) DPad Right pressed");
+                            isdown = true;
+                        }
+                        // down is between 13500 and 22500
+                        if ((dpad >= 13500 && dpad <= 22500) && fl == GamepadButtonFlags.DPadDown)
+                        {
+                            Log.Line("(DirectInput) DPad Down pressed");
+                            isdown = true;
+                        }
+                        // left is between 22500 and 31500
+                        if ((dpad >= 22500 && dpad <= 31500) && fl == GamepadButtonFlags.DPadLeft)
+                        {
+                            Log.Line("(DirectInput) DPad Right pressed");
+                            isdown = true;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //it's a special button, we need to do something other..
+                bool trigger = false;
+                isdown = false;
+                switch (this.button)
+                {
+                    // get the left and right triggers, here as digital values.
+                    case EMJBUTTON.RightTrigger:
+                        trigger = stick.Buttons[5];
+                        break;
+                    case EMJBUTTON.LeftTrigger:
+                        trigger = stick.Buttons[4];
+                        break;
+                    case EMJBUTTON.LeftThumbstick:
+                    case EMJBUTTON.RightThumbstick:
+                        // it's a stick function, lets do
+                        // some stick magic.
+                        //this.XupdateSticks(pad);
+                        // we don't need the stuff below then.
+                        return;
+                    default:
+                        isdown = false;
+                        break;
+                }
+                if (trigger == true)
+                    isdown = true;
+            }
+
+            // ok, the button is down.
+            if (isdown)
+            {
+                if (!buttonDown)
+                    this.onButtonDown();
+                buttonDown = true;
+            }
+            else
+            { // ..or not.
+                if (buttonDown)
+                    this.onButtonUp();
+                hitDelayCount = 0;
+                buttonDown = false;
+            }
+
+            // maybe hit the keys more than once.
+            if (buttonDown == true && hitDelay >= 1)
+            {
+                if (hitDelayCount >= hitDelay)
+                    this.onButtonDown();
+                else
+                    hitDelayCount += 20; // add 20 ms.
+            }
+        }
+
+        // update the buttons (XBox)
+        public void XUpdate(Gamepad pad, byte FNflag)
         {
             // return if the virtual keyboard is on.
             if(Program.Input.Config.IsVirtualKeyboardOn && this.Function!=EMJFUNCTION.SWITCH_VIRTUAL_KEYBOARD && this.Function!=EMJFUNCTION.SHOW_MENU)
@@ -320,7 +475,7 @@ namespace Majestic_11
                     case EMJBUTTON.RightThumbstick:
                         // it's a stick function, lets do
                         // some stick magic.
-                        this.updateSticks(pad);
+                        this.XupdateSticks(pad);
                         // we don't need the stuff below then.
                         return;
                     default:
@@ -354,8 +509,11 @@ namespace Majestic_11
             }
         }
 
+        protected void DIupdateSticks()
+        { }
+
         // update the sticks and do the function for them.
-        protected void updateSticks(Gamepad pad)
+        protected void XupdateSticks(Gamepad pad)
         {
             // TODO: remove stuff from program.input
 
@@ -600,9 +758,32 @@ namespace Majestic_11
             SendKeys.SendWait(hit);
         }
 
+        // 0.8.2 incorporate directinput
+        public void DIUpdate(JoystickState state)
+        {
+            Log.Line("X:"+state.X.ToString()+" Y:"+state.Y.ToString()+" Z:"+state.Z.ToString()+" RotZ:"+state.RotationZ.ToString());
+
+            // same as the below function for the DirectInput stuff.
+            FNflag = 0;
+            foreach(MJButtonTranslation btn in buttons)
+            {
+                if (btn.Function == EMJFUNCTION.FN_MODIFICATOR)
+                    btn.DIUpdate(state, FNflag);
+            }
+
+            foreach(MJButtonTranslation btn in buttons)
+            {
+                btn.DIUpdate(state, FNflag);
+            }
+
+            if(Program.Input.Config.IsVirtualKeyboardOn)
+            {
+               // this.DIUpdateVirtualKeyboard(state)
+            }
+        }
 
         // this function updates all the stuff.
-        public void Update(Gamepad pad)
+        public void XUpdate(Gamepad pad)
         {
             // first, just check for FN flags.
             // This is the bugfix which made 0.4.x to 0.5.x
@@ -610,12 +791,12 @@ namespace Majestic_11
             foreach (MJButtonTranslation btn in buttons)
             {
                 if (btn.Function == EMJFUNCTION.FN_MODIFICATOR)
-                    btn.Update(pad, FNflag);
+                    btn.XUpdate(pad, FNflag);
             }
             // then update the buttons.
             foreach (MJButtonTranslation btn in buttons)
             {
-                btn.Update(pad, FNflag);
+                btn.XUpdate(pad, FNflag);
             }
 
             // update the virtual keyboard if the keyboard is on.

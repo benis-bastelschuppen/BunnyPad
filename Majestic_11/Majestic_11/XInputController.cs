@@ -4,33 +4,27 @@
  * a.k.a. JoyMouse
  * [The Joy Of A Mouse]
  * 
+ * Version 0.8.1
+ * 
  * by Benedict "Oki Wan Ben0bi" Jäggi
  * (Joymouse) ~2002
- * Copyright 2018 Ben0bi Enterprises
- * https://github.com/ben0bi/BunnyPad
+ * Copyright 2018, 2022 Ben0bi Enterprises / Kaiserliche Spiele Manufaktur / Benedict Jaeggi
+ * https://github.com/benis-bastelschuppen/BunnyPad
  * 
- * LICENSE:
- * Use of this source code and/or the executables is free in all terms for private use,
- * "private" hereby translated to "ONE natural person",
- * by adding the above credentials and this license text to your end-product.
- * Giving away, copying, and putting this product online in a LAN or WAN, altering the code,
- * derive new products and doing the same for or with them, is free for private use,
- * festivals, parties, events (especially eSport-events), hospitals, social institutions,
- * and schools where the oldest school clients (scholars) are less-equal than 18 years old 
- * (USA: 21 years). Every other commercial use is forbidden.
- * It is forbidden to sell this product or parts of it. Commercial use is not allowed in 
- * all terms except the ones declared above.
  */
 
 
 using System;
 
 // Use NuGet to install SharpDX and SharpDX.XInput
-using SharpDX.XInput;
+using SharpDX.XInput; // shit for using XInput (XBox 360 / ONE Controller)
+
+// new v2.0
+using SharpDX.DirectInput; // shit for using DirectInput (standard pc controller)
+// does not work with my controllers.
+// endof new
 
 using System.Threading;
-using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Majestic_11
@@ -39,10 +33,21 @@ namespace Majestic_11
     {
         protected Frm_MJOY_Main mainForm;
 
+// new 0.8.1
+        protected DirectInput directInput;
+        Joystick joystick=null;
+        Joystick joystick2 = null;
+// endof new
+
         protected Gamepad pad;
         protected Controller controller;
-        protected bool connected = false;
-        public bool IsConnected { get { return connected;} }
+        protected bool Xconnected = false;
+
+        // 0.8.1 DirectInput
+        protected Gamepad padj;
+        protected bool DIconnected = false;
+
+        public bool IsConnected { get { return Xconnected || DIconnected;} }
 
         // stick deadzone.
         public float deadzone = 5000.0f;
@@ -67,6 +72,10 @@ namespace Majestic_11
         public XInputController(Frm_MJOY_Main frm)
         {
             config = new MJConfig();
+
+            //new version 2.0
+            directInput = new DirectInput();
+            //endof new
 
             string loadconfigfile = Properties.Settings.Default.StartupConfig;
             Log.Line("Startup config 1: " + Properties.Settings.Default.StartupConfig);
@@ -96,7 +105,7 @@ namespace Majestic_11
             char c = '*';
             byte q = 1;
             this.connect(c);
-            while(!connected)
+            while(!Xconnected && !DIconnected)
             {
                 switch(q)
                 {
@@ -122,13 +131,14 @@ namespace Majestic_11
         // the connect function itself.
         public void connect(char loadingchar)
         {
+            // old, XINPUT    
             // this function may be started in a thread so the text functions need to invoke.
-            controller = new Controller(UserIndex.One);
-            connected = controller.IsConnected;
+           controller = new Controller(UserIndex.One);
+           Xconnected = controller.IsConnected;
 
-            if (connected)
+            if (Xconnected)
             {
-                string txt = "+++ CONNECTED +++\n";
+                string txt = "+++ CONNECTED (XBox) +++\n";
                 string q = controller.GetBatteryInformation(BatteryDeviceType.Gamepad).BatteryType.ToString();
                 if (q == "Disconnected")
                     q = "Wired or Unknown";
@@ -140,15 +150,50 @@ namespace Majestic_11
                 Cursor.Show();
                 Log.Line("Controller connected.");
                 pollcount = 0;
-            }else{
-                m_connectingText = "!.. Waiting for connection ..!";
-                mainForm.setLbl_connected(""+loadingchar+" ..Waiting for connection.. "+loadingchar);
+            }
+            else
+            {
                 if (pollcount == 0)
                     Log.Line("Polling for controller");
                 else
                     Log.Append(".");
                 pollcount++;
-            }
+
+                // 8.0.1 new, directinput
+                // Find a Gamepad Guid
+                Guid joystickGuid = Guid.Empty;
+                if (joystickGuid == Guid.Empty)
+                {
+                    foreach (var deviceInstance in directInput.GetDevices(SharpDX.DirectInput.DeviceType.Gamepad,
+                            DeviceEnumerationFlags.AllDevices))
+                        joystickGuid = deviceInstance.InstanceGuid;
+
+                    // No Gamepad Guid found, find a Joystick GUID (PS2 controller...)
+                    if (joystickGuid == Guid.Empty)
+                    {
+                        foreach (var deviceInstance in directInput.GetDevices(SharpDX.DirectInput.DeviceType.Joystick,
+                                DeviceEnumerationFlags.AllDevices))
+                        {
+                            joystickGuid = deviceInstance.InstanceGuid;
+                        }
+                    }
+                }
+
+                // there is a joystick or gamepad, show that in the text.
+                if (joystickGuid != Guid.Empty)
+                {
+                    m_connectingText="+++ CONNECTED (DirectInput) +++";
+                    DIconnected = true;
+                    pollcount = 0;
+
+                    joystick = new Joystick(directInput, joystickGuid);
+                    joystick.Acquire();
+
+                }else{
+                    m_connectingText = "!.. Waiting for connection ..!";
+                    mainForm.setLbl_connected("" + loadingchar + " ..Waiting for connection.. " + loadingchar);
+                }
+              }
         }
 
         // get the controller buttons and thumbs.
@@ -160,7 +205,7 @@ namespace Majestic_11
                 Program.UpdateLabels();
 
                 // check if there is a controller connected.
-                if(!controller.IsConnected || !connected)
+                if((Xconnected && !controller.IsConnected) || (!Xconnected && !DIconnected)) //!controller.IsConnected || !connected)
                 {
                     done = true;
                     break;
@@ -169,8 +214,19 @@ namespace Majestic_11
                 // get the gamepad
                 try
                 {
-                    pad = controller.GetState().Gamepad;
-                    config.Update(pad); // NEW 0.4.x
+                    if (Xconnected)
+                    {
+                        pad = controller.GetState().Gamepad;
+                        config.XUpdate(pad); // NEW 0.4.x
+                    }
+
+                    // new 0.8.x > .0
+                    if (DIconnected)
+                    {
+                        joystick.Poll();
+                        JoystickState state = joystick.GetCurrentState();
+                        config.DIUpdate(state);
+                    }
 
                     // 0.5.12: update mouse speed
                     if (!config.MouseSpeed_Slower && !config.MouseSpeed_Faster)

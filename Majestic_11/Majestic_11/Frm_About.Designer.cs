@@ -67,10 +67,10 @@
             this.url_sourceLink.Location = new System.Drawing.Point(9, 7);
             this.url_sourceLink.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.url_sourceLink.Name = "url_sourceLink";
-            this.url_sourceLink.Size = new System.Drawing.Size(186, 13);
+            this.url_sourceLink.Size = new System.Drawing.Size(257, 13);
             this.url_sourceLink.TabIndex = 3;
             this.url_sourceLink.TabStop = true;
-            this.url_sourceLink.Text = "https://github.com/ben0bi/BunnyPad";
+            this.url_sourceLink.Text = "https://github.com/benis-bastelschuppen/BunnyPad";
             this.url_sourceLink.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.url_sourceLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.url_sourceLink_LinkClicked);
             // 

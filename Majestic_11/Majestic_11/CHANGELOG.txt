@@ -1,8 +1,17 @@
-﻿Changes.
+﻿BunnyPad changes.
 Log begins with version 0.5.18
 
 TODO: Autostart
-0.8.0:	Release Candidate 2 with VK.
+
+0.8.3:	Incorporated the Digital Pad which is different in DirectInput.
+0.8.2:	Incorporated the buttons from DirectInput to work with 
+		GamepadButtonFlags from XInput.
+0.8.1: 	Began including the SharpDX.DirectInput library for 
+		using with standard pc controllers which are not XBox controllers.
+		New About information and new github website link.
+========================================================================================
+0.8.0:	Release Candidate 2 with Virtual Keyboard (VK).
+========================================================================================
 0.7.16: Show the help image when the VK is on.
 		Sometimes the VK won't work with hidden main menu. 
 		Just press the main menu button then and get the focus to
@@ -36,10 +45,12 @@ TODO: Autostart
 		Stopping all buttons/sticks when VK is on.
 		(VK not working yet.)
 0.7.1:  Another about image.
+=========================================================================
 0.7.0:  Working update button.
 		Function createButtonFromValues in Frm_ButtonConfig.cs
 		Function updateButton in MJConfig
 		This is RC 1.
+=========================================================================
 0.6.8:  Load last saved configuration at startup.
 0.6.7:	Show actual config file name in the button config window.
 		Config has a configname. Usually the filename.

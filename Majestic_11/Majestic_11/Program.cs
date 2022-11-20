@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Majestic_11
@@ -33,7 +30,6 @@ namespace Majestic_11
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             mainform = new Frm_MJOY_Main();
-
             // the action overlay is the overlay which shows the virtual keyboard.
 
             VKoverlay = new actionoverlay();

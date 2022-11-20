@@ -6,3 +6,6 @@ Majestic_11/*/obj/Debug/
 Majestic_11/*/obj/*
 Majestic_11/*/obj/
 Majestic_11/*/*/DesignTimeBuild/*
+/Majestic_11/packages/SharpDX.4.2.0/lib/net40
+/Majestic_11/packages/SharpDX.4.2.0/lib/netstandard1.1
+/Majestic_11/packages/SharpDX.4.2.0
