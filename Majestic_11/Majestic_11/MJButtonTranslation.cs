@@ -65,8 +65,8 @@ namespace Majestic_11
         X = GamepadButtonFlags.X,
         Y = GamepadButtonFlags.Y,
         // The thumbsticks.
-        LeftThumbstick=-10,
-        RightThumbstick=-11
+        LeftThumbstick = -10,
+        RightThumbstick = -11
     }
 
     // a button and its associated key config.
@@ -80,7 +80,7 @@ namespace Majestic_11
         // import mouse_event from user32.dll
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
         static extern void mouse_event(uint dwFlags, int dx, int dy, uint cButtons, uint dwExtraInfo);
-        
+
         //Mouse actions for the windows API.
         private const int MOUSEEVENTF_LEFTDOWN = 0x02;
         private const int MOUSEEVENTF_LEFTUP = 0x04;
@@ -130,11 +130,11 @@ namespace Majestic_11
             string rep = "";
             if (hitDelay > 0)
                 rep = "[Repeating after " + hitDelay + "ms] ";
-            return f+button.ToString() + " => " +rep+ actionText;
+            return f + button.ToString() + " => " + rep + actionText;
         }
 
         // 0.5.21 New constructor.
-        public MJButtonTranslation(EMJBUTTON btn, EMJFUNCTION func, byte FN = 0, string keychars="")
+        public MJButtonTranslation(EMJBUTTON btn, EMJFUNCTION func, byte FN = 0, string keychars = "")
         {
             this.keyStroke = keychars;
             this.button = btn;
@@ -165,7 +165,7 @@ namespace Majestic_11
         public MJButtonTranslation(TextReader br)
         {
             // read all the values from the file.
-            string t=br.ReadLine();
+            string t = br.ReadLine();
             this.button = (EMJBUTTON)int.Parse(t);
 
             this.keyStroke = br.ReadLine();
@@ -192,7 +192,7 @@ namespace Majestic_11
             onButtonUp = new voidDelegate(voidFunc);
             actionText = "!NOTHING!";
 
-            switch(this.function)
+            switch (this.function)
             {
                 case EMJFUNCTION.KEYBOARD_COMBINATION:
                     onButtonDown = new voidDelegate(hitKey);
@@ -272,7 +272,7 @@ namespace Majestic_11
         public void volumeDown() => keybd_event((byte)Keys.VolumeDown, 0, 0, 0);
         public void volumeMute() => keybd_event((byte)Keys.VolumeMute, 0, 0, 0);
 
-// 0.8.x > 0
+        // 0.8.x > 0
         public void DIUpdate(JoystickState stick, byte FNflag)
         {
             // return if the virtual keyboard is on.
@@ -294,14 +294,14 @@ namespace Majestic_11
             {
                 fl = (GamepadButtonFlags)this.button;
                 if (FNflag == FNindex)
-                { 
+                {
                     // 0.8.2
                     // get all the buttons except right and left trigger.
                     // this function is a copy of XUpdate below ;)
                     if (stick.Buttons[0] && fl == GamepadButtonFlags.Y)
                     {
                         Log.Line("(DirectInput) Y pressed");
-                        isdown = true; 
+                        isdown = true;
                     }
                     if (stick.Buttons[1] && fl == GamepadButtonFlags.B)
                     {
@@ -349,7 +349,7 @@ namespace Majestic_11
                         Log.Line("(DirectInput) Right Thumb pressed");
                         isdown = true;
                     }
-        
+
                     // 0.8.3
                     // digital pad is on pointofviewcontrollers[0]
                     // and has value from 0 to 
@@ -401,7 +401,7 @@ namespace Majestic_11
                     case EMJBUTTON.RightThumbstick:
                         // it's a stick function, lets do
                         // some stick magic.
-                        //this.XupdateSticks(pad);
+                        this.DIupdateSticks(stick);
                         // we don't need the stuff below then.
                         return;
                     default:
@@ -441,7 +441,7 @@ namespace Majestic_11
         public void XUpdate(Gamepad pad, byte FNflag)
         {
             // return if the virtual keyboard is on.
-            if(Program.Input.Config.IsVirtualKeyboardOn && this.Function!=EMJFUNCTION.SWITCH_VIRTUAL_KEYBOARD && this.Function!=EMJFUNCTION.SHOW_MENU)
+            if (Program.Input.Config.IsVirtualKeyboardOn && this.Function != EMJFUNCTION.SWITCH_VIRTUAL_KEYBOARD && this.Function != EMJFUNCTION.SHOW_MENU)
             {
                 // The VK will be updated in the configs Update
                 // function, not in the MJButtonTranslation one.
@@ -459,11 +459,11 @@ namespace Majestic_11
                 fl = (GamepadButtonFlags)this.button;
                 if ((FNflag == FNindex) && ((pad.Buttons & fl) == fl))
                     isdown = true;
-            }else{
+            } else {
                 //it's a special button, we need to do something other..
                 byte trigger = 0;
                 isdown = false;
-                switch(this.button)
+                switch (this.button)
                 {
                     case EMJBUTTON.RightTrigger:
                         trigger = pad.RightTrigger;
@@ -509,8 +509,33 @@ namespace Majestic_11
             }
         }
 
-        protected void DIupdateSticks()
-        { }
+        // 0.8.4 DirectInput Update Sticks
+        protected void DIupdateSticks(JoystickState sticks)
+        {
+            // Log.Line("X: " + sticks.X.ToString() + " Y:" + sticks.Y.ToString() + " Z:" + sticks.Z + " RotZ:" + sticks.RotationZ);
+            float stickx = 0;
+            float sticky = 0;// min is 0, middle is 32511, max is 65535
+            // get the raw values.
+            string q = "";
+            switch (this.button)
+            {
+                case EMJBUTTON.LeftThumbstick:
+                    q = "Left";
+                    stickx = sticks.X - short.MaxValue;
+                    sticky = 0-(sticks.Y - short.MaxValue);
+                    break;
+                case EMJBUTTON.RightThumbstick:
+                    q = "Right";
+                    stickx = sticks.RotationZ - short.MaxValue;
+                    sticky = sticks.Z - short.MaxValue;
+                    break;
+                default:
+                    break;
+            }
+            //Log.Line(q + " X:" + stickx + " Y:" + sticky);
+
+            this.updateSticks(stickx, sticky);
+        }
 
         // update the sticks and do the function for them.
         protected void XupdateSticks(Gamepad pad)
@@ -534,6 +559,12 @@ namespace Majestic_11
                     break;
             }
 
+            this.updateSticks(stickx, sticky);
+        }
+
+        // 0.8.4 all that in its own function
+        protected void updateSticks(float stickx, float sticky)
+        {
             // implement deadzone
             float dzone = Program.Input.deadzone;
             if (stickx < dzone && stickx > -dzone)
@@ -559,21 +590,23 @@ namespace Majestic_11
                     break;
                 case EMJFUNCTION.MOUSE_WHEEL:
                     // turn mouse wheel
-                    if(sticky != 0)
-                        mouse_event(MOUSEEVENTF_WHEEL, curx, cury, (uint)(sticky*Program.Input.MouseSpeed), 0);
+                    if (sticky != 0)
+                        mouse_event(MOUSEEVENTF_WHEEL, curx, cury, (uint)(sticky * Program.Input.MouseSpeed), 0);
                     break;
                 case EMJFUNCTION.ARROW_KEYS:
                 case EMJFUNCTION.WASD_KEYS:
                     // simulate keypresses.
                     string updown = "";
                     string leftright = "";
-                    if(this.Function == EMJFUNCTION.ARROW_KEYS)
+                    if (this.Function == EMJFUNCTION.ARROW_KEYS)
                     {
                         if (stickx < 0) leftright = "{LEFT}";
                         if (stickx > 0) leftright = "{RIGHT}";
                         if (sticky > 0) updown = "{UP}";
                         if (sticky < 0) updown = "{DOWN}";
-                    }else{
+                    }
+                    else
+                    {
                         if (stickx < 0) leftright = "a";
                         if (stickx > 0) leftright = "d";
                         if (sticky > 0) updown = "w";
@@ -581,7 +614,7 @@ namespace Majestic_11
                     }
                     if (updown != "")
                         SendKeys.SendWait(updown);
-                    if (leftright!="")
+                    if (leftright != "")
                         SendKeys.SendWait(leftright);
                     break;
                 // TODO: add the other functions.
@@ -591,7 +624,7 @@ namespace Majestic_11
         }
     }
 
-//----------------------------------------------------------------
+    //----------------------------------------------------------------
 
     // a configuration.
     public class MJConfig

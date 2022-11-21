@@ -3,15 +3,21 @@ Log begins with version 0.5.18
 
 TODO: Autostart
 
-0.8.3:	Incorporated the Digital Pad which is different in DirectInput.
+=========================================================================================
+0.9.0:	BunnyPad now also works with a DirectInput Gamepad.
+			Tested with an old PS2 Pad and a NoName Pad
+=========================================================================================
+
+0.8.4:	Incorporated the DirectInput Sticks X, Y, Z and RotationZ for left and right.
+0.8.3:	Incorporated the DirectInput Digital Pad which is different as in XInput.
 0.8.2:	Incorporated the buttons from DirectInput to work with 
 		GamepadButtonFlags from XInput.
 0.8.1: 	Began including the SharpDX.DirectInput library for 
 		using with standard pc controllers which are not XBox controllers.
 		New About information and new github website link.
-========================================================================================
+=========================================================================================
 0.8.0:	Release Candidate 2 with Virtual Keyboard (VK).
-========================================================================================
+=========================================================================================
 0.7.16: Show the help image when the VK is on.
 		Sometimes the VK won't work with hidden main menu. 
 		Just press the main menu button then and get the focus to
