@@ -69,6 +69,24 @@ namespace Majestic_11
         RightThumbstick = -11
     }
 
+    // 0.8.5
+    // button indexes of the buttons in DirectInput
+    public enum EMJDIBUTTONIDX
+    {
+        BTN_Y = 0,
+        BTN_A = 1,
+        BTN_B = 2,
+        BTN_X = 3,
+        BTN_LeftTrigger= 4,
+        BTN_RightTrigger= 5,
+        BTN_LeftShoulder= 6,
+        BTN_RightShoulder= 7,
+        BTN_BACK= 8,
+        BTN_START=9,
+        BTN_LeftThumb=10,
+        BTN_RightThumb=11
+    }
+
     // a button and its associated key config.
     public class MJButtonTranslation
     {
@@ -298,55 +316,55 @@ namespace Majestic_11
                     // 0.8.2
                     // get all the buttons except right and left trigger.
                     // this function is a copy of XUpdate below ;)
-                    if (stick.Buttons[0] && fl == GamepadButtonFlags.Y)
+                    if (stick.Buttons[(int)EMJDIBUTTONIDX.BTN_Y] && fl == GamepadButtonFlags.Y)
                     {
-                        Log.Line("(DirectInput) Y pressed");
+                        //Log.Line("(DirectInput) Y pressed");
                         isdown = true;
                     }
-                    if (stick.Buttons[1] && fl == GamepadButtonFlags.B)
+                    if (stick.Buttons[(int)EMJDIBUTTONIDX.BTN_B] && fl == GamepadButtonFlags.B)
                     {
-                        Log.Line("(DirectInput) B pressed");
+                        //Log.Line("(DirectInput) B pressed");
                         isdown = true;
                     }
-                    if (stick.Buttons[2] && fl == GamepadButtonFlags.A)
+                    if (stick.Buttons[(int)EMJDIBUTTONIDX.BTN_A] && fl == GamepadButtonFlags.A)
                     {
-                        Log.Line("(DirectInput) A pressed");
+                        //Log.Line("(DirectInput) A pressed");
                         isdown = true;
                     }
-                    if (stick.Buttons[3] && fl == GamepadButtonFlags.X)
+                    if (stick.Buttons[(int)EMJDIBUTTONIDX.BTN_X] && fl == GamepadButtonFlags.X)
                     {
-                        Log.Line("(DirectInput) X pressed");
+                        //Log.Line("(DirectInput) X pressed");
                         isdown = true;
                     }
                     // 4 and 5 are triggers, see below
-                    if (stick.Buttons[6] && fl == GamepadButtonFlags.LeftShoulder)
+                    if (stick.Buttons[(int)EMJDIBUTTONIDX.BTN_LeftShoulder] && fl == GamepadButtonFlags.LeftShoulder)
                     {
-                        Log.Line("(DirectInput) Left Shoulder pressed");
+                        //Log.Line("(DirectInput) Left Shoulder pressed");
                         isdown = true;
                     }
-                    if (stick.Buttons[7] && fl == GamepadButtonFlags.RightShoulder)
+                    if (stick.Buttons[(int)EMJDIBUTTONIDX.BTN_RightShoulder] && fl == GamepadButtonFlags.RightShoulder)
                     {
-                        Log.Line("(DirectInput) Right Shoulder pressed");
+                        //Log.Line("(DirectInput) Right Shoulder pressed");
                         isdown = true;
                     }
-                    if (stick.Buttons[8] && fl == GamepadButtonFlags.Back)
+                    if (stick.Buttons[(int)EMJDIBUTTONIDX.BTN_BACK] && fl == GamepadButtonFlags.Back)
                     {
-                        Log.Line("(DirectInput) Back/Select pressed");
+                        //Log.Line("(DirectInput) Back/Select pressed");
                         isdown = true;
                     }
-                    if (stick.Buttons[9] && fl == GamepadButtonFlags.Start)
+                    if (stick.Buttons[(int)EMJDIBUTTONIDX.BTN_START] && fl == GamepadButtonFlags.Start)
                     {
-                        Log.Line("(DirectInput) Start pressed");
+                        //Log.Line("(DirectInput) Start pressed");
                         isdown = true;
                     }
-                    if (stick.Buttons[10] && fl == GamepadButtonFlags.LeftThumb)
+                    if (stick.Buttons[(int)EMJDIBUTTONIDX.BTN_LeftThumb] && fl == GamepadButtonFlags.LeftThumb)
                     {
-                        Log.Line("(DirectInput) Left Thumb pressed");
+                        //Log.Line("(DirectInput) Left Thumb pressed");
                         isdown = true;
                     }
-                    if (stick.Buttons[11] && fl == GamepadButtonFlags.RightThumb)
+                    if (stick.Buttons[(int)EMJDIBUTTONIDX.BTN_RightThumb] && fl == GamepadButtonFlags.RightThumb)
                     {
-                        Log.Line("(DirectInput) Right Thumb pressed");
+                        //Log.Line("(DirectInput) Right Thumb pressed");
                         isdown = true;
                     }
 
@@ -359,25 +377,25 @@ namespace Majestic_11
                         // up is between 0, 4500 and >= 31500
                         if ((dpad >= 31500 || (dpad >= 0 && dpad <= 4500)) && fl == GamepadButtonFlags.DPadUp)
                         {
-                            Log.Line("(DirectInput) DPad Up pressed");
+                            //Log.Line("(DirectInput) DPad Up pressed");
                             isdown = true;
                         }
                         // right is between 4500 and 13500
                         if ((dpad >= 4500 && dpad <= 13500) && fl == GamepadButtonFlags.DPadRight)
                         {
-                            Log.Line("(DirectInput) DPad Right pressed");
+                            //Log.Line("(DirectInput) DPad Right pressed");
                             isdown = true;
                         }
                         // down is between 13500 and 22500
                         if ((dpad >= 13500 && dpad <= 22500) && fl == GamepadButtonFlags.DPadDown)
                         {
-                            Log.Line("(DirectInput) DPad Down pressed");
+                            //Log.Line("(DirectInput) DPad Down pressed");
                             isdown = true;
                         }
                         // left is between 22500 and 31500
                         if ((dpad >= 22500 && dpad <= 31500) && fl == GamepadButtonFlags.DPadLeft)
                         {
-                            Log.Line("(DirectInput) DPad Right pressed");
+                            //Log.Line("(DirectInput) DPad Right pressed");
                             isdown = true;
                         }
                     }
@@ -392,10 +410,10 @@ namespace Majestic_11
                 {
                     // get the left and right triggers, here as digital values.
                     case EMJBUTTON.RightTrigger:
-                        trigger = stick.Buttons[5];
+                        trigger = stick.Buttons[(int)EMJDIBUTTONIDX.BTN_RightTrigger];
                         break;
                     case EMJBUTTON.LeftTrigger:
-                        trigger = stick.Buttons[4];
+                        trigger = stick.Buttons[(int)EMJDIBUTTONIDX.BTN_LeftTrigger];
                         break;
                     case EMJBUTTON.LeftThumbstick:
                     case EMJBUTTON.RightThumbstick:
@@ -516,16 +534,16 @@ namespace Majestic_11
             float stickx = 0;
             float sticky = 0;// min is 0, middle is 32511, max is 65535
             // get the raw values.
-            string q = "";
+            //string q = "";
             switch (this.button)
             {
                 case EMJBUTTON.LeftThumbstick:
-                    q = "Left";
+                    //q = "Left";
                     stickx = sticks.X - short.MaxValue;
                     sticky = 0-(sticks.Y - short.MaxValue);
                     break;
                 case EMJBUTTON.RightThumbstick:
-                    q = "Right";
+                    //q = "Right";
                     stickx = sticks.RotationZ - short.MaxValue;
                     sticky = sticks.Z - short.MaxValue;
                     break;
@@ -687,7 +705,59 @@ namespace Majestic_11
         int VKtimer = 0;
         bool VKfirsttime = true;
         bool vkshiftkey = false;
-        public void UpdateVirtualKeyboard(Gamepad pad)
+
+        // 0.8.5
+        // Update input for the virtual keyboard with DirectInput.
+        public void DIUpdateVirtualKeyboard(JoystickState state)
+        {
+            vkshiftkey = (state.Buttons[(int)EMJDIBUTTONIDX.BTN_RightTrigger] || state.Buttons[(int)EMJDIBUTTONIDX.BTN_LeftTrigger]) ? true : false;
+            float stickx = state.X - short.MaxValue;
+            float sticky = 0 - (state.Y - short.MaxValue);
+
+            float dzone = Program.Input.deadzone;
+            int moveCursor = -1;
+            // up
+            if (state.PointOfViewControllers[0] >= 31500 ||
+                (state.PointOfViewControllers[0] >= 0 && state.PointOfViewControllers[0] <= 4500) ||
+                sticky < -dzone)
+                moveCursor = 1;
+            // down
+            if ((state.PointOfViewControllers[0] >= 13500 && state.PointOfViewControllers[0] <= 22500) ||
+                sticky > dzone)
+                moveCursor = 2;
+            // left
+            if ((state.PointOfViewControllers[0] >= 22500 && state.PointOfViewControllers[0] <= 31500) ||
+                stickx < -dzone)
+                moveCursor = 3;
+            // right
+            if ((state.PointOfViewControllers[0] >= 4500 && state.PointOfViewControllers[0] <= 13500) ||
+                stickx > dzone)
+                moveCursor = 4;
+
+
+            // set the y cursor position directly 
+            // with the shortcut keys. And then press.
+            if ((state.Buttons[(int)EMJDIBUTTONIDX.BTN_RightShoulder]) == true)
+                moveCursor = 9;
+            if ((state.Buttons[(int)EMJDIBUTTONIDX.BTN_A]) == true)
+                moveCursor = 8;
+            if ((state.Buttons[(int)EMJDIBUTTONIDX.BTN_B]) == true)
+                moveCursor = 7;
+            if ((state.Buttons[(int)EMJDIBUTTONIDX.BTN_X]) == true)
+                moveCursor = 6;
+            if ((state.Buttons[(int)EMJDIBUTTONIDX.BTN_Y]) == true)
+                moveCursor = 5;
+
+            // or hit the key under the cursor directly with LS.
+            if ((state.Buttons[(int)EMJDIBUTTONIDX.BTN_LeftShoulder]) == true)
+                moveCursor = 10;
+
+            UpdateVirtualKeyboard(moveCursor);
+        }
+
+        // Update the input for the virtual keyboard.
+        // 0.7.x
+        public void XUpdateVirtualKeyboard(Gamepad pad)
         {
             // Get the shift flag.
             vkshiftkey = (pad.RightTrigger > 10 || pad.LeftTrigger > 10) ? true : false;
@@ -726,12 +796,19 @@ namespace Majestic_11
             if ((pad.Buttons & GamepadButtonFlags.LeftShoulder) == GamepadButtonFlags.LeftShoulder)
                 moveCursor = 10;
 
+            UpdateVirtualKeyboard(moveCursor);
+        }
+
+        // 0.8.5
+        // all the stuff in its own function
+        public void UpdateVirtualKeyboard(int moveCursor)
+        {
             // update the cursor position, but just once.
-            if (moveCursor!=lastVKCursorKey ||
-                (VKfirsttime==false && VKtimer > 60) ||
+            if (moveCursor != lastVKCursorKey ||
+                (VKfirsttime == false && VKtimer > 60) ||
                 (VKfirsttime == true && VKtimer > 250))
             {
-                switch(moveCursor)
+                switch (moveCursor)
                 {
                     case 1: // up
                         vkPosY -= 1;
@@ -783,6 +860,7 @@ namespace Majestic_11
             Program.UpdateVKForm(vkshiftkey, vkPosX, vkPosY);
         }
 
+
         // v0.7.12 hit the virtual keyboard key.        
         protected void hitCursor()
         {
@@ -794,7 +872,7 @@ namespace Majestic_11
         // 0.8.2 incorporate directinput
         public void DIUpdate(JoystickState state)
         {
-            Log.Line("X:"+state.X.ToString()+" Y:"+state.Y.ToString()+" Z:"+state.Z.ToString()+" RotZ:"+state.RotationZ.ToString());
+            //Log.Line("X:"+state.X.ToString()+" Y:"+state.Y.ToString()+" Z:"+state.Z.ToString()+" RotZ:"+state.RotationZ.ToString());
 
             // same as the below function for the DirectInput stuff.
             FNflag = 0;
@@ -809,9 +887,10 @@ namespace Majestic_11
                 btn.DIUpdate(state, FNflag);
             }
 
+            // 0.8.5
             if(Program.Input.Config.IsVirtualKeyboardOn)
             {
-               // this.DIUpdateVirtualKeyboard(state)
+                this.DIUpdateVirtualKeyboard(state);
             }
         }
 
@@ -835,7 +914,7 @@ namespace Majestic_11
             // update the virtual keyboard if the keyboard is on.
             if (Program.Input.Config.IsVirtualKeyboardOn)
             {
-                this.UpdateVirtualKeyboard(pad);
+                this.XUpdateVirtualKeyboard(pad);
             }
         }
 
