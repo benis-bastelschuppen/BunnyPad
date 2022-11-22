@@ -557,14 +557,14 @@ namespace Majestic_11
             switch (this.button)
             {
                 case EMJBUTTON.LeftThumbstick:
-                    //q = "Left";
+                    //q = "Left Stick";
                     stickx = sticks.X - short.MaxValue;
-                    sticky = 0-(sticks.Y - short.MaxValue);
+                    sticky = Program.Input.Config.invertYLeft*(0-(sticks.Y - short.MaxValue));
                     break;
                 case EMJBUTTON.RightThumbstick:
-                    //q = "Right";
-                    sticky = 0-(sticks.RotationZ - short.MaxValue);
+                    //q = "Right Stick";
                     stickx = sticks.Z - short.MaxValue;
+                    sticky = Program.Input.Config.invertYRight*(0-(sticks.RotationZ - short.MaxValue));
                     break;
                 default:
                     break;
@@ -586,11 +586,11 @@ namespace Majestic_11
             {
                 case EMJBUTTON.LeftThumbstick:
                     stickx = pad.LeftThumbX;
-                    sticky = pad.LeftThumbY;
+                    sticky = Program.Input.Config.invertYLeft*pad.LeftThumbY;
                     break;
                 case EMJBUTTON.RightThumbstick:
                     stickx = pad.RightThumbX;
-                    sticky = pad.RightThumbY;
+                    sticky = Program.Input.Config.invertYRight*pad.RightThumbY;
                     break;
                 default:
                     break;
@@ -677,6 +677,10 @@ namespace Majestic_11
         // the gamepad buttons.
         protected List<MJButtonTranslation> buttons;
         public List<MJButtonTranslation> Items => buttons;
+
+        // 0.9.1 inverting the Y on the sticks?
+        public int invertYLeft = 1;
+        public int invertYRight = 1;
 
         // 0.5.12: new flags for the mouse speed.
         protected bool mousespeed_slower = false;
@@ -1138,7 +1142,7 @@ namespace Majestic_11
         // config files have this number as first line.
         protected byte configFileDeterminator = 129;
         // the version number is the second line.
-        protected byte configFileVersion = 3;
+        protected byte configFileVersion = 4;
         public bool SaveTo(string filename)
         {
             try
@@ -1159,6 +1163,10 @@ namespace Majestic_11
                 // write determinator and version
                 bw.WriteLine(configFileDeterminator);
                 bw.WriteLine(configFileVersion);
+
+                Log.Line("Writing invert Y values..");
+                bw.WriteLine(Program.Input.Config.invertYLeft);
+                bw.WriteLine(Program.Input.Config.invertYRight);
 
                 // write count of mjbuttons.
                 Log.Line("Writing " + this.buttons.Count + " buttons..");
@@ -1200,6 +1208,14 @@ namespace Majestic_11
                     if (cd==configFileVersion)
                     {
                         // OK File and File Version are ok.
+
+                        // Read invert y values.
+                        t = br.ReadLine();
+                        Program.Input.Config.invertYLeft = int.Parse(t);
+
+                        t = br.ReadLine();
+                        Program.Input.Config.invertYRight = int.Parse(t);
+
                         // clear the buttons..
                         this.clearButtons();
 
