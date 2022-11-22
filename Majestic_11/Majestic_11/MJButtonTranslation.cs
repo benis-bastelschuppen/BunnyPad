@@ -91,13 +91,14 @@ namespace Majestic_11
     public class MJButtonTranslation
     {
         // WINDOWS SPECIFIC
-        // import keyboard event only for setting the volume.
+        // import keyboard event only for setting the volume and using WASD and ARROW keys.
         [DllImport("user32.dll")]
         static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
 
         // import mouse_event from user32.dll
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
         static extern void mouse_event(uint dwFlags, int dx, int dy, uint cButtons, uint dwExtraInfo);
+
 
         //Mouse actions for the windows API.
         private const int MOUSEEVENTF_LEFTDOWN = 0x02;
@@ -289,6 +290,24 @@ namespace Majestic_11
         public void volumeUp() => keybd_event((byte)Keys.VolumeUp, 0, 0, 0);
         public void volumeDown() => keybd_event((byte)Keys.VolumeDown, 0, 0, 0);
         public void volumeMute() => keybd_event((byte)Keys.VolumeMute, 0, 0, 0);
+
+        // 0.8.7 Fast key pressing for game movement.
+         public void arrowsUp()
+         {
+             keybd_event((byte)Keys.A, 0, 0x02, 0);
+             keybd_event((byte)Keys.D, 0, 0x02, 0);
+             keybd_event((byte)Keys.S, 0, 0x02, 0);
+             keybd_event((byte)Keys.W, 0, 0x02, 0);
+             keybd_event((byte)Keys.Up, 0, 0x02, 0);
+             keybd_event((byte)Keys.Down, 0, 0x02, 0);
+             keybd_event((byte)Keys.Left, 0, 0x02, 0);
+             keybd_event((byte)Keys.Right, 0, 0x02, 0);
+         }
+        public void pressKeyFast(Keys k)
+        {
+            //keybd_event((byte)k, 0, 0x02, 0);
+            keybd_event((byte)k, 0, 0, 0); 
+        }
 
         // 0.8.x > 0
         public void DIUpdate(JoystickState stick, byte FNflag)
@@ -544,8 +563,8 @@ namespace Majestic_11
                     break;
                 case EMJBUTTON.RightThumbstick:
                     //q = "Right";
-                    stickx = sticks.RotationZ - short.MaxValue;
-                    sticky = sticks.Z - short.MaxValue;
+                    sticky = 0-(sticks.RotationZ - short.MaxValue);
+                    stickx = sticks.Z - short.MaxValue;
                     break;
                 default:
                     break;
@@ -581,6 +600,7 @@ namespace Majestic_11
         }
 
         // 0.8.4 all that in its own function
+        private bool resetKeys = false;
         protected void updateSticks(float stickx, float sticky)
         {
             // implement deadzone
@@ -614,26 +634,33 @@ namespace Majestic_11
                 case EMJFUNCTION.ARROW_KEYS:
                 case EMJFUNCTION.WASD_KEYS:
                     // simulate keypresses.
-                    string updown = "";
-                    string leftright = "";
+                    // 0.8.7 use keybd_event for faster recognition in games.
+                    //string updown = "";
+                    //string leftright = "";
+                    if (resetKeys == true) 
+                    { 
+                        arrowsUp(); 
+                        resetKeys = false; 
+                    }
                     if (this.Function == EMJFUNCTION.ARROW_KEYS)
                     {
-                        if (stickx < 0) leftright = "{LEFT}";
-                        if (stickx > 0) leftright = "{RIGHT}";
-                        if (sticky > 0) updown = "{UP}";
-                        if (sticky < 0) updown = "{DOWN}";
+                        if (stickx < 0) { pressKeyFast(Keys.Left); resetKeys = true; }// leftright = "{LEFT}";
+                        if (stickx > 0) { pressKeyFast(Keys.Right); resetKeys = true; } //leftright = "{RIGHT}";
+                        if (sticky > 0) { pressKeyFast(Keys.Up); resetKeys = true; }// updown = "{UP}";
+                        if (sticky < 0) { pressKeyFast(Keys.Down); resetKeys = true; }// updown = "{DOWN}";
                     }
                     else
                     {
-                        if (stickx < 0) leftright = "a";
-                        if (stickx > 0) leftright = "d";
-                        if (sticky > 0) updown = "w";
-                        if (sticky < 0) updown = "s";
+                        if (stickx < 0) { pressKeyFast(Keys.A); resetKeys = true; }// leftright = "a";
+                        if (stickx > 0) { pressKeyFast(Keys.D); resetKeys = true; }// leftright = "d";
+                        if (sticky > 0) { pressKeyFast(Keys.W); resetKeys = true; }// updown = "w";
+                        if (sticky < 0) { pressKeyFast(Keys.S); resetKeys = true; }// updown = "s";
                     }
-                    if (updown != "")
+                    /*if (updown != "")
                         SendKeys.SendWait(updown);
                     if (leftright != "")
                         SendKeys.SendWait(leftright);
+                    */
                     break;
                 // TODO: add the other functions.
                 default:
@@ -712,7 +739,7 @@ namespace Majestic_11
         {
             vkshiftkey = (state.Buttons[(int)EMJDIBUTTONIDX.BTN_RightTrigger] || state.Buttons[(int)EMJDIBUTTONIDX.BTN_LeftTrigger]) ? true : false;
             float stickx = state.X - short.MaxValue;
-            float sticky = 0 - (state.Y - short.MaxValue);
+            float sticky = state.Y - short.MaxValue;
 
             float dzone = Program.Input.deadzone;
             int moveCursor = -1;
@@ -1221,7 +1248,7 @@ namespace Majestic_11
             }
         }
 
-        // creaate the virtual key arrays.
+        // create the virtual key arrays.
         string[,,] vkArray;
         public void createVKArray()
         {

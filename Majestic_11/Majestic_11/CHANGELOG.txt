@@ -3,6 +3,10 @@ Log begins with version 0.5.18
 
 TODO: Autostart
 
+0.9.0:	Directinput works.
+		Made the WASD and ARROW function using keybd_event 
+			for faster key pressing when moving in game.
+0.8.6:	Fixed inverted stick y in DirectInput.
 0.8.5:	Incorporated the Virtual Keyboard to work with DirectInput.
 0.8.4:	Incorporated the DirectInput Sticks X, Y, Z and RotationZ for left and right.
 0.8.3:	Incorporated the DirectInput Digital Pad which is different as in XInput.
