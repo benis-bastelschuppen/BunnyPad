@@ -73,6 +73,33 @@ namespace Majestic_11
             {
                 ListBox_Buttons.Items.Add(bt);
             }
+
+            // set the checkboxes
+            // invert y
+            if (Program.Input.Config.invertYLeft < 0)
+                chk_invertyleft.Checked = true;
+            else
+                chk_invertyleft.Checked = false;
+
+            if (Program.Input.Config.invertYRight < 0)
+                chk_invertyright.Checked = true;
+            else
+                chk_invertyright.Checked = false;
+
+            // invert x
+            if (Program.Input.Config.invertXLeft < 0)
+                chk_invertxleft.Checked = true;
+            else
+                chk_invertxleft.Checked = false;
+
+            if (Program.Input.Config.invertXRight < 0)
+                chk_invertxright.Checked = true;
+            else
+                chk_invertxright.Checked = false;
+
+            // exchange x for y
+            chk_exchangexyleft.Checked = Program.Input.Config.exchangeXYLeft;
+            chk_exchangexyright.Checked = Program.Input.Config.exchangeXYRight;
         }
 
         // call this after creating the window.
@@ -376,6 +403,50 @@ namespace Majestic_11
                 this.LoadActualConfig();
                 Log.Line("Default config loaded.");
             }
+        }
+
+        private void chk_invertyleft_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chk_invertyleft.Checked == true)
+                Program.Input.Config.invertYLeft = -1;
+            else
+                Program.Input.Config.invertYLeft = 1;
+        }
+
+        private void chk_invertyright_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chk_invertyright.Checked == true)
+                Program.Input.Config.invertYRight = -1;
+            else
+                Program.Input.Config.invertYRight = 1;
+
+        }
+
+        private void chk_invertxleft_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chk_invertxleft.Checked == true)
+                Program.Input.Config.invertXLeft = -1;
+            else
+                Program.Input.Config.invertXLeft = 1;
+
+        }
+
+        private void chk_invertxright_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chk_invertxright.Checked == true)
+                Program.Input.Config.invertXRight = -1;
+            else
+                Program.Input.Config.invertXRight = 1;
+        }
+
+        private void chk_exchangexyleft_CheckedChanged(object sender, EventArgs e)
+        {
+            Program.Input.Config.exchangeXYLeft = chk_exchangexyleft.Checked;
+        }
+
+        private void chk_exchangexyright_CheckedChanged(object sender, EventArgs e)
+        {
+            Program.Input.Config.exchangeXYRight = chk_exchangexyright.Checked;
         }
     }
 }

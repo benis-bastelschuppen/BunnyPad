@@ -54,9 +54,17 @@
             this.btn_resetConfig = new System.Windows.Forms.Button();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.lbl_actualConfig = new System.Windows.Forms.ToolStripStatusLabel();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chk_exchangexyleft = new System.Windows.Forms.CheckBox();
+            this.chk_invertyright = new System.Windows.Forms.CheckBox();
+            this.chk_invertyleft = new System.Windows.Forms.CheckBox();
+            this.chk_exchangexyright = new System.Windows.Forms.CheckBox();
+            this.chk_invertxleft = new System.Windows.Forms.CheckBox();
+            this.chk_invertxright = new System.Windows.Forms.CheckBox();
             this.grp_newBtn.SuspendLayout();
             this.panel_keystuff.SuspendLayout();
             this.statusStrip.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // ListBox_Buttons
@@ -317,7 +325,7 @@
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lbl_actualConfig});
-            this.statusStrip.Location = new System.Drawing.Point(0, 337);
+            this.statusStrip.Location = new System.Drawing.Point(0, 436);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(483, 22);
             this.statusStrip.SizingGrip = false;
@@ -326,15 +334,97 @@
             // lbl_actualConfig
             // 
             this.lbl_actualConfig.Name = "lbl_actualConfig";
-            this.lbl_actualConfig.Size = new System.Drawing.Size(138, 17);
+            this.lbl_actualConfig.Size = new System.Drawing.Size(136, 17);
             this.lbl_actualConfig.Text = "Actual config: [NOT SET]";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.chk_invertxright);
+            this.groupBox1.Controls.Add(this.chk_invertxleft);
+            this.groupBox1.Controls.Add(this.chk_exchangexyright);
+            this.groupBox1.Controls.Add(this.chk_exchangexyleft);
+            this.groupBox1.Controls.Add(this.chk_invertyright);
+            this.groupBox1.Controls.Add(this.chk_invertyleft);
+            this.groupBox1.Location = new System.Drawing.Point(9, 340);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(467, 88);
+            this.groupBox1.TabIndex = 17;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Stick Configuration";
+            // 
+            // chk_exchangexyleft
+            // 
+            this.chk_exchangexyleft.AutoSize = true;
+            this.chk_exchangexyleft.Location = new System.Drawing.Point(7, 65);
+            this.chk_exchangexyleft.Name = "chk_exchangexyleft";
+            this.chk_exchangexyleft.Size = new System.Drawing.Size(187, 17);
+            this.chk_exchangexyleft.TabIndex = 2;
+            this.chk_exchangexyleft.Text = "Exchange X for Y on the left stick.";
+            this.chk_exchangexyleft.UseVisualStyleBackColor = true;
+            this.chk_exchangexyleft.CheckedChanged += new System.EventHandler(this.chk_exchangexyleft_CheckedChanged);
+            // 
+            // chk_invertyright
+            // 
+            this.chk_invertyright.AutoSize = true;
+            this.chk_invertyright.Location = new System.Drawing.Point(198, 19);
+            this.chk_invertyright.Name = "chk_invertyright";
+            this.chk_invertyright.Size = new System.Drawing.Size(147, 17);
+            this.chk_invertyright.TabIndex = 1;
+            this.chk_invertyright.Text = "Invert Y on the right stick.";
+            this.chk_invertyright.UseVisualStyleBackColor = true;
+            this.chk_invertyright.CheckedChanged += new System.EventHandler(this.chk_invertyright_CheckedChanged);
+            // 
+            // chk_invertyleft
+            // 
+            this.chk_invertyleft.AutoSize = true;
+            this.chk_invertyleft.Location = new System.Drawing.Point(7, 19);
+            this.chk_invertyleft.Name = "chk_invertyleft";
+            this.chk_invertyleft.Size = new System.Drawing.Size(141, 17);
+            this.chk_invertyleft.TabIndex = 0;
+            this.chk_invertyleft.Text = "Invert Y on the left stick.";
+            this.chk_invertyleft.UseVisualStyleBackColor = true;
+            this.chk_invertyleft.CheckedChanged += new System.EventHandler(this.chk_invertyleft_CheckedChanged);
+            // 
+            // chk_exchangexyright
+            // 
+            this.chk_exchangexyright.AutoSize = true;
+            this.chk_exchangexyright.Location = new System.Drawing.Point(198, 65);
+            this.chk_exchangexyright.Name = "chk_exchangexyright";
+            this.chk_exchangexyright.Size = new System.Drawing.Size(193, 17);
+            this.chk_exchangexyright.TabIndex = 3;
+            this.chk_exchangexyright.Text = "Exchange X for Y on the right stick.";
+            this.chk_exchangexyright.UseVisualStyleBackColor = true;
+            this.chk_exchangexyright.CheckedChanged += new System.EventHandler(this.chk_exchangexyright_CheckedChanged);
+            // 
+            // chk_invertxleft
+            // 
+            this.chk_invertxleft.AutoSize = true;
+            this.chk_invertxleft.Location = new System.Drawing.Point(7, 42);
+            this.chk_invertxleft.Name = "chk_invertxleft";
+            this.chk_invertxleft.Size = new System.Drawing.Size(141, 17);
+            this.chk_invertxleft.TabIndex = 4;
+            this.chk_invertxleft.Text = "Invert X on the left stick.";
+            this.chk_invertxleft.UseVisualStyleBackColor = true;
+            this.chk_invertxleft.CheckedChanged += new System.EventHandler(this.chk_invertxleft_CheckedChanged);
+            // 
+            // chk_invertxright
+            // 
+            this.chk_invertxright.AutoSize = true;
+            this.chk_invertxright.Location = new System.Drawing.Point(198, 42);
+            this.chk_invertxright.Name = "chk_invertxright";
+            this.chk_invertxright.Size = new System.Drawing.Size(147, 17);
+            this.chk_invertxright.TabIndex = 5;
+            this.chk_invertxright.Text = "Invert X on the right stick.";
+            this.chk_invertxright.UseVisualStyleBackColor = true;
+            this.chk_invertxright.CheckedChanged += new System.EventHandler(this.chk_invertxright_CheckedChanged);
             // 
             // Frm_ButtonConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btn_OK;
-            this.ClientSize = new System.Drawing.Size(483, 359);
+            this.ClientSize = new System.Drawing.Size(483, 458);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.btn_resetConfig);
             this.Controls.Add(this.btn_saveConfig);
@@ -360,6 +450,8 @@
             this.panel_keystuff.PerformLayout();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -392,5 +484,12 @@
         private System.Windows.Forms.Button btn_resetConfig;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel lbl_actualConfig;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.CheckBox chk_exchangexyleft;
+        private System.Windows.Forms.CheckBox chk_invertyright;
+        private System.Windows.Forms.CheckBox chk_invertyleft;
+        private System.Windows.Forms.CheckBox chk_exchangexyright;
+        private System.Windows.Forms.CheckBox chk_invertxright;
+        private System.Windows.Forms.CheckBox chk_invertxleft;
     }
 }

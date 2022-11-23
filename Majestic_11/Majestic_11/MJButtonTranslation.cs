@@ -559,12 +559,30 @@ namespace Majestic_11
                 case EMJBUTTON.LeftThumbstick:
                     //q = "Left Stick";
                     stickx = sticks.X - short.MaxValue;
-                    sticky = Program.Input.Config.invertYLeft*(0-(sticks.Y - short.MaxValue));
+                    sticky = 0-(sticks.Y - short.MaxValue);
+                    // maybe exchange x for y
+                    if (Program.Input.Config.exchangeXYLeft == true)
+                    {
+                        float sx = stickx;
+                        stickx = sticky;
+                        sticky = sx;
+                    }
+                    stickx *= Program.Input.Config.invertXLeft;
+                    sticky *= Program.Input.Config.invertYLeft;
                     break;
                 case EMJBUTTON.RightThumbstick:
                     //q = "Right Stick";
                     stickx = sticks.Z - short.MaxValue;
-                    sticky = Program.Input.Config.invertYRight*(0-(sticks.RotationZ - short.MaxValue));
+                    sticky = 0-(sticks.RotationZ - short.MaxValue);
+                    // maybe exchange x for y
+                    if (Program.Input.Config.exchangeXYRight == true)
+                    {
+                        float sx = stickx;
+                        stickx = sticky;
+                        sticky = sx;
+                    }
+                    stickx *= Program.Input.Config.invertXRight; 
+                    sticky *= Program.Input.Config.invertYRight;
                     break;
                 default:
                     break;
@@ -586,11 +604,29 @@ namespace Majestic_11
             {
                 case EMJBUTTON.LeftThumbstick:
                     stickx = pad.LeftThumbX;
-                    sticky = Program.Input.Config.invertYLeft*pad.LeftThumbY;
+                    sticky = pad.LeftThumbY;
+                    // maybe exchange x for y
+                    if (Program.Input.Config.exchangeXYLeft==true)
+                    {
+                        float sx = stickx;
+                        stickx = sticky;
+                        sticky = sx;
+                    }
+                    stickx *= Program.Input.Config.invertXLeft;
+                    sticky *= Program.Input.Config.invertYLeft;
                     break;
                 case EMJBUTTON.RightThumbstick:
                     stickx = pad.RightThumbX;
-                    sticky = Program.Input.Config.invertYRight*pad.RightThumbY;
+                    sticky = pad.RightThumbY;
+                    // maybe exchange x for y
+                    if (Program.Input.Config.exchangeXYRight == true)
+                    {
+                        float sx = stickx;
+                        stickx = sticky;
+                        sticky = sx;
+                    }
+                    stickx *= Program.Input.Config.invertXRight;
+                    sticky *= Program.Input.Config.invertYRight;
                     break;
                 default:
                     break;
@@ -613,6 +649,8 @@ namespace Majestic_11
             // normalize the values
             stickx *= Program.Input.StickMultiplier;
             sticky *= Program.Input.StickMultiplier;
+
+            //Log.Line("StickX:"+stickx.ToString()+" StickY:"+sticky.ToString());
 
             int curx = Cursor.Position.X;
             int cury = Cursor.Position.Y;
@@ -637,6 +675,7 @@ namespace Majestic_11
                     // 0.8.7 use keybd_event for faster recognition in games.
                     //string updown = "";
                     //string leftright = "";
+
                     if (resetKeys == true) 
                     { 
                         arrowsUp(); 
@@ -681,6 +720,14 @@ namespace Majestic_11
         // 0.9.1 inverting the Y on the sticks?
         public int invertYLeft = 1;
         public int invertYRight = 1;
+
+        // 0.9.3 inverting X on the sticks?
+        public int invertXLeft = 1;
+        public int invertXRight = 1;
+
+        // 0.9.2 exchange x for y
+        public bool exchangeXYLeft=false;
+        public bool exchangeXYRight=false;
 
         // 0.5.12: new flags for the mouse speed.
         protected bool mousespeed_slower = false;
@@ -1136,13 +1183,18 @@ namespace Majestic_11
             b.hitDelay = this.DefaultKeyStrokeDelay;
             // MUTE volume with FN_1 => need this keystroke!
             b = this.addButton(EMJBUTTON.DPadLeft, EMJFUNCTION.MUTE_VOLUME,1);
+
+            invertXLeft = 1;
+            invertYLeft = 1;
+            exchangeXYLeft = false;
+            exchangeXYRight = false;
         }
 
         // we use this version to determine if the fileloader works.
         // config files have this number as first line.
         protected byte configFileDeterminator = 129;
         // the version number is the second line.
-        protected byte configFileVersion = 4;
+        protected byte configFileVersion = 6;
         public bool SaveTo(string filename)
         {
             try
@@ -1164,9 +1216,16 @@ namespace Majestic_11
                 bw.WriteLine(configFileDeterminator);
                 bw.WriteLine(configFileVersion);
 
-                Log.Line("Writing invert Y values..");
-                bw.WriteLine(Program.Input.Config.invertYLeft);
-                bw.WriteLine(Program.Input.Config.invertYRight);
+                Log.Line("Writing invert values..");
+                bw.WriteLine(this.invertYLeft);
+                bw.WriteLine(this.invertYRight);
+
+                bw.WriteLine(this.invertXLeft);
+                bw.WriteLine(this.invertYLeft);
+
+                Log.Line("Writing exchange X for Y flags..");
+                bw.WriteLine(this.exchangeXYLeft);
+                bw.WriteLine(this.exchangeXYRight);
 
                 // write count of mjbuttons.
                 Log.Line("Writing " + this.buttons.Count + " buttons..");
@@ -1211,10 +1270,23 @@ namespace Majestic_11
 
                         // Read invert y values.
                         t = br.ReadLine();
-                        Program.Input.Config.invertYLeft = int.Parse(t);
+                        this.invertYLeft = int.Parse(t);
 
                         t = br.ReadLine();
-                        Program.Input.Config.invertYRight = int.Parse(t);
+                        this.invertYRight = int.Parse(t);
+
+                        t = br.ReadLine();
+                        this.invertXLeft = int.Parse(t);
+
+                        t = br.ReadLine();
+                        this.invertXRight = int.Parse(t);
+
+                        // read exchange x for y flags
+                        t = br.ReadLine();
+                        this.exchangeXYLeft = bool.Parse(t);
+
+                        t = br.ReadLine();
+                        this.exchangeXYRight = bool.Parse(t);
 
                         // clear the buttons..
                         this.clearButtons();
