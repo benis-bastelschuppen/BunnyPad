@@ -244,7 +244,6 @@ namespace Majestic_11
                     // This also happens when a DirectInput controller is disconnected so
                     // we set DIconnected to false to wait for another connecting thread.
                     DIconnected = false;
-                    done = true;
                     continue;
                 }
 
