@@ -54,17 +54,21 @@
             this.btn_resetConfig = new System.Windows.Forms.Button();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.lbl_actualConfig = new System.Windows.Forms.ToolStripStatusLabel();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.grp_stickConfig = new System.Windows.Forms.GroupBox();
             this.chk_exchangexyleft = new System.Windows.Forms.CheckBox();
             this.chk_invertyright = new System.Windows.Forms.CheckBox();
             this.chk_invertyleft = new System.Windows.Forms.CheckBox();
             this.chk_exchangexyright = new System.Windows.Forms.CheckBox();
             this.chk_invertxleft = new System.Windows.Forms.CheckBox();
             this.chk_invertxright = new System.Windows.Forms.CheckBox();
+            this.grp_mousespeed = new System.Windows.Forms.GroupBox();
+            this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
+            this.lbl_mousespeed = new System.Windows.Forms.Label();
             this.grp_newBtn.SuspendLayout();
             this.panel_keystuff.SuspendLayout();
             this.statusStrip.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            this.grp_stickConfig.SuspendLayout();
+            this.grp_mousespeed.SuspendLayout();
             this.SuspendLayout();
             // 
             // ListBox_Buttons
@@ -325,7 +329,7 @@
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lbl_actualConfig});
-            this.statusStrip.Location = new System.Drawing.Point(0, 436);
+            this.statusStrip.Location = new System.Drawing.Point(0, 497);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(483, 22);
             this.statusStrip.SizingGrip = false;
@@ -337,20 +341,20 @@
             this.lbl_actualConfig.Size = new System.Drawing.Size(136, 17);
             this.lbl_actualConfig.Text = "Actual config: [NOT SET]";
             // 
-            // groupBox1
+            // grp_stickConfig
             // 
-            this.groupBox1.Controls.Add(this.chk_invertxright);
-            this.groupBox1.Controls.Add(this.chk_invertxleft);
-            this.groupBox1.Controls.Add(this.chk_exchangexyright);
-            this.groupBox1.Controls.Add(this.chk_exchangexyleft);
-            this.groupBox1.Controls.Add(this.chk_invertyright);
-            this.groupBox1.Controls.Add(this.chk_invertyleft);
-            this.groupBox1.Location = new System.Drawing.Point(9, 340);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(467, 88);
-            this.groupBox1.TabIndex = 17;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Stick Configuration";
+            this.grp_stickConfig.Controls.Add(this.chk_invertxright);
+            this.grp_stickConfig.Controls.Add(this.chk_invertxleft);
+            this.grp_stickConfig.Controls.Add(this.chk_exchangexyright);
+            this.grp_stickConfig.Controls.Add(this.chk_exchangexyleft);
+            this.grp_stickConfig.Controls.Add(this.chk_invertyright);
+            this.grp_stickConfig.Controls.Add(this.chk_invertyleft);
+            this.grp_stickConfig.Location = new System.Drawing.Point(9, 340);
+            this.grp_stickConfig.Name = "grp_stickConfig";
+            this.grp_stickConfig.Size = new System.Drawing.Size(467, 88);
+            this.grp_stickConfig.TabIndex = 17;
+            this.grp_stickConfig.TabStop = false;
+            this.grp_stickConfig.Text = "Stick Configuration";
             // 
             // chk_exchangexyleft
             // 
@@ -418,13 +422,45 @@
             this.chk_invertxright.UseVisualStyleBackColor = true;
             this.chk_invertxright.CheckedChanged += new System.EventHandler(this.chk_invertxright_CheckedChanged);
             // 
+            // grp_mousespeed
+            // 
+            this.grp_mousespeed.Controls.Add(this.lbl_mousespeed);
+            this.grp_mousespeed.Controls.Add(this.hScrollBar1);
+            this.grp_mousespeed.Location = new System.Drawing.Point(9, 434);
+            this.grp_mousespeed.Name = "grp_mousespeed";
+            this.grp_mousespeed.Size = new System.Drawing.Size(467, 60);
+            this.grp_mousespeed.TabIndex = 18;
+            this.grp_mousespeed.TabStop = false;
+            this.grp_mousespeed.Text = "Mouse Speed";
+            // 
+            // hScrollBar1
+            // 
+            this.hScrollBar1.Location = new System.Drawing.Point(7, 38);
+            this.hScrollBar1.Minimum = 1;
+            this.hScrollBar1.Name = "hScrollBar1";
+            this.hScrollBar1.Size = new System.Drawing.Size(457, 19);
+            this.hScrollBar1.TabIndex = 0;
+            this.hScrollBar1.TabStop = true;
+            this.hScrollBar1.Value = 1;
+            this.hScrollBar1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollBar1_Scroll);
+            // 
+            // lbl_mousespeed
+            // 
+            this.lbl_mousespeed.AutoSize = true;
+            this.lbl_mousespeed.Location = new System.Drawing.Point(426, 16);
+            this.lbl_mousespeed.Name = "lbl_mousespeed";
+            this.lbl_mousespeed.Size = new System.Drawing.Size(19, 13);
+            this.lbl_mousespeed.TabIndex = 1;
+            this.lbl_mousespeed.Text = "10";
+            // 
             // Frm_ButtonConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btn_OK;
-            this.ClientSize = new System.Drawing.Size(483, 458);
-            this.Controls.Add(this.groupBox1);
+            this.ClientSize = new System.Drawing.Size(483, 519);
+            this.Controls.Add(this.grp_mousespeed);
+            this.Controls.Add(this.grp_stickConfig);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.btn_resetConfig);
             this.Controls.Add(this.btn_saveConfig);
@@ -450,8 +486,10 @@
             this.panel_keystuff.PerformLayout();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.grp_stickConfig.ResumeLayout(false);
+            this.grp_stickConfig.PerformLayout();
+            this.grp_mousespeed.ResumeLayout(false);
+            this.grp_mousespeed.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -484,12 +522,15 @@
         private System.Windows.Forms.Button btn_resetConfig;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel lbl_actualConfig;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox grp_stickConfig;
         private System.Windows.Forms.CheckBox chk_exchangexyleft;
         private System.Windows.Forms.CheckBox chk_invertyright;
         private System.Windows.Forms.CheckBox chk_invertyleft;
         private System.Windows.Forms.CheckBox chk_exchangexyright;
         private System.Windows.Forms.CheckBox chk_invertxright;
         private System.Windows.Forms.CheckBox chk_invertxleft;
+        private System.Windows.Forms.GroupBox grp_mousespeed;
+        private System.Windows.Forms.HScrollBar hScrollBar1;
+        private System.Windows.Forms.Label lbl_mousespeed;
     }
 }

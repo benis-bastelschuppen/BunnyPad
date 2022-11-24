@@ -100,6 +100,10 @@ namespace Majestic_11
             // exchange x for y
             chk_exchangexyleft.Checked = Program.Input.Config.exchangeXYLeft;
             chk_exchangexyright.Checked = Program.Input.Config.exchangeXYRight;
+
+            // mouse speed slider
+            hScrollBar1.Value = (int)(Program.Input.Config.baseMouseSpeed * 10);
+            lbl_mousespeed.Text = hScrollBar1.Value.ToString();
         }
 
         // call this after creating the window.
@@ -447,6 +451,13 @@ namespace Majestic_11
         private void chk_exchangexyright_CheckedChanged(object sender, EventArgs e)
         {
             Program.Input.Config.exchangeXYRight = chk_exchangexyright.Checked;
+        }
+
+        private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
+        {
+            float v = hScrollBar1.Value;
+            lbl_mousespeed.Text = hScrollBar1.Value.ToString();
+            Program.Input.Config.baseMouseSpeed = hScrollBar1.Value * 0.1f;
         }
     }
 }

@@ -660,14 +660,14 @@ namespace Majestic_11
             {
                 case EMJFUNCTION.MOUSE_MOVEMENT:
                     // move mouse
-                    curx = (int)(stickx * Program.Input.MouseSpeed);
-                    cury = -(int)(sticky * Program.Input.MouseSpeed);
+                    curx = (int)(stickx * Program.Input.MouseSpeed*Program.Input.Config.baseMouseSpeed);
+                    cury = -(int)(sticky * Program.Input.MouseSpeed*Program.Input.Config.baseMouseSpeed);
                     mouse_event(MOUSEEVENTF_MOVE, curx, cury, 0, 0);
                     break;
                 case EMJFUNCTION.MOUSE_WHEEL:
                     // turn mouse wheel
                     if (sticky != 0)
-                        mouse_event(MOUSEEVENTF_WHEEL, curx, cury, (uint)(sticky * Program.Input.MouseSpeed), 0);
+                        mouse_event(MOUSEEVENTF_WHEEL, curx, cury, (uint)(sticky * Program.Input.MouseSpeed*Program.Input.Config.baseMouseSpeed), 0);
                     break;
                 case EMJFUNCTION.ARROW_KEYS:
                 case EMJFUNCTION.WASD_KEYS:
@@ -728,6 +728,8 @@ namespace Majestic_11
         // 0.9.2 exchange x for y
         public bool exchangeXYLeft=false;
         public bool exchangeXYRight=false;
+
+        public float baseMouseSpeed = 1.0f;
 
         // 0.5.12: new flags for the mouse speed.
         protected bool mousespeed_slower = false;
@@ -1188,13 +1190,14 @@ namespace Majestic_11
             invertYLeft = 1;
             exchangeXYLeft = false;
             exchangeXYRight = false;
+            baseMouseSpeed = 1.0f;
         }
 
         // we use this version to determine if the fileloader works.
         // config files have this number as first line.
         protected byte configFileDeterminator = 129;
         // the version number is the second line.
-        protected byte configFileVersion = 6;
+        protected byte configFileVersion = 7;
         public bool SaveTo(string filename)
         {
             try
@@ -1226,6 +1229,9 @@ namespace Majestic_11
                 Log.Line("Writing exchange X for Y flags..");
                 bw.WriteLine(this.exchangeXYLeft);
                 bw.WriteLine(this.exchangeXYRight);
+
+                Log.Line("Writing mouse speed..");
+                bw.WriteLine(this.baseMouseSpeed);
 
                 // write count of mjbuttons.
                 Log.Line("Writing " + this.buttons.Count + " buttons..");
@@ -1287,6 +1293,10 @@ namespace Majestic_11
 
                         t = br.ReadLine();
                         this.exchangeXYRight = bool.Parse(t);
+
+                        // read mouse speed
+                        t = br.ReadLine();
+                        this.baseMouseSpeed = float.Parse(t);
 
                         // clear the buttons..
                         this.clearButtons();

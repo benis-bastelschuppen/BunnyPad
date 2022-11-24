@@ -52,7 +52,7 @@ namespace Majestic_11
         // stick deadzone.
         public float deadzone = 5000.0f;
 
-        protected float multiplier = 50.0f / (float)short.MaxValue;
+        protected float multiplier = 50000.0f / (float)short.MaxValue;
         public float StickMultiplier => multiplier;
 
         protected Thread thread = null;
@@ -62,7 +62,7 @@ namespace Majestic_11
         protected string m_connectingText = "-=+ connection status not known yet +=-";
         public string ConnectText => m_connectingText;
 
-        protected float mouseSpeed = 0.5f;
+        protected float mouseSpeed = 0.0005f;
         public float MouseSpeed => mouseSpeed;
 
         // NEW 0.4.x:
@@ -205,7 +205,7 @@ namespace Majestic_11
                 Program.UpdateLabels();
 
                 // check if there is a controller connected.
-                if((Xconnected && !controller.IsConnected) || (!Xconnected && !DIconnected)) //!controller.IsConnected || !connected)
+                if ((Xconnected && !controller.IsConnected) || (!Xconnected && !DIconnected)) //!controller.IsConnected || !connected)
                 {
                     done = true;
                     break;
@@ -230,16 +230,21 @@ namespace Majestic_11
 
                     // 0.5.12: update mouse speed
                     if (!config.MouseSpeed_Slower && !config.MouseSpeed_Faster)
-                        mouseSpeed = 0.5f;
+                        mouseSpeed = 0.0005f;
                     if (config.MouseSpeed_Slower && !config.MouseSpeed_Faster)
-                        mouseSpeed = 0.1f;
+                        mouseSpeed = 0.0001f;
                     if (!config.MouseSpeed_Slower && config.MouseSpeed_Faster)
-                        mouseSpeed = 1.0f;
+                        mouseSpeed = 0.001f;
 
                 } catch (Exception ex) {
                     // sometimes the gamepad will not be found, like when you
                     // get the computer back from hibernation or something like this.
                     // to not crash the program then, we just continue here.
+
+                    // This also happens when a DirectInput controller is disconnected so
+                    // we set DIconnected to false to wait for another connecting thread.
+                    DIconnected = false;
+                    done = true;
                     continue;
                 }
 

@@ -3,6 +3,13 @@ Log begins with version 0.5.18
 
 TODO: Autostart
 
+=======================================================================================
+0.10.0: Release Candidate 3
+		It now recognizes when the gamepad is disconnected with DirectInput.
+=======================================================================================
+
+0.9.5:	You can now set the mouse speed in the configuration.
+		Loading and saving mouse speed.
 0.9.4:	Also made a config for inverting the X values in case something goes wrong.
 		Inverting X on the right and left stick with checkboxes in the config form.
 		Saving and loading the invert x values.

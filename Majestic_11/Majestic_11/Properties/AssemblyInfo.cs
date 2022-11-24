@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Majestic_11")]
 [assembly: AssemblyDescription("Control your PC with a gamepad.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("ben0biEnterprises")]
+[assembly: AssemblyCompany("Kaiserliche Spiele Manufaktur")]
 [assembly: AssemblyProduct("Majestic_11")]
 [assembly: AssemblyCopyright("Copyright ©  2018, 2022")]
 [assembly: AssemblyTrademark("")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // Sie können alle Werte angeben oder Standardwerte für die Build- und Revisionsnummern verwenden,
 // übernehmen, indem Sie "*" eingeben:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.9.*")]
-[assembly: AssemblyFileVersion("0.9.4")]
+[assembly: AssemblyVersion("0.10.*")]
+[assembly: AssemblyFileVersion("0.10.0")]
