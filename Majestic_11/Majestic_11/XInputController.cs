@@ -230,11 +230,11 @@ namespace Majestic_11
 
                     // 0.5.12: update mouse speed
                     if (!config.MouseSpeed_Slower && !config.MouseSpeed_Faster)
-                        mouseSpeed = 0.0005f;
+                        mouseSpeed = 0.00025f;
                     if (config.MouseSpeed_Slower && !config.MouseSpeed_Faster)
-                        mouseSpeed = 0.0001f;
+                        mouseSpeed = 0.00005f;
                     if (!config.MouseSpeed_Slower && config.MouseSpeed_Faster)
-                        mouseSpeed = 0.001f;
+                        mouseSpeed = 0.0005f;
 
                 } catch (Exception ex) {
                     // sometimes the gamepad will not be found, like when you
