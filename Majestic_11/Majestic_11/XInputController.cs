@@ -248,7 +248,7 @@ namespace Majestic_11
                 }
 
                 // wait some millisecs.
-                Thread.Sleep(20);
+                Thread.Sleep(10);
             }
 
             // *10 ooops, we got thrown out of the update loop...
