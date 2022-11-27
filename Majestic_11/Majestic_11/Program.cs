@@ -82,7 +82,7 @@ namespace Majestic_11
             if (mainFormVisibility)
                 ShowMainForm();
             else
-                HideMainForm();
+                HideMainForm(true);
         }
 
         // show or hide the virtual keyboard overlay.
@@ -143,12 +143,12 @@ namespace Majestic_11
         }
 
         // hide or minimize the main form.
-        public static void HideMainForm()
+        public static void HideMainForm(bool hideicon)
         {
             mainform.Invoke((MethodInvoker)delegate
             {
                 mainFormVisibility = false;
-                if (Program.controlpoller.IsConnected)
+                if (hideicon==true)
                 {
                     mainform.Enabled = false;
                     mainform.Hide();

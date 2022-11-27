@@ -3,6 +3,8 @@ Log begins with version 0.5.18
 
 TODO: Autostart
 
+0.10.1: Remove the deadzone from the stick values for a preciser movement.
+
 =======================================================================================
 0.10.0: Release Candidate 3
 		It now recognizes when the gamepad is disconnected with DirectInput.

@@ -646,6 +646,24 @@ namespace Majestic_11
             if (sticky < dzone && sticky > -dzone)
                 sticky = 0;
 
+            // remove deadzone from values
+            // 0.10.1
+            if(stickx!=0)
+            {
+                if (stickx > 0)
+                    stickx -= dzone;
+                else
+                    stickx += dzone;
+            }
+            if (sticky != 0)
+            {
+                if (sticky > 0)
+                    sticky -= dzone;
+                else
+                    sticky += dzone;
+            }
+
+
             // normalize the values
             stickx *= Program.Input.StickMultiplier;
             sticky *= Program.Input.StickMultiplier;

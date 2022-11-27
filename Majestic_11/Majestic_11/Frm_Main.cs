@@ -30,7 +30,7 @@ namespace Majestic_11
 
         private void btn_minimize_Click(object sender, EventArgs e)
         {
-            Program.HideMainForm();
+            Program.HideMainForm(false);
         }
 
         private void btn_about_Click(object sender, EventArgs e)
