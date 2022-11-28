@@ -301,8 +301,8 @@ namespace Majestic_11
         public void middleMouseUp() => mouseevt(MOUSEEVENTF_MIDDLEUP);
 
         // 0.10.2
-        public void wheelMouseUp() => mouse_event(MOUSEEVENTF_WHEEL, Cursor.Position.X, Cursor.Position.Y, 120, 0);
-        public void wheelMouseDown() => mouse_event(MOUSEEVENTF_WHEEL, Cursor.Position.X, Cursor.Position.Y, -120, 0);
+        public void wheelMouseUp() => mouse_event(MOUSEEVENTF_WHEEL, Cursor.Position.X, Cursor.Position.Y, -120, 0);
+        public void wheelMouseDown() => mouse_event(MOUSEEVENTF_WHEEL, Cursor.Position.X, Cursor.Position.Y, 120, 0);
 
         // adjust the system volume.
         public void volumeUp() => keybd_event((byte)Keys.VolumeUp, 0, 0, 0);
@@ -703,7 +703,7 @@ namespace Majestic_11
                 case EMJFUNCTION.MOUSE_WHEEL:
                     // turn mouse wheel
                     if (sticky != 0)
-                        mouse_event(MOUSEEVENTF_WHEEL, curx, cury, (int)(sticky * Program.Input.MouseSpeed*Program.Input.Config.baseMouseSpeed), 0);
+                        mouse_event(MOUSEEVENTF_WHEEL, curx, cury, (int)(sticky * Program.Input.MouseSpeed*Program.Input.Config.baseMouseSpeed*10), 0);
                     break;
                 case EMJFUNCTION.ARROW_KEYS:
                 case EMJFUNCTION.WASD_KEYS:
