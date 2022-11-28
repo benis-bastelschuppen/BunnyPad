@@ -3,6 +3,7 @@ Log begins with version 0.5.18
 
 TODO: Autostart
 
+0.10.2: Added Mouse Wheel Up and Down (not button but wheel) as button configuration.
 0.10.1: Remove the deadzone from the stick values for a preciser movement.
 
 =======================================================================================

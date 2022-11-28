@@ -29,6 +29,10 @@ namespace Majestic_11
         LEFT_MOUSE_BUTTON = 2000,
         RIGHT_MOUSE_BUTTON,
         MIDDLE_MOUSE_BUTTON,
+        // 0.10.2
+        MOUSE_WHEEL_UP=2500,
+        MOUSE_WHEEL_DOWN,
+        // endof 0.10.2
         VOLUME_UP = 3000,
         VOLUME_DOWN,
         MUTE_VOLUME,
@@ -97,7 +101,7 @@ namespace Majestic_11
 
         // import mouse_event from user32.dll
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-        static extern void mouse_event(uint dwFlags, int dx, int dy, uint cButtons, uint dwExtraInfo);
+        static extern void mouse_event(uint dwFlags, int dx, int dy, int cButtons, uint dwExtraInfo);
 
 
         //Mouse actions for the windows API.
@@ -232,6 +236,16 @@ namespace Majestic_11
                     onButtonUp = new voidDelegate(middleMouseUp);
                     actionText = "Middle Mouse Button";
                     break;
+                // 0.10.2
+                case EMJFUNCTION.MOUSE_WHEEL_UP:
+                    onButtonDown = new voidDelegate(wheelMouseUp);
+                    actionText = "Mouse Wheel UP";
+                    break;
+                case EMJFUNCTION.MOUSE_WHEEL_DOWN:
+                    onButtonDown = new voidDelegate(wheelMouseDown);
+                    actionText = "Mouse Wheel DOWN";
+                    break;
+                // endof 0.10.2
                 case EMJFUNCTION.VOLUME_UP:
                     onButtonDown = new voidDelegate(volumeUp);
                     actionText = "Volume UP";
@@ -285,6 +299,10 @@ namespace Majestic_11
         public void leftMouseUp() => mouseevt(MOUSEEVENTF_LEFTUP);
         public void rightMouseUp() => mouseevt(MOUSEEVENTF_RIGHTUP);
         public void middleMouseUp() => mouseevt(MOUSEEVENTF_MIDDLEUP);
+
+        // 0.10.2
+        public void wheelMouseUp() => mouse_event(MOUSEEVENTF_WHEEL, Cursor.Position.X, Cursor.Position.Y, 120, 0);
+        public void wheelMouseDown() => mouse_event(MOUSEEVENTF_WHEEL, Cursor.Position.X, Cursor.Position.Y, -120, 0);
 
         // adjust the system volume.
         public void volumeUp() => keybd_event((byte)Keys.VolumeUp, 0, 0, 0);
@@ -685,7 +703,7 @@ namespace Majestic_11
                 case EMJFUNCTION.MOUSE_WHEEL:
                     // turn mouse wheel
                     if (sticky != 0)
-                        mouse_event(MOUSEEVENTF_WHEEL, curx, cury, (uint)(sticky * Program.Input.MouseSpeed*Program.Input.Config.baseMouseSpeed), 0);
+                        mouse_event(MOUSEEVENTF_WHEEL, curx, cury, (int)(sticky * Program.Input.MouseSpeed*Program.Input.Config.baseMouseSpeed), 0);
                     break;
                 case EMJFUNCTION.ARROW_KEYS:
                 case EMJFUNCTION.WASD_KEYS:
